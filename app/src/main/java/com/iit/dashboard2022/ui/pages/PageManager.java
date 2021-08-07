@@ -35,6 +35,7 @@ public class PageManager extends FragmentStateAdapter {
         /* ADD NEW PAGES HERE */
         pageList.add(new CarDashboard());
         pageList.add(new Logs());
+        pageList.add(new LiveData());
 
         pages = pageList.toArray(new Page[0]);
     }
