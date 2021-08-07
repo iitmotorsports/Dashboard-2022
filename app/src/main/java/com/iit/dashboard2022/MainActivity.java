@@ -9,16 +9,27 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.iit.dashboard2022.ui.Pager;
+
 public class MainActivity extends AppCompatActivity {
+
+    Pager mainPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupUI();
+
+        mainPager = new Pager(this);
+
+    }
+
+    private void setupUI() {
         // Landscape mode
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        // Account for notch in newer phones
+        // Account for notches in newer phones
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
