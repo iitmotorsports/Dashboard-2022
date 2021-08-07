@@ -1,7 +1,5 @@
 package com.iit.dashboard2022.ui;
 
-import android.graphics.Color;
-
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -20,6 +18,7 @@ public class Pager {
 
         PageManager pageManager = new PageManager(activity.getSupportFragmentManager());
 
+        tabs.removeAllTabs();
         for (int i = 0; i < pageManager.getItemCount(); i++) {
             tabs.addTab(tabs.newTab());
         }

@@ -37,6 +37,29 @@
         app:tabSelectedTextColor="@color/colorAccent"
         app:tabTextAppearance="@style/TabText"
         app:tabTextColor="@color/backgroundText"
-        app:tabUnboundedRipple="false"/>
+        app:tabUnboundedRipple="false"
+        tools:ignore="SpeakableTextPresentCheck" >
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example" />
+
+    </com.google.android.material.tabs.TabLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
