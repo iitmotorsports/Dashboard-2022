@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.iit.dashboard2022.ui.Pager;
+import com.iit.dashboard2022.ui.anim.SettingsBtnAnim;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +26,15 @@ public class MainActivity extends AppCompatActivity {
         setupUI();
 
         mainPager = new Pager(this);
+
+//        Snackbar snk = Snackbar.make(findViewById(R.id.tabs), "AHHHH!", Snackbar.LENGTH_SHORT);
+//        snk.setActionTextColor(getResources().getColor(R.color.colorAccent, getTheme()));
+//        snk.setAction("Yellow", v -> snk.dismiss());
+
+        ImageButton settingsBtn = findViewById(R.id.settingsBtn);
+        SettingsBtnAnim settingsBtnAnim = new SettingsBtnAnim(this, settingsBtn);
+        settingsBtnAnim.setCallbackOpen(() -> Toast.makeText(this, "Open", Toast.LENGTH_SHORT).show(), false);
+        settingsBtnAnim.setCallbackClose(() -> Toast.makeText(this, "Close", Toast.LENGTH_SHORT).show(), true);
 
     }
 

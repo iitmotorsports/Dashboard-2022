@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainConstraint"
@@ -12,54 +12,78 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/mainPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
+        android:layout_height="match_parent">
     </androidx.viewpager2.widget.ViewPager2>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/translucent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:tabGravity="center"
-        app:tabIndicatorAnimationDuration="100"
-        app:tabIndicatorAnimationMode="elastic"
-        app:tabIndicatorColor="@color/colorAccent"
-        app:tabIndicatorFullWidth="true"
-        app:tabIndicatorGravity="top"
-        app:tabIndicatorHeight="5dp"
-        app:tabMinWidth="5dp"
-        app:tabMode="auto"
-        app:tabRippleColor="@color/translucent"
-        app:tabSelectedTextColor="@color/colorAccent"
-        app:tabTextAppearance="@style/TabText"
-        app:tabTextColor="@color/backgroundText"
-        app:tabUnboundedRipple="false"
-        tools:ignore="SpeakableTextPresentCheck">
+        android:layout_gravity="bottom|center"
+        android:orientation="horizontal">
 
-        <com.google.android.material.tabs.TabItem
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/example" />
+            android:layout_gravity="bottom|center"
+            android:background="@color/transparent"
+            app:tabGravity="center"
+            app:tabIndicatorAnimationDuration="100"
+            app:tabIndicatorAnimationMode="elastic"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorGravity="top"
+            app:tabIndicatorHeight="5dp"
+            app:tabMinWidth="5dp"
+            app:tabMode="auto"
+            app:tabRippleColor="@color/transparent"
+            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabTextAppearance="@style/TabText"
+            app:tabTextColor="@color/backgroundText"
+            app:tabUnboundedRipple="false">
 
-        <com.google.android.material.tabs.TabItem
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/example" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/example" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/example" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/example" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/settingsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/example" />
+            android:layout_gravity="center"
+            android:background="@color/transparent"
+            android:contentDescription="@string/settings"
+            android:src="@drawable/round_settings"
+            app:elevation="0dp" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/example" />
+    </LinearLayout>
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/example" />
-
-    </com.google.android.material.tabs.TabLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
