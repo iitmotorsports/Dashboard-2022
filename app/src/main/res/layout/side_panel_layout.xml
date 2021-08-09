@@ -10,6 +10,8 @@
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,27 +20,34 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="10dp">
 
-            <TextView
-                android:id="@+id/textView3"
-                style="@style/SideLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch2"
-                style="@style/SideSwitch"
+            <com.iit.dashboard2022.ui.widget.SideLabel
+                android:id="@+id/sideLabel2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/sideButton4"
+                android:id="@+id/sideButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <com.iit.dashboard2022.ui.widget.SideSwitch
+                android:id="@+id/sideSwitch6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Console" />
+
+            <com.iit.dashboard2022.ui.widget.SideToggle
+                android:id="@+id/sideToggle20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="TouchTargetSizeCheck" />
 
         </LinearLayout>
     </ScrollView>

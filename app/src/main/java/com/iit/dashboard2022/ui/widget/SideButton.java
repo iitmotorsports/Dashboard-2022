@@ -6,9 +6,10 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.button.MaterialButton;
 import com.iit.dashboard2022.R;
 
-public class SideButton extends com.google.android.material.button.MaterialButton {
+public class SideButton extends MaterialButton {
 
     public SideButton(@NonNull Context context) {
         super(context, null, R.attr.sideButtonStyle);

@@ -1,7 +1,18 @@
 <resources>
-    <attr name="sideButtonStyle" format="reference"/>
+    <attr name="sideButtonStyle" format="reference" />
+    <attr name="sideToggleButtonStyle" format="reference" />
+    <attr name="sideLabelStyle" format="reference" />
+    <attr name="sideSwitchWidgetStyle" format="reference" />
     <declare-styleable name="FullscreenAttrs">
         <attr name="fullscreenBackgroundColor" format="color" />
         <attr name="fullscreenTextColor" format="color" />
     </declare-styleable>
+    <declare-styleable name="SideToggle">
+        <attr name="android:textOn" format="string" />
+        <attr name="android:textOff" format="string" />
+        <attr name="android:disabledAlpha" format="float" />
+        <attr name="android:checked" format="boolean" />
+    </declare-styleable>
+
+
 </resources>

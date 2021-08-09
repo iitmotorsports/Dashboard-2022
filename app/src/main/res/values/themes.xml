@@ -20,5 +20,8 @@
         <item name="android:minHeight">5dp</item>
         <!-- Widget Styles -->
         <item name="sideButtonStyle">@style/SideButton</item>
+        <item name="sideToggleButtonStyle">@style/SideToggleButton</item>
+        <item name="sideLabelStyle">@style/SideLabel</item>
+        <item name="sideSwitchWidgetStyle">@style/SideSwitchWidget</item>
     </style>
 </resources>
