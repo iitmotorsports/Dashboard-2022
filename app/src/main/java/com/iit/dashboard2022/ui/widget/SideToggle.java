@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.view.SoundEffectConstants;
 
 import com.google.android.material.button.MaterialButton;
 import com.iit.dashboard2022.R;
@@ -13,7 +12,6 @@ import com.iit.dashboard2022.ui.anim.ColorAnim;
 public class SideToggle extends MaterialButton {
     private CharSequence mTextOn, mTextOff;
     //    private final float mDisabledAlpha;
-//    private boolean mChecked;
 
     private final ColorAnim colorAnim;
 
@@ -73,14 +71,5 @@ public class SideToggle extends MaterialButton {
             colorAnim.reverse();
         }
     }
-
-//    @Override
-//    public boolean performClick() {
-//        boolean handled = super.performClick();
-//        if (!handled) {
-//            playSoundEffect(SoundEffectConstants.CLICK);
-//        }
-//        return handled;
-//    }
 
 }
