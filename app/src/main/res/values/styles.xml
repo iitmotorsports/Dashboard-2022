@@ -11,13 +11,12 @@
     </style>
 
     <style name="SideButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:backgroundTint">@color/foregroundText</item>
         <item name="android:minWidth">48dp</item>
-        <item name="android:minHeight">0dp</item>
-        <item name="android:paddingStart">8dp</item>
-        <item name="android:paddingEnd">8dp</item>
+        <item name="android:minHeight">28dp</item>
+        <item name="android:padding">4dp</item>
         <item name="android:text">Button</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textAllCaps">false</item>
@@ -26,6 +25,11 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">12sp</item>
         <item name="rippleColor">@color/colorAccent</item>
+        <item name="android:maxEms">6</item>
+        <item name="android:insetTop">2dp</item>
+        <item name="android:insetBottom">2dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="SideToggleButton" parent="SideButton">
@@ -34,6 +38,8 @@
         <item name="android:textOff">OFF</item>
         <item name="android:disabledAlpha">0.5</item>
         <item name="android:checked">false</item>
+        <item name="textOnSize">12sp</item>
+        <item name="textOffSize">12sp</item>
         <item name="rippleColor">@color/transparent</item>
     </style>
 
@@ -41,11 +47,13 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">0dp</item>
+        <item name="enableText">true</item>
     </style>
 
     <style name="SideSwitchWidget">
         <item name="android:clipChildren">false</item>
         <item name="android:clipToPadding">false</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="SideLabel">
@@ -58,5 +66,19 @@
         <item name="android:text">Label</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:ems">6</item>
+    </style>
+
+    <style name="SideRadioButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:drawablePadding">0dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/foregroundText</item>
     </style>
 </resources>

@@ -10,7 +10,7 @@ import com.iit.dashboard2022.ui.SidePanel;
 public class SidePanelDrawerAnim {
 
     public static ObjectAnimator create(SidePanel sidePanel) {
-        ObjectAnimator transAnimation = ObjectAnimator.ofFloat(sidePanel, View.TRANSLATION_X, 0, 200);
+        ObjectAnimator transAnimation = ObjectAnimator.ofFloat(sidePanel, View.TRANSLATION_X, 0, 250);
         transAnimation.setInterpolator(new FastOutSlowInInterpolator());
         transAnimation.setDuration(AnimSetting.ANIM_DURATION);
         transAnimation.start();

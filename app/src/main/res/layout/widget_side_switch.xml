@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:clipChildren="false"
     android:clipToPadding="false">
 
@@ -20,7 +21,7 @@
         tools:ignore="TextContrastCheck" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchMaterial"
+        android:id="@+id/widget_switch"
         style="@style/SideSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,6 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/SwitchWidgetLabel"
+        app:switchMinWidth="64dp"
         tools:ignore="TouchTargetSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

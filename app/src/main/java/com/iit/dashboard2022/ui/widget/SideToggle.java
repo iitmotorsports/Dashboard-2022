@@ -1,48 +1,57 @@
 package com.iit.dashboard2022.ui.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+
+import androidx.annotation.StyleableRes;
 
 import com.google.android.material.button.MaterialButton;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
 
 public class SideToggle extends MaterialButton {
-    private CharSequence mTextOn, mTextOff;
-    //    private final float mDisabledAlpha;
+    private final CharSequence mTextOn;
+    private final CharSequence mTextOff;
+    private final float mTextOnSize, mTextOffSize;
 
     private final ColorAnim colorAnim;
 
-    @SuppressLint("ResourceType")
     public SideToggle(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, R.attr.sideToggleButtonStyle);
+        setCheckable(true);
 
         colorAnim = new ColorAnim(context, R.color.foregroundText, R.color.colorAccent, this::setBackgroundColor);
 
         int[] set = {
                 android.R.attr.textOn,
                 android.R.attr.textOff,
-                android.R.attr.disabledAlpha,
-                android.R.attr.checked
+                android.R.attr.checked,
+                android.R.attr.text,
+                android.R.attr.textSize,
+                R.attr.textOffSize,
+                R.attr.textOnSize,
         };
 
         final TypedArray a = context.obtainStyledAttributes(attrs, set);
-        mTextOn = a.getText(0);
-        mTextOff = a.getText(1);
-//        mDisabledAlpha = a.getFloat(2, 0.5f);
 
-        setCheckable(true);
+        @StyleableRes
+        int i = 0;
 
-        super.setChecked(a.getBoolean(3, false));
+        mTextOn = a.getText(i++);
+        mTextOff = a.getText(i++);
+        super.setChecked(a.getBoolean(i++, false));
+        CharSequence mText = a.getText(i++);
+        float textSize = a.getDimension(i++, 12.0f * getResources().getDisplayMetrics().scaledDensity);
+        mTextOffSize = a.getDimension(i++, textSize) / getResources().getDisplayMetrics().scaledDensity;
+        mTextOnSize = a.getDimension(i, textSize) / getResources().getDisplayMetrics().scaledDensity;
 
-        if (mTextOn == null || mTextOff == null) {
-            mTextOn = "ON";
-            mTextOff = "OFF";
-        }
+        if (mText != null)
+            setText(mText);
+
+        setTextSize(textSize);
+
         a.recycle();
-
         syncCheckState();
     }
 
@@ -65,11 +74,17 @@ public class SideToggle extends MaterialButton {
 
         colorAnim.cancel();
 
-        if (checked && mTextOn != null) {
-            setText(mTextOn);
+        if (checked) {
+            if (mTextOn != null) {
+                setText(mTextOn);
+                setTextSize(mTextOnSize);
+            }
             colorAnim.start();
-        } else if (!checked && mTextOff != null) {
-            setText(mTextOff);
+        } else {
+            if (mTextOff != null) {
+                setText(mTextOff);
+                setTextSize(mTextOffSize);
+            }
             colorAnim.reverse();
         }
     }

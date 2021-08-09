@@ -10,8 +10,14 @@
     <declare-styleable name="SideToggle">
         <attr name="android:textOn" format="string" />
         <attr name="android:textOff" format="string" />
+        <attr name="textOnSize" format="dimension" />
+        <attr name="textOffSize" format="dimension" />
         <attr name="android:disabledAlpha" format="float" />
         <attr name="android:checked" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="SideSwitch">
+        <attr name="android:text" format="string" />
+        <attr name="enableText" format="boolean" />
     </declare-styleable>
 
 

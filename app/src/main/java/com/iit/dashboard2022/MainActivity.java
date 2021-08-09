@@ -37,12 +37,6 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator sidePanelDrawerAnim = SidePanelDrawerAnim.create(sidePanel);
         new SettingsBtnAnim(settingsBtn, sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> Snackbar.make(findViewById(R.id.tabs), locked ? "Locked" : "Unlocked", Snackbar.LENGTH_SHORT).show());
 
-        SideToggle sideToggle = findViewById(R.id.sideToggle20);
-        sideToggle.addOnCheckedChangeListener((button, isChecked) -> {
-//            sideToggle.setChecked(false);
-            Snackbar.make(findViewById(R.id.tabs), isChecked ? "Enabled!" : "OFF!", Snackbar.LENGTH_SHORT).show();
-        });
-
     }
 
     private void setupUI() {
