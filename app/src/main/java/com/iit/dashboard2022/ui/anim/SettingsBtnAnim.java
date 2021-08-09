@@ -12,7 +12,7 @@ import com.iit.dashboard2022.R;
 
 public class SettingsBtnAnim {
 
-    private static final int ANIM_DURATION = 150;
+    private static final int ANIM_DURATION = 300;
     private static final int ANIM_DEGREES = 60;
 
     private Runnable animCloseStart, animOpenStart, animCloseEnd, animOpenEnd;
