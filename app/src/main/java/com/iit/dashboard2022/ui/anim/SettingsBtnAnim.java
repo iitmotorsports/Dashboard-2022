@@ -1,9 +1,7 @@
 package com.iit.dashboard2022.ui.anim;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
@@ -19,6 +17,7 @@ public class SettingsBtnAnim {
 
     private Runnable animCloseStart, animOpenStart, animCloseEnd, animOpenEnd;
     private final RotateAnimation close, open;
+    private final ColorAnim colorAnim;
 
     public SettingsBtnAnim(Activity activity, ImageButton settingsBtn) {
         final boolean[] open = {false};
@@ -72,29 +71,14 @@ public class SettingsBtnAnim {
             }
         });
 
-        final float[] from = new float[3], to = new float[3];
-
-        Color.colorToHSV(activity.getResources().getColor(R.color.backgroundText, activity.getTheme()), from);
-        Color.colorToHSV(activity.getResources().getColor(R.color.colorAccent, activity.getTheme()), to);
-
-        ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
-        anim.setDuration(150);
-
-        final float[] hsv = new float[3];
-
-        anim.addUpdateListener(animation -> {
-            hsv[0] = from[0] + (to[0] - from[0]) * (4 * animation.getAnimatedFraction());
-            hsv[1] = from[1] + (to[1] - from[1]) * animation.getAnimatedFraction();
-            hsv[2] = from[2] + (to[2] - from[2]) * animation.getAnimatedFraction();
-            settingsBtn.setImageTintList(ColorStateList.valueOf(Color.HSVToColor(hsv)));
-        });
+        colorAnim = new ColorAnim(activity, R.color.backgroundText, R.color.colorAccent, color -> settingsBtn.setImageTintList(ColorStateList.valueOf(color)));
 
         settingsBtn.setOnClickListener(v -> {
             if (open[0]) {
-                anim.reverse();
+                colorAnim.reverse();
                 settingsBtn.startAnimation(close);
             } else {
-                anim.start();
+                colorAnim.start();
                 settingsBtn.startAnimation(this.open);
             }
             open[0] = !open[0];

@@ -1,45 +1,27 @@
 package com.iit.dashboard2022.ui.widget;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.SoundEffectConstants;
-import android.view.ViewDebug;
-
-import androidx.annotation.InspectableProperty;
 
 import com.google.android.material.button.MaterialButton;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ui.anim.ColorAnim;
 
 public class SideToggle extends MaterialButton {
     private CharSequence mTextOn, mTextOff;
-    private final float mDisabledAlpha;
-    private boolean mChecked;
-    private final Context mContext;
+    //    private final float mDisabledAlpha;
+//    private boolean mChecked;
 
-    final float[] anim_from = new float[3], anim_to = new float[3];
-    final float[] anim_hsv = new float[3];
-    ValueAnimator anim;
+    private final ColorAnim colorAnim;
 
     @SuppressLint("ResourceType")
     public SideToggle(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, R.attr.sideToggleButtonStyle);
 
-        Color.colorToHSV(getResources().getColor(R.color.foregroundText, context.getTheme()), anim_from);
-        Color.colorToHSV(getResources().getColor(R.color.colorAccent, context.getTheme()), anim_to);
-
-        anim = ValueAnimator.ofFloat(0, 1);
-        anim.setDuration(150);
-
-        anim.addUpdateListener(animation -> {
-            anim_hsv[0] = anim_from[0] + (anim_to[0] - anim_from[0]) * (4 * animation.getAnimatedFraction());
-            anim_hsv[1] = anim_from[1] + (anim_to[1] - anim_from[1]) * animation.getAnimatedFraction();
-            anim_hsv[2] = anim_from[2] + (anim_to[2] - anim_from[2]) * animation.getAnimatedFraction();
-            setBackgroundColor(Color.HSVToColor(anim_hsv));
-        });
+        colorAnim = new ColorAnim(context, R.color.foregroundText, R.color.colorAccent, this::setBackgroundColor);
 
         int[] set = {
                 android.R.attr.textOn,
@@ -51,9 +33,12 @@ public class SideToggle extends MaterialButton {
         final TypedArray a = context.obtainStyledAttributes(attrs, set);
         mTextOn = a.getText(0);
         mTextOff = a.getText(1);
-        mDisabledAlpha = a.getFloat(2, 0.5f);
-        mChecked = a.getBoolean(3, false);
-        mContext = context;
+//        mDisabledAlpha = a.getFloat(2, 0.5f);
+
+        setCheckable(true);
+
+        super.setChecked(a.getBoolean(3, false));
+
         if (mTextOn == null || mTextOff == null) {
             mTextOn = "ON";
             mTextOff = "OFF";
@@ -73,11 +58,8 @@ public class SideToggle extends MaterialButton {
 
     @Override
     public void setChecked(boolean checked) {
-        if (mChecked != checked) {
-            mChecked = checked;
-            refreshDrawableState();
-            syncCheckState();
-        }
+        super.setChecked(checked);
+        syncCheckState();
     }
 
     private void syncCheckState() {
@@ -85,33 +67,20 @@ public class SideToggle extends MaterialButton {
 
         if (checked && mTextOn != null) {
             setText(mTextOn);
-            anim.start();
+            colorAnim.start();
         } else if (!checked && mTextOff != null) {
             setText(mTextOff);
-            anim.reverse();
+            colorAnim.reverse();
         }
     }
 
-    @Override
-    public void toggle() {
-        setChecked(!mChecked);
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean performClick() {
-        toggle();
-
-        playSoundEffect(SoundEffectConstants.CLICK);
-
-        return true;
-    }
-
-    @InspectableProperty
-    @ViewDebug.ExportedProperty
-    @Override
-    public boolean isChecked() {
-        return mChecked;
-    }
+//    @Override
+//    public boolean performClick() {
+//        boolean handled = super.performClick();
+//        if (!handled) {
+//            playSoundEffect(SoundEffectConstants.CLICK);
+//        }
+//        return handled;
+//    }
 
 }
