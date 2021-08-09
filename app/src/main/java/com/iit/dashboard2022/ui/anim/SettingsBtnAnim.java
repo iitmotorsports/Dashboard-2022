@@ -1,8 +1,8 @@
 package com.iit.dashboard2022.ui.anim;
 
-import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.view.animation.Animation;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 
@@ -13,18 +13,30 @@ import com.iit.dashboard2022.R;
 public class SettingsBtnAnim {
     private static final int ANIM_DEGREES = 60;
 
-    private final RotateAnimation close, open;
-    private final ColorAnim colorAnim;
+    private final RotateAnimation close, open, lockSpin;
+    private final ColorAnim spinColorAnim, lockedColorAnim;
+    private final LockCallback lockCallback;
 
-    public SettingsBtnAnim(ImageButton settingsBtn, Runnable callbackOpen, Runnable callbackClose) {
-        final boolean[] open = {false};
+    private final ImageButton settingsBtn;
+    private boolean isOpen = false;
+    private boolean locked = false;
+
+    public interface LockCallback {
+        void run(boolean locked);
+    }
+
+    public SettingsBtnAnim(ImageButton settingsBtn, Runnable callbackOpen, Runnable callbackClose, LockCallback lockCallback) {
 
         close = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        this.open = new RotateAnimation(0, -ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        open = new RotateAnimation(0, -ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         close.setInterpolator(new FastOutSlowInInterpolator());
-        this.open.setInterpolator(new FastOutSlowInInterpolator());
+        open.setInterpolator(new FastOutSlowInInterpolator());
         close.setDuration(AnimSetting.ANIM_DURATION);
-        this.open.setDuration(AnimSetting.ANIM_DURATION);
+        open.setDuration(AnimSetting.ANIM_DURATION);
+
+        lockSpin = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        lockSpin.setInterpolator(new AnticipateOvershootInterpolator());
+        lockSpin.setDuration(AnimSetting.ANIM_DURATION * 2);
 
         close.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -34,6 +46,8 @@ public class SettingsBtnAnim {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                if (locked)
+                    settingsBtn.startAnimation(lockSpin);
             }
 
             @Override
@@ -42,7 +56,7 @@ public class SettingsBtnAnim {
             }
         });
 
-        this.open.setAnimationListener(new Animation.AnimationListener() {
+        open.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 callbackOpen.run();
@@ -57,17 +71,47 @@ public class SettingsBtnAnim {
 
             }
         });
-        colorAnim = new ColorAnim(settingsBtn.getContext(), R.color.backgroundText, R.color.colorAccent, color -> settingsBtn.setImageTintList(ColorStateList.valueOf(color)));
+        spinColorAnim = new ColorAnim(settingsBtn.getContext(), R.color.backgroundText, R.color.colorAccent, color -> settingsBtn.setImageTintList(ColorStateList.valueOf(color)));
+        lockedColorAnim = new ColorAnim(settingsBtn.getContext(), R.color.backgroundText, R.color.foregroundText, color -> settingsBtn.setImageTintList(ColorStateList.valueOf(color)));
+
+        this.lockCallback = lockCallback;
+
+        this.settingsBtn = settingsBtn;
 
         settingsBtn.setOnClickListener(v -> {
-            if (open[0]) {
-                colorAnim.reverse();
+            if (locked) {
+                return;
+            }
+            if (isOpen) {
+                spinColorAnim.reverse();
                 settingsBtn.startAnimation(close);
             } else {
-                colorAnim.start();
+                spinColorAnim.start();
                 settingsBtn.startAnimation(this.open);
             }
-            open[0] = !open[0];
+            isOpen = !isOpen;
         });
+
+        settingsBtn.setOnLongClickListener(v -> {
+            lock(!locked);
+            return true;
+        });
+    }
+
+    public void lock(boolean locked) {
+        if (this.locked != locked) {
+            if (locked) {
+                if (isOpen)
+                    settingsBtn.performClick();
+                else
+                    settingsBtn.startAnimation(lockSpin);
+                lockedColorAnim.start();
+            } else {
+                lockedColorAnim.reverse();
+            }
+            this.locked = locked;
+
+            lockCallback.run(locked);
+        }
     }
 }

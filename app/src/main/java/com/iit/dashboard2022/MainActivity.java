@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,15 +32,11 @@ public class MainActivity extends AppCompatActivity {
 
         mainPager = new Pager(this);
 
-//        Snackbar snk = Snackbar.make(findViewById(R.id.tabs), "AHHHH!", Snackbar.LENGTH_SHORT);
-//        snk.setActionTextColor(getResources().getColor(R.color.colorAccent, getTheme()));
-//        snk.setAction("Yellow", v -> snk.dismiss());
-
         SidePanel sidePanel = findViewById(R.id.sidePanel);
         ImageButton settingsBtn = findViewById(R.id.settingsBtn);
 
         ObjectAnimator sidePanelDrawerAnim = SidePanelDrawerAnim.create(sidePanel);
-        new SettingsBtnAnim(settingsBtn, sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start);
+        new SettingsBtnAnim(settingsBtn, sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> Snackbar.make(findViewById(R.id.tabs), locked ? "Locked" : "Unlocked", Snackbar.LENGTH_SHORT).show());
 
         SideToggle sideToggle = findViewById(R.id.sideToggle20);
         sideToggle.addOnCheckedChangeListener((button, isChecked) -> {
