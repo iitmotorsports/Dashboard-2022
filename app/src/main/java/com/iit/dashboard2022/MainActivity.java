@@ -39,6 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        setupUI();
+    }
+
     private void setupUI() {
         // Landscape mode
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
