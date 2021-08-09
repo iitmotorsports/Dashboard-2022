@@ -41,4 +41,8 @@ public class ColorAnim {
         anim.start();
     }
 
+    public void cancel() {
+        anim.cancel();
+    }
+
 }

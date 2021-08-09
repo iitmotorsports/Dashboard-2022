@@ -11,10 +11,12 @@ import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.iit.dashboard2022.ui.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.anim.SettingsBtnAnim;
 import com.iit.dashboard2022.ui.anim.SidePanelDrawerAnim;
+import com.iit.dashboard2022.ui.widget.SideToggle;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
 
         ObjectAnimator sidePanelDrawerAnim = SidePanelDrawerAnim.create(sidePanel);
         new SettingsBtnAnim(settingsBtn, sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start);
+
+        SideToggle sideToggle = findViewById(R.id.sideToggle20);
+        sideToggle.addOnCheckedChangeListener((button, isChecked) -> {
+//            sideToggle.setChecked(false);
+            Snackbar.make(findViewById(R.id.tabs), isChecked ? "Enabled!" : "OFF!", Snackbar.LENGTH_SHORT).show();
+        });
 
     }
 

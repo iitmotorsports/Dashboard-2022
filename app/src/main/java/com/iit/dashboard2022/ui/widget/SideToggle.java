@@ -63,6 +63,8 @@ public class SideToggle extends MaterialButton {
     private void syncCheckState() {
         boolean checked = isChecked();
 
+        colorAnim.cancel();
+
         if (checked && mTextOn != null) {
             setText(mTextOn);
             colorAnim.start();
