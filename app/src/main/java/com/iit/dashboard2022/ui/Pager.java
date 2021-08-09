@@ -9,8 +9,8 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.pages.PageManager;
 
 public class Pager {
-    public ViewPager2 mainPager;
-    public TabLayout tabs;
+    public final ViewPager2 mainPager;
+    public final TabLayout tabs;
 
     public Pager(FragmentActivity activity) {
         this.mainPager = activity.findViewById(R.id.mainPager);
