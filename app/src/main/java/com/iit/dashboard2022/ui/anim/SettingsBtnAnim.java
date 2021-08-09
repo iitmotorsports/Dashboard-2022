@@ -3,6 +3,7 @@ package com.iit.dashboard2022.ui.anim;
 import android.content.res.ColorStateList;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 
@@ -13,7 +14,7 @@ import com.iit.dashboard2022.R;
 public class SettingsBtnAnim {
     private static final int ANIM_DEGREES = 60;
 
-    private final RotateAnimation close, open, lockSpin;
+    private final RotateAnimation close, open, lockSpin, jiggle;
     private final ColorAnim spinColorAnim, lockedColorAnim;
     private final LockCallback lockCallback;
 
@@ -37,6 +38,10 @@ public class SettingsBtnAnim {
         lockSpin = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         lockSpin.setInterpolator(new AnticipateOvershootInterpolator());
         lockSpin.setDuration(AnimSetting.ANIM_DURATION * 2);
+
+        jiggle = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        jiggle.setInterpolator(new BounceInterpolator());
+        jiggle.setDuration(AnimSetting.ANIM_DURATION);
 
         close.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -80,6 +85,7 @@ public class SettingsBtnAnim {
 
         settingsBtn.setOnClickListener(v -> {
             if (locked) {
+                settingsBtn.startAnimation(jiggle);
                 return;
             }
             if (isOpen) {
