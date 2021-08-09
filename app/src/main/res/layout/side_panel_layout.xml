@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.iit.dashboard2022.ui.button.SideButton
+            <com.iit.dashboard2022.ui.widget.SideButton
                 android:id="@+id/sideButton4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

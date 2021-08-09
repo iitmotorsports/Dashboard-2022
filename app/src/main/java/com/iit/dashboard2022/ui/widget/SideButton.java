@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ui.button;
+package com.iit.dashboard2022.ui.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
