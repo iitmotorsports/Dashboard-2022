@@ -22,7 +22,7 @@ public class ColorAnim {
         Color.colorToHSV(context.getResources().getColor(to, context.getTheme()), anim_to);
 
         anim = ValueAnimator.ofFloat(0, 1);
-        anim.setDuration(150);
+        anim.setDuration(AnimSetting.ANIM_DURATION);
 
         anim.addUpdateListener(animation -> {
             anim_hsv[0] = anim_from[0] + (anim_to[0] - anim_from[0]) * (4 * animation.getAnimatedFraction());

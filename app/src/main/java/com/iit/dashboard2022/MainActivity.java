@@ -7,16 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.iit.dashboard2022.ui.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.anim.SettingsBtnAnim;
+import com.iit.dashboard2022.ui.anim.SidePanelDrawerAnim;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,14 +36,8 @@ public class MainActivity extends AppCompatActivity {
         SidePanel sidePanel = findViewById(R.id.sidePanel);
         ImageButton settingsBtn = findViewById(R.id.settingsBtn);
 
-        ObjectAnimator transAnimation = ObjectAnimator.ofFloat(sidePanel, View.TRANSLATION_X, 0, 200);
-        transAnimation.setInterpolator(new FastOutSlowInInterpolator());
-        transAnimation.setDuration(300);
-        transAnimation.start();
-
-        SettingsBtnAnim settingsBtnAnim = new SettingsBtnAnim(this, settingsBtn);
-        settingsBtnAnim.setCallbackOpen(transAnimation::reverse, false);
-        settingsBtnAnim.setCallbackClose(transAnimation::start, false);
+        ObjectAnimator sidePanelDrawerAnim = SidePanelDrawerAnim.create(sidePanel);
+        new SettingsBtnAnim(settingsBtn, sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start);
 
     }
 
