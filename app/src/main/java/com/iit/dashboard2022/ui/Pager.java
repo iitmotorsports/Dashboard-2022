@@ -11,12 +11,13 @@ import com.iit.dashboard2022.ui.pages.PageManager;
 public class Pager {
     public final ViewPager2 mainPager;
     public final TabLayout tabs;
+    public final PageManager pageManager;
 
     public Pager(FragmentActivity activity) {
         this.mainPager = activity.findViewById(R.id.mainPager);
         this.tabs = activity.findViewById(R.id.tabs);
 
-        PageManager pageManager = new PageManager(activity.getSupportFragmentManager());
+        pageManager = new PageManager(activity.getSupportFragmentManager());
 
         tabs.removeAllTabs();
         for (int i = 0; i < pageManager.getItemCount(); i++) {

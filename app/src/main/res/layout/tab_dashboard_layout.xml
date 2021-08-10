@@ -5,15 +5,53 @@
     android:layout_height="match_parent"
     android:theme="@style/Theme.Dashboard2022">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Car Dashboard Tab"
-        android:textAlignment="center"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/_0"
+            android:textAlignment="center"
+            android:textSize="128sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp">
+
+            <com.iit.dashboard2022.ui.widget.gauge.SpeedGauge
+                android:id="@+id/speedGaugeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/backgroundText"
+                android:scaleX="-1"
+                app:colorHigh="@color/red"
+                app:colorLow="@color/green"
+                app:colorMid="@color/yellow" />
+
+            <Space
+                android:layout_width="32dp"
+                android:layout_height="wrap_content" />
+
+            <com.iit.dashboard2022.ui.widget.gauge.SpeedGauge
+                android:id="@+id/speedGaugeRight"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/backgroundText"
+                app:colorHigh="@color/red"
+                app:colorLow="@color/green"
+                app:colorMid="@color/yellow" />
+        </LinearLayout>
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

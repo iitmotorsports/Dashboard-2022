@@ -11,12 +11,13 @@ import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.iit.dashboard2022.ui.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.anim.SettingsBtnAnim;
 import com.iit.dashboard2022.ui.anim.SidePanelDrawerAnim;
-import com.iit.dashboard2022.ui.widget.SideToggle;
+import com.iit.dashboard2022.ui.pages.CarDashboard;
+import com.iit.dashboard2022.ui.pages.LiveData;
+import com.iit.dashboard2022.ui.pages.Logs;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,8 +35,13 @@ public class MainActivity extends AppCompatActivity {
         SidePanel sidePanel = findViewById(R.id.sidePanel);
         ImageButton settingsBtn = findViewById(R.id.settingsBtn);
 
+        CarDashboard cdPage = (CarDashboard) mainPager.pageManager.getPage(0);
+        Logs logPage = (Logs) mainPager.pageManager.getPage(1);
+        LiveData ldPage = (LiveData) mainPager.pageManager.getPage(2);
+
         ObjectAnimator sidePanelDrawerAnim = SidePanelDrawerAnim.create(sidePanel);
-        new SettingsBtnAnim(settingsBtn, sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> Snackbar.make(findViewById(R.id.tabs), locked ? "Locked" : "Unlocked", Snackbar.LENGTH_SHORT).show());
+        new SettingsBtnAnim(settingsBtn, sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> {
+        });
 
     }
 

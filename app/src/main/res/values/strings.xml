@@ -20,4 +20,5 @@
     <string name="ascii">Ascii</string>
     <string name="hex">Hex</string>
     <string name="raw">Raw</string>
+    <string name="_0">0</string>
 </resources>

@@ -49,6 +49,10 @@ public class PageManager extends FragmentStateAdapter {
         return pages[position];
     }
 
+    public Page getPage(int index) {
+        return pages[index];
+    }
+
     @Override
     public int getItemCount() {
         return pages.length;

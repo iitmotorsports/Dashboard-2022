@@ -43,4 +43,10 @@
         </attr>
         <attr name="anti_aliasing" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="SpeedGauge">
+        <attr name="colorLow" format="color"/>
+        <attr name="colorMid" format="color"/>
+        <attr name="colorHigh" format="color"/>
+        <attr name="taper" format="float"/>
+    </declare-styleable>
 </resources>
