@@ -1,6 +1,8 @@
 package com.iit.dashboard2022.page;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -8,17 +10,21 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 public class Pager {
     private final ViewPager2 viewPager;
-    private final TabLayout tabs;
     private final PageManager pageManager;
-    private TranslationAnim tabLayoutAnim;
+    private final ValueAnimator edgeAnim;
+    private final TranslationAnim tabLayoutAnim;
+    private final ViewGroup.MarginLayoutParams params;
+    private int tl = 0, tt = 0, tr = 0, tb = 0;
+    private int l, t, r, b;
 
     public Pager(FragmentActivity activity) {
         this.viewPager = activity.findViewById(R.id.mainPager);
-        this.tabs = activity.findViewById(R.id.tabs);
+        TabLayout tabs = activity.findViewById(R.id.tabs);
 
         pageManager = new PageManager(activity.getSupportFragmentManager());
 
@@ -33,25 +39,90 @@ public class Pager {
 
         new TabLayoutMediator(tabs, viewPager, (tab, position) -> tab.setText(pageManager.getPageTitle(position))).attach();
 
+        params = (ViewGroup.MarginLayoutParams) viewPager.getLayoutParams();
+
         tabLayoutAnim = new TranslationAnim(tabs, TranslationAnim.Y_AXIS, TranslationAnim.ANIM_BACKWARD);
+        tabLayoutAnim.setOnInitializedListener(() -> {
+            params.bottomMargin = (int) tabLayoutAnim.getPositionDelta();
+            b = params.bottomMargin;
+            viewPager.setLayoutParams(params);
+        });
+
+        edgeAnim = ValueAnimator.ofFloat(0, 1);
+        edgeAnim.setDuration(AnimSetting.ANIM_DURATION);
+        edgeAnim.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+        edgeAnim.addUpdateListener(animation -> {
+            float f = animation.getAnimatedFraction();
+            params.leftMargin += (int) ((l - params.leftMargin) * f);
+            params.topMargin += (int) ((t - params.topMargin) * f);
+            params.rightMargin += (int) ((r - params.rightMargin) * f);
+            params.bottomMargin += (int) ((b - params.bottomMargin) * f);
+            viewPager.setLayoutParams(params);
+            fakeTouch(); // TODO: Fix unwanted bouncy effect when changing side margins
+            if (f == 1) {
+                tl = 0;
+                tt = 0;
+                tr = 0;
+                tb = 0;
+            }
+        });
 
     }
 
     @SuppressLint("ClickableViewAccessibility")
     public void setOnTouchCallback(Runnable onTouchCallback) {
         viewPager.setOnTouchListener((v, event) -> {
-            v.performClick();
             onTouchCallback.run();
-            return true;
+            return v.performClick();
         });
+    }
+
+    public static final int LEFT = 0;
+    public static final int TOP = 1;
+    public static final int RIGHT = 2;
+    public static final int BOTTOM = 3;
+
+    private void fakeTouch() {
+        viewPager.beginFakeDrag();
+        viewPager.fakeDragBy(0);
+        viewPager.endFakeDrag();
+    }
+
+    private void startMarginAnim() {
+        l = params.leftMargin + tl;
+        t = params.topMargin + tt;
+        r = params.rightMargin + tr;
+        b = params.bottomMargin + tb;
+        edgeAnim.start();
+    }
+
+    public void setMargin(int edge, int size) {
+        switch (edge) {
+            case LEFT:
+                tl += size;
+                break;
+            case TOP:
+                tt += size;
+                break;
+            case RIGHT:
+                tr += size;
+                break;
+            case BOTTOM:
+                tb += size;
+                break;
+            default:
+                return;
+        }
+        startMarginAnim();
     }
 
     public void setUserInputEnabled(boolean enabled) {
         viewPager.setUserInputEnabled(enabled);
-        if (enabled)
-            tabLayoutAnim.reverse();
-        else
-            tabLayoutAnim.start();
+        if (enabled) {
+            setMargin(BOTTOM, (int) -tabLayoutAnim.reverse());
+        } else {
+            setMargin(BOTTOM, (int) -tabLayoutAnim.start());
+        }
     }
 
     public Page getPage(int index) {

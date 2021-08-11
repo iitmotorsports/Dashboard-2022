@@ -43,8 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
         mainPager.setOnTouchCallback(settingsBtn::performClick);
 
-        settingsBtn.setCallbacks(sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> mainPager.setUserInputEnabled(!locked));
-
+        settingsBtn.setCallbacks(
+                () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.reverse()),
+                () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.start()),
+                locked -> mainPager.setUserInputEnabled(!locked)
+        );
     }
 
     @Override
