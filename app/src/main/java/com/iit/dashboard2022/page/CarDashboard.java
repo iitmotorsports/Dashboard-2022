@@ -24,15 +24,15 @@ public class CarDashboard extends Page implements TestUI {
         return rootView;
     }
 
+    public void setPercentage(float percent) {
+        sgL.setPercent(percent);
+        sgR.setPercent(percent);
+    }
+
     @NonNull
     @Override
     public String getTitle() {
         return "Dashboard";
-    }
-
-    public void setPercentage(float percent) {
-        sgL.setPercent(percent);
-        sgR.setPercent(percent);
     }
 
     @Override
