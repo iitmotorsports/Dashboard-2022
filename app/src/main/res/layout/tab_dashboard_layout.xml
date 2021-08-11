@@ -6,6 +6,7 @@
     android:theme="@style/Theme.Dashboard2022">
 
     <LinearLayout
+        android:id="@+id/mainDashLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
