@@ -12,7 +12,7 @@ public class TranslationAnim {
     public static boolean ANIM_FORWARD = true;
 
     private final boolean autoSize, direction;
-    private float toSize = 0;
+    private float posDX = 0;
     private boolean startWhenRdy = false;
     private ObjectAnimator translator;
 
@@ -58,7 +58,7 @@ public class TranslationAnim {
     }
 
     private void init(View view, boolean axis, float from, float to, Interpolator interpolator) {
-        toSize = to;
+        posDX = to - from;
         translator = ObjectAnimator.ofFloat(view, axis ? View.TRANSLATION_X : View.TRANSLATION_Y, from, to);
         translator.setInterpolator(interpolator);
         translator.setDuration(AnimSetting.ANIM_DURATION);
@@ -75,13 +75,13 @@ public class TranslationAnim {
     public float start() {
         if (translator != null)
             translator.start();
-        return toSize;
+        return posDX;
     }
 
     public float reverse() {
         if (translator != null)
             translator.reverse();
-        return -toSize;
+        return -posDX;
     }
 
     public void cancel() {
