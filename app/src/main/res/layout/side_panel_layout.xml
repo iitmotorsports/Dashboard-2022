@@ -79,27 +79,27 @@
                     android:layout_height="wrap_content"
                     android:clipChildren="false">
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/radioButton"
+                    <com.iit.dashboard2022.ui.widget.SideRadio
+                        android:id="@+id/asciiRButton"
                         style="@style/SideRadioButton"
                         android:layout_width="match_parent"
                         android:checked="true"
                         android:text="@string/ascii"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/radioButton4"
+                    <com.iit.dashboard2022.ui.widget.SideRadio
+                        android:id="@+id/hexRButton"
                         style="@style/SideRadioButton"
                         android:layout_width="match_parent"
                         android:text="@string/hex"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
-                    <com.google.android.material.radiobutton.MaterialRadioButton
-                        android:id="@+id/radioButton5"
+                    <com.iit.dashboard2022.ui.widget.SideRadio
+                        android:id="@+id/rawRButton"
                         style="@style/SideRadioButton"
                         android:layout_width="match_parent"
                         android:text="@string/raw"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
                 </RadioGroup>
 
