@@ -5,29 +5,27 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
 
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-
 public class TranslationAnim {
-    private static final Interpolator defaultInter = new FastOutSlowInInterpolator();
     public static boolean X_AXIS = true;
     public static boolean Y_AXIS = false;
     public static boolean ANIM_BACKWARD = false;
     public static boolean ANIM_FORWARD = true;
 
     private final boolean autoSize, direction;
+    private float toSize = 0;
     private boolean startWhenRdy = false;
     private ObjectAnimator translator;
 
     public TranslationAnim(View view, boolean axis, boolean direction) {
         autoSize = true;
         this.direction = direction;
-        setup(view, axis, 0, 0, defaultInter);
+        setup(view, axis, 0, 0, AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
     }
 
     public TranslationAnim(View view, boolean axis, float from, float to) {
         autoSize = false;
         this.direction = ANIM_BACKWARD;
-        setup(view, axis, from, to, defaultInter);
+        setup(view, axis, from, to, AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
     }
 
     public TranslationAnim(View view, boolean axis, boolean direction, Interpolator interpolator) {
@@ -60,6 +58,7 @@ public class TranslationAnim {
     }
 
     private void init(View view, boolean axis, float from, float to, Interpolator interpolator) {
+        toSize = to;
         translator = ObjectAnimator.ofFloat(view, axis ? View.TRANSLATION_X : View.TRANSLATION_Y, from, to);
         translator.setInterpolator(interpolator);
         translator.setDuration(AnimSetting.ANIM_DURATION);
@@ -67,20 +66,22 @@ public class TranslationAnim {
 
     public void startWhenReady() {
         if (!startWhenRdy) {
+            startWhenRdy = true;
             if (!autoSize)
                 start();
-            startWhenRdy = true;
         }
     }
 
-    public void start() {
+    public float start() {
         if (translator != null)
             translator.start();
+        return toSize;
     }
 
-    public void reverse() {
+    public float reverse() {
         if (translator != null)
             translator.reverse();
+        return -toSize;
     }
 
     public void cancel() {
