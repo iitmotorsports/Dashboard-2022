@@ -14,6 +14,7 @@ public class TranslationAnim {
     private final boolean autoSize, direction;
     private float posDX = 0;
     private boolean startWhenRdy = false;
+    private Runnable onInitializedListener;
     private ObjectAnimator translator;
 
     public TranslationAnim(View view, boolean axis, boolean direction) {
@@ -48,12 +49,17 @@ public class TranslationAnim {
                     view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     int to = axis ? view.getMeasuredWidth() : view.getMeasuredHeight();
                     init(view, axis, from, to * (direction ? -1 : 1), interpolator);
-                    if (startWhenRdy)
+                    if (onInitializedListener != null)
+                        onInitializedListener.run();
+                    if (startWhenRdy) {
                         start();
+                    }
                 }
             });
         } else {
             init(view, axis, from, to, interpolator);
+            if (onInitializedListener != null)
+                onInitializedListener.run();
         }
     }
 
@@ -62,6 +68,10 @@ public class TranslationAnim {
         translator = ObjectAnimator.ofFloat(view, axis ? View.TRANSLATION_X : View.TRANSLATION_Y, from, to);
         translator.setInterpolator(interpolator);
         translator.setDuration(AnimSetting.ANIM_DURATION);
+    }
+
+    public void setOnInitializedListener(Runnable callback) {
+        this.onInitializedListener = callback;
     }
 
     public void startWhenReady() {
@@ -82,6 +92,10 @@ public class TranslationAnim {
         if (translator != null)
             translator.reverse();
         return -posDX;
+    }
+
+    public float getPositionDelta() {
+        return posDX;
     }
 
     public void cancel() {
