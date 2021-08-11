@@ -34,17 +34,16 @@ public class MainActivity extends AppCompatActivity {
         sidePanel = findViewById(R.id.sidePanel);
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
 
-        CarDashboard cdPage = (CarDashboard) mainPager.pageManager.getPage(0);
-        Logs logPage = (Logs) mainPager.pageManager.getPage(1);
-        LiveData ldPage = (LiveData) mainPager.pageManager.getPage(2);
-
-        int a = sidePanel.getLayoutParams().width;
+        CarDashboard cdPage = (CarDashboard) mainPager.getPage(0);
+        Logs logPage = (Logs) mainPager.getPage(1);
+        LiveData ldPage = (LiveData) mainPager.getPage(2);
 
         TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
         sidePanelDrawerAnim.startWhenReady();
 
-        settingsBtn.setCallbacks(sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> {
-        });
+        mainPager.setOnTouchCallback(settingsBtn::performClick);
+
+        settingsBtn.setCallbacks(sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> mainPager.setUserInputEnabled(!locked));
 
     }
 
