@@ -6,9 +6,9 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
 
 public class TranslationAnim {
-    public static boolean X_AXIS = true;
-    public static boolean Y_AXIS = false;
-    public static boolean ANIM_BACKWARD = false;
+    public static final boolean X_AXIS = true;
+    public static final boolean Y_AXIS = false;
+    public static final boolean ANIM_BACKWARD = false;
     public static boolean ANIM_FORWARD = true;
 
     private final boolean autoSize, direction;

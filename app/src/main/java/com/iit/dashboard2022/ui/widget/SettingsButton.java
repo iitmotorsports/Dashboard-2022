@@ -10,7 +10,6 @@ import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.AnimSetting;

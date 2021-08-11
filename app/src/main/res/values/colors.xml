@@ -6,7 +6,6 @@
     <color name="backgroundSecondary">#090a13</color>
     <color name="translucent_Background">#80121527</color>
 
-    <!--    <color name="foregroundText">#BCBCBC</color>-->
     <color name="foregroundText">#d6d7d7</color>
     <color name="backgroundText">#3A3D4F</color>
 
@@ -15,8 +14,6 @@
     <color name="green">#0BA60A</color>
     <color name="blue">#004896</color>
 
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
     <color name="translucent_White">#BCBCBCBC</color>
     <color name="translucent_Black">#80000000</color>
     <color name="transparent">#00000000</color>
