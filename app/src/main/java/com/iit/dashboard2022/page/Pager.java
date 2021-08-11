@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ui;
+package com.iit.dashboard2022.page;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -6,7 +6,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.pages.PageManager;
 
 public class Pager {
     public final ViewPager2 mainPager;

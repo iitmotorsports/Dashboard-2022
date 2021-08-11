@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ui.pages;
+package com.iit.dashboard2022.page;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,18 +10,17 @@ import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
 
-public class Logs extends Page {
-
+public class LiveData extends Page{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.tab_logs_layout, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.tab_live_data_layout, container, false);
         return rootView;
     }
 
     @NonNull
     @Override
     public String getTitle() {
-        return "Logs";
+        return "Live Data";
     }
 }

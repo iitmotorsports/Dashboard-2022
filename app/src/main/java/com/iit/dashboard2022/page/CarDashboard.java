@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ui.pages;
+package com.iit.dashboard2022.page;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

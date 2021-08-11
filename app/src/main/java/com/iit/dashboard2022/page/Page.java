@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ui.pages;
+package com.iit.dashboard2022.page;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
