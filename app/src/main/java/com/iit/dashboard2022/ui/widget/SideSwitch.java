@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 
 public class SideSwitch extends RelativeLayout {
+    private SwitchMaterial widget_switch;
 
     public SideSwitch(Context context) {
         super(context, null, R.attr.sideSwitchWidgetStyle);
@@ -48,18 +50,35 @@ public class SideSwitch extends RelativeLayout {
             a.recycle();
 
             TextView tv = findViewById(R.id.SwitchWidgetLabel);
+            widget_switch = findViewById(R.id.widget_switch);
 
             if (!enableText) {
                 tv.setVisibility(View.GONE);
-                SwitchMaterial sm = findViewById(R.id.widget_switch);
-                ViewGroup.MarginLayoutParams params = (MarginLayoutParams) sm.getLayoutParams();
+                ViewGroup.MarginLayoutParams params = (MarginLayoutParams) widget_switch.getLayoutParams();
                 params.setMargins(0, 0, 0, 0);
-                sm.setLayoutParams(params);
+                widget_switch.setLayoutParams(params);
             }
 
             if (t != null)
                 tv.setText(t);
         }
+    }
+
+    public boolean isChecked() {
+        return widget_switch.isChecked();
+    }
+
+    public void setChecked(boolean checked) {
+        widget_switch.setChecked(checked);
+    }
+
+    public void setOnCheckedChangeListener(@Nullable CompoundButton.OnCheckedChangeListener listener) {
+        widget_switch.setOnCheckedChangeListener(listener);
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable View.OnClickListener listener) {
+        widget_switch.setOnClickListener(listener);
     }
 
 }

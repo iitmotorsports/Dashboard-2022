@@ -9,9 +9,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.widget.SideRadio;
+import com.iit.dashboard2022.ui.widget.SideSwitch;
 
 public class SidePanel extends ConstraintLayout {
     private final SideRadio asciiRButton, hexRButton, rawRButton;
+    private final SideSwitch uiTestSwitch, reverseSwitch, consoleSwitch;
 
     public SidePanel(Context context) {
         this(context, null);
@@ -29,5 +31,22 @@ public class SidePanel extends ConstraintLayout {
         hexRButton = findViewById(R.id.hexRButton);
         rawRButton = findViewById(R.id.rawRButton);
 
+        uiTestSwitch = findViewById(R.id.uiTestSwitch);
+        reverseSwitch = findViewById(R.id.reverseSwitch);
+        consoleSwitch = findViewById(R.id.consoleSwitch);
+
     }
+
+    public void setUiTestSwitchListener(@Nullable View.OnClickListener listener) {
+        uiTestSwitch.setOnClickListener(listener);
+    }
+
+    public void setReverseSwitchListener(@Nullable View.OnClickListener listener) {
+        reverseSwitch.setOnClickListener(listener);
+    }
+
+    public void setConsoleSwitchListener(@Nullable View.OnClickListener listener) {
+        consoleSwitch.setOnClickListener(listener);
+    }
+
 }
