@@ -9,11 +9,13 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
+import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
         sidePanelDrawerAnim.startWhenReady();
+        sidePanel.setUiTestSwitchListener(v -> UITester.enable(((SwitchMaterial) v).isChecked()));
 
         mainPager.setOnTouchCallback(settingsBtn::performClick);
 

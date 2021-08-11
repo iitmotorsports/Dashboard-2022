@@ -9,11 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.TestUI;
+import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
 
-public class CarDashboard extends Page implements TestUI {
-    SpeedGauge sgL, sgR;
+public class CarDashboard extends Page implements UITester.TestUI {
+    private SpeedGauge sgL, sgR;
 
     @Nullable
     @Override
@@ -21,7 +21,14 @@ public class CarDashboard extends Page implements TestUI {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.tab_dashboard_layout, container, false);
         sgL = rootView.findViewById(R.id.speedGaugeLeft);
         sgR = rootView.findViewById(R.id.speedGaugeRight);
+        UITester.addTest(this);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        UITester.removeTest(this);
+        super.onDestroy();
     }
 
     public void setPercentage(float percent) {
