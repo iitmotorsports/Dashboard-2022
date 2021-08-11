@@ -56,8 +56,8 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
         close = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         open = new RotateAnimation(0, -ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        close.setInterpolator(new FastOutSlowInInterpolator());
-        open.setInterpolator(new FastOutSlowInInterpolator());
+        close.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+        open.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
         close.setDuration(AnimSetting.ANIM_DURATION);
         open.setDuration(AnimSetting.ANIM_DURATION);
 
