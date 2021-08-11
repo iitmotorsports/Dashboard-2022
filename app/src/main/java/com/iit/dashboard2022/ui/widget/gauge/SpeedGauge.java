@@ -20,11 +20,11 @@ import androidx.annotation.StyleableRes;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SpeedGauge extends View {
-    private static final List<SpeedGauge> gauges = new ArrayList<>();
+    private static final Set<SpeedGauge> gauges = new HashSet<>();
     private static final Handler updater = new Handler();
     private static final Runnable update = new Runnable() {
         @Override
@@ -161,7 +161,7 @@ public class SpeedGauge extends View {
     }
 
     private int maskWidth(float percent) {
-        int count = (int) ((bars + 1) * percent);
+        int count = (int) Math.ceil((bars + 1) * percent);
 
         int xPos = 0;
         boolean draw = true;
