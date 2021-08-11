@@ -1,32 +1,58 @@
-package com.iit.dashboard2022.ui.anim;
+package com.iit.dashboard2022.ui.widget;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
+import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ui.anim.AnimSetting;
+import com.iit.dashboard2022.ui.anim.ColorAnim;
 
-public class SettingsBtnAnim {
+public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton {
     private static final int ANIM_DEGREES = 60;
 
-    private final RotateAnimation close, open, lockSpin, jiggle;
-    private final ColorAnim spinColorAnim, lockedColorAnim;
-    private final LockCallback lockCallback;
+    private RotateAnimation close, open, lockSpin, jiggle;
+    private ColorAnim spinColorAnim, lockedColorAnim;
+    private LockCallback lockCallback;
+    private Runnable callbackOpen, callbackClose;
 
-    private final ImageButton settingsBtn;
     private boolean isOpen = false;
     private boolean locked = false;
+
+    public SettingsButton(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public SettingsButton(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public SettingsButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
 
     public interface LockCallback {
         void run(boolean locked);
     }
 
-    public SettingsBtnAnim(ImageButton settingsBtn, Runnable callbackOpen, Runnable callbackClose, LockCallback lockCallback) {
+    public void setCallbacks(Runnable callbackOpen, Runnable callbackClose, LockCallback lockCallback) {
+        this.lockCallback = lockCallback;
+        this.callbackOpen = callbackOpen;
+        this.callbackClose = callbackClose;
+    }
+
+    public void init() {
+        setClickable(true);
+        setLongClickable(true);
 
         close = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         open = new RotateAnimation(0, -ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -52,7 +78,7 @@ public class SettingsBtnAnim {
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (locked)
-                    settingsBtn.startAnimation(lockSpin);
+                    startAnimation(lockSpin);
             }
 
             @Override
@@ -76,41 +102,40 @@ public class SettingsBtnAnim {
 
             }
         });
-        spinColorAnim = new ColorAnim(settingsBtn.getContext(), R.color.backgroundText, R.color.colorAccent, color -> settingsBtn.setImageTintList(ColorStateList.valueOf(color)));
-        lockedColorAnim = new ColorAnim(settingsBtn.getContext(), R.color.backgroundText, R.color.foregroundText, color -> settingsBtn.setImageTintList(ColorStateList.valueOf(color)));
+        spinColorAnim = new ColorAnim(getContext(), R.color.backgroundText, R.color.colorAccent, color -> setImageTintList(ColorStateList.valueOf(color)));
+        lockedColorAnim = new ColorAnim(getContext(), R.color.backgroundText, R.color.foregroundText, color -> setImageTintList(ColorStateList.valueOf(color)));
+    }
 
-        this.lockCallback = lockCallback;
+    @Override
+    public boolean performClick() {
+        if (locked) {
+            startAnimation(jiggle);
+            return false;
+        }
+        if (isOpen) {
+            spinColorAnim.reverse();
+            startAnimation(close);
+        } else {
+            spinColorAnim.start();
+            startAnimation(this.open);
+        }
+        isOpen = !isOpen;
+        return super.performClick();
+    }
 
-        this.settingsBtn = settingsBtn;
-
-        settingsBtn.setOnClickListener(v -> {
-            if (locked) {
-                settingsBtn.startAnimation(jiggle);
-                return;
-            }
-            if (isOpen) {
-                spinColorAnim.reverse();
-                settingsBtn.startAnimation(close);
-            } else {
-                spinColorAnim.start();
-                settingsBtn.startAnimation(this.open);
-            }
-            isOpen = !isOpen;
-        });
-
-        settingsBtn.setOnLongClickListener(v -> {
-            lock(!locked);
-            return true;
-        });
+    @Override
+    public boolean performLongClick() {
+        lock(!locked);
+        return true;
     }
 
     public void lock(boolean locked) {
         if (this.locked != locked) {
             if (locked) {
                 if (isOpen)
-                    settingsBtn.performClick();
+                    performClick();
                 else
-                    settingsBtn.startAnimation(lockSpin);
+                    startAnimation(lockSpin);
                 lockedColorAnim.start();
             } else {
                 lockedColorAnim.reverse();

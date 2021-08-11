@@ -89,14 +89,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <ImageButton
+        <com.iit.dashboard2022.ui.widget.SettingsButton
             android:id="@+id/settingsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
             android:contentDescription="@string/settings"
             android:src="@drawable/round_settings"
-            app:elevation="0dp"
             tools:ignore="ImageContrastCheck" />
 
     </LinearLayout>
