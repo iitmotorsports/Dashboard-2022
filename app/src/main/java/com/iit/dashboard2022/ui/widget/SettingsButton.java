@@ -44,7 +44,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         void run(boolean locked);
     }
 
-    public void setCallbacks(Runnable callbackOpen, Runnable callbackClose, LockCallback lockCallback) {
+    public void setCallbacks(@NonNull Runnable callbackOpen, @NonNull Runnable callbackClose, @NonNull LockCallback lockCallback) {
         this.lockCallback = lockCallback;
         this.callbackOpen = callbackOpen;
         this.callbackClose = callbackClose;
