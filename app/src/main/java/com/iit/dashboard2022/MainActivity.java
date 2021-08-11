@@ -1,6 +1,5 @@
 package com.iit.dashboard2022;
 
-import android.animation.ObjectAnimator;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,12 +14,13 @@ import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
-import com.iit.dashboard2022.ui.anim.SidePanelDrawerAnim;
+import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 
 public class MainActivity extends AppCompatActivity {
 
     Pager mainPager;
+    SidePanel sidePanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +31,17 @@ public class MainActivity extends AppCompatActivity {
 
         mainPager = new Pager(this);
 
-        SidePanel sidePanel = findViewById(R.id.sidePanel);
+        sidePanel = findViewById(R.id.sidePanel);
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
 
         CarDashboard cdPage = (CarDashboard) mainPager.pageManager.getPage(0);
         Logs logPage = (Logs) mainPager.pageManager.getPage(1);
         LiveData ldPage = (LiveData) mainPager.pageManager.getPage(2);
 
-        ObjectAnimator sidePanelDrawerAnim = SidePanelDrawerAnim.create(sidePanel);
+        int a = sidePanel.getLayoutParams().width;
+
+        TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
+        sidePanelDrawerAnim.startWhenReady();
 
         settingsBtn.setCallbacks(sidePanelDrawerAnim::reverse, sidePanelDrawerAnim::start, locked -> {
         });
