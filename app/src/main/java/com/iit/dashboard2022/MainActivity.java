@@ -17,10 +17,10 @@ import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
-import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
+import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 
-public class MainActivity extends AppCompatActivity implements UITester.TestUI {
+public class MainActivity extends AppCompatActivity {
 
     Pager mainPager;
     SidePanel sidePanel;
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements UITester.TestUI {
 
         /* FINAL CALLS */
 
-        UITester.addTest(this);
     }
 
     @Override
@@ -109,14 +108,4 @@ public class MainActivity extends AppCompatActivity implements UITester.TestUI {
         }
     }
 
-    @Override
-    public void testUI(float percent) {
-        console.post(UITester.rndStr((int) (percent * 50)));
-    }
-
-    @Override
-    protected void onDestroy() {
-        UITester.removeTest(this);
-        super.onDestroy();
-    }
 }
