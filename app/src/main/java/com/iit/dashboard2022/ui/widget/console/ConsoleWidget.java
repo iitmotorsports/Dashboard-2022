@@ -55,7 +55,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         public void run() {
             CharSequence msg;
 
-            if (text.getLineCount() > 1000){
+            if (text.getLineCount() > 1000) {
                 CharSequence cq = text.getText();
                 int len = cq.length();
                 text.setText(cq.subSequence(len / 2, len));
@@ -169,6 +169,8 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
             textHandle.post(textLoad);
         } else {
             run = false;
+            rawQueue.clear();
+            outQueue.clear();
         }
     }
 
@@ -195,7 +197,8 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     }
 
     public void post(@NonNull CharSequence msg) {
-        rawQueue.add(msg);
+        if (run)
+            rawQueue.add(msg);
     }
 
 }
