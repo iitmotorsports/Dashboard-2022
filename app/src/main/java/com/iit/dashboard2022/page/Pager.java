@@ -96,7 +96,7 @@ public class Pager {
         edgeAnim.start();
     }
 
-    public void setMargin(int edge, int size) {
+    public void setMargin(int edge, int size) { // FIXME: Issue where if settings is tapped right after unlocking, bottom margin shifts up
         switch (edge) {
             case LEFT:
                 tl += size;
