@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.ui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -74,6 +75,12 @@ public class SideSwitch extends RelativeLayout {
 
     public void setOnCheckedChangeListener(@Nullable CompoundButton.OnCheckedChangeListener listener) {
         widget_switch.setOnCheckedChangeListener(listener);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean performClick() {
+        return widget_switch.performClick();
     }
 
     @Override

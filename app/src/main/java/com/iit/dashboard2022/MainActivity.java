@@ -17,12 +17,14 @@ import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
+import com.iit.dashboard2022.ui.widget.ConsoleWidget;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 
 public class MainActivity extends AppCompatActivity {
 
     Pager mainPager;
     SidePanel sidePanel;
+    ConsoleWidget console;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
         mainPager = new Pager(this);
 
+        console = findViewById(R.id.console);
+
         sidePanel = findViewById(R.id.sidePanel);
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
 
@@ -42,14 +46,28 @@ public class MainActivity extends AppCompatActivity {
 
         TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
         sidePanelDrawerAnim.startWhenReady();
+        TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
+        consoleAnim.startWhenReady();
         sidePanel.setUiTestSwitchListener(v -> UITester.enable(((SwitchMaterial) v).isChecked()));
+        sidePanel.setConsoleSwitchListener(v -> {
+            if (((SwitchMaterial) v).isChecked())
+                consoleAnim.reverse();
+            else
+                consoleAnim.start();
+        });
 
         mainPager.setOnTouchCallback(settingsBtn::performClick);
 
         settingsBtn.setCallbacks(
                 () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.reverse()),
-                () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.start()),
-                locked -> mainPager.setUserInputEnabled(!locked)
+                () -> {
+                    mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.start());
+                    sidePanel.setChecked(SidePanel.CheckableWidget.consoleSwitch, false);
+                },
+                locked -> {
+                    mainPager.setUserInputEnabled(!locked);
+                    sidePanel.setChecked(SidePanel.CheckableWidget.consoleSwitch, false);
+                }
         );
     }
 

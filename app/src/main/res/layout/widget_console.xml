@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/consoleScoller"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/translucent_Black"
+        android:contentDescription="@string/console_text_scroller"
+        app:layout_constraintBottom_toTopOf="@+id/consoleInfoBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/consoleText"
+            style="@style/SideLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/console_text_default"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            tools:ignore="TextContrastCheck" />
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/consoleInfoBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/leftInfoBar"
+            style="@style/SideLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="50"
+            android:lines="1"
+            android:minEms="6"
+            android:padding="4dp"
+            android:text="@string/console_status_default"
+            android:textAlignment="viewStart"
+            android:textStyle="normal"
+            tools:ignore="TextContrastCheck" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/consoleError"
+            style="@style/SideLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="50"
+            android:lines="1"
+            android:minEms="6"
+            android:padding="4dp"
+            android:text="@string/console_error_default"
+            android:textAlignment="viewEnd"
+            android:textStyle="normal"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/consoleLines"
+            style="@style/SideLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="50"
+            android:lines="1"
+            android:minEms="6"
+            android:padding="4dp"
+            android:text="@string/console_line_default"
+            android:textAlignment="viewEnd"
+            android:textStyle="normal"
+            tools:ignore="TextContrastCheck" />
+
+    </LinearLayout>
+
+    <!--    <no.danielzeller.blurbehindlib.BlurBehindLayout-->
+    <!--        android:id="@+id/blurBehindLayout"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:textStyle="normal"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:blurRadius="100.0"-->
+    <!--        app:updateMode="onScroll"-->
+    <!--        app:useTextureView="false"-->
+    <!--        app:blurPaddingVertical="50dp"-->
+    <!--        app:blurTextureScale="0.5"-->
+    <!--        app:useChildAlphaAsMask="false">-->
+    <!--        &lt;!&ndash; Add Children &ndash;&gt;-->
+    <!--    </no.danielzeller.blurbehindlib.BlurBehindLayout>-->
+</androidx.constraintlayout.widget.ConstraintLayout>
