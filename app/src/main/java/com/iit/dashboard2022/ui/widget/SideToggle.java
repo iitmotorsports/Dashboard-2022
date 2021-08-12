@@ -10,7 +10,7 @@ import com.google.android.material.button.MaterialButton;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
 
-public class SideToggle extends MaterialButton {
+public class SideToggle extends MaterialButton implements ActionableCheck {
     private final CharSequence mTextOn;
     private final CharSequence mTextOff;
     private final float mTextOnSize, mTextOffSize;
@@ -87,6 +87,13 @@ public class SideToggle extends MaterialButton {
             }
             colorAnim.reverse();
         }
+    }
+
+    @Override
+    public void setActionedCheck(boolean checked) {
+        if (isChecked() == checked)
+            return;
+        performClick();
     }
 
 }

@@ -16,7 +16,7 @@ import androidx.annotation.StyleableRes;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 
-public class SideSwitch extends RelativeLayout {
+public class SideSwitch extends RelativeLayout implements ActionableCheck {
     private SwitchMaterial widget_switch;
 
     public SideSwitch(Context context) {
@@ -88,4 +88,10 @@ public class SideSwitch extends RelativeLayout {
         widget_switch.setOnClickListener(listener);
     }
 
+    @Override
+    public void setActionedCheck(boolean checked) {
+        if (isChecked() == checked)
+            return;
+        performClick();
+    }
 }
