@@ -54,18 +54,25 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         @Override
         public void run() {
             CharSequence msg;
+
+            if (text.getLineCount() > 1000){
+                CharSequence cq = text.getText();
+                int len = cq.length();
+                text.setText(cq.subSequence(len / 2, len));
+            }
+
             while ((msg = outQueue.poll()) != null) {
                 text.append(msg);
-                consoleScroller.scroll();
-                setLineCount();
             }
+            consoleScroller.scroll();
+            setLineCount();
             if (run)
                 uiHandle.postDelayed(this, 100);
         }
     };
 
     private void clearText() {
-        text.setText("");
+        text.setText(null);
     }
 
     private void setErrorCount() {
