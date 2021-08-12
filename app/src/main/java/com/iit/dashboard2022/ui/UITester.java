@@ -21,6 +21,17 @@ public class UITester {
         void testUI(float percent);
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n\t";
+
+    public static String rndStr(int count) {
+        char[] text = new char[count];
+        for (int i = 0; i < count; i++) {
+            text[i] = chars.charAt(Rnd.nextInt(chars.length()));
+        }
+        return new String(text);
+    }
+
     private static void runTest(float val) {
         for (TestUI test : UITests) {
             test.testUI(val);

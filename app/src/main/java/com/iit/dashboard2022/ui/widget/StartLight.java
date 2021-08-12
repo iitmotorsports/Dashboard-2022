@@ -55,23 +55,12 @@ public class StartLight extends LinearLayout implements UITester.TestUI {
         super.finalize();
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    private String rndStr(int count) {
-        char[] text = new char[count];
-        for (int i = 0; i < count; i++) {
-            text[i] = chars.charAt(UITester.Rnd.nextInt(chars.length()));
-        }
-        return new String(text);
-    }
-
     @Override
     public void testUI(float percent) {
         light(percent % 0.2 > 0.1f);
         if (percent == 0)
             setState(defaultText);
         else
-            setState(rndStr((int) (percent * 25)));
+            setState(UITester.rndStr((int) (percent * 25)));
     }
 }
