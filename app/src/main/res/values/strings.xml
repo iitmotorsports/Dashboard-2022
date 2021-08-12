@@ -27,4 +27,5 @@
     <string name="console_error_default">Errors: 9999+</string>
     <string name="console_status_default">Status: Disconnected</string>
     <string name="console_text_default">IIT SAE 2022</string>
+    <string name="scroll_to_end">Scroll to end</string>
 </resources>

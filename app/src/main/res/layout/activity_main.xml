@@ -99,7 +99,7 @@
 
     </LinearLayout>
 
-    <com.iit.dashboard2022.ui.widget.ConsoleWidget
+    <com.iit.dashboard2022.ui.widget.console.ConsoleWidget
         android:id="@+id/console"
         android:layout_width="0dp"
         android:layout_height="0dp"

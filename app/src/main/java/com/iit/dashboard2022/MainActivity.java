@@ -17,10 +17,10 @@ import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
-import com.iit.dashboard2022.ui.widget.ConsoleWidget;
+import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UITester.TestUI {
 
     Pager mainPager;
     SidePanel sidePanel;
@@ -30,45 +30,56 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setupUI();
 
+        /* PAGER */
+
         mainPager = new Pager(this);
-
-        console = findViewById(R.id.console);
-
-        sidePanel = findViewById(R.id.sidePanel);
-        SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
 
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(0);
         Logs logPage = (Logs) mainPager.getPage(1);
         LiveData ldPage = (LiveData) mainPager.getPage(2);
 
+        /* SIDE PANEL */
+
+        console = findViewById(R.id.console);
+        sidePanel = findViewById(R.id.sidePanel);
+
         TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
         sidePanelDrawerAnim.startWhenReady();
         TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
         consoleAnim.startWhenReady();
-        sidePanel.setUiTestSwitchListener(v -> UITester.enable(((SwitchMaterial) v).isChecked()));
-        sidePanel.setConsoleSwitchListener(v -> {
-            if (((SwitchMaterial) v).isChecked())
+
+        sidePanel.consoleSwitch.setOnClickListener(v -> {
+            if (((SwitchMaterial) v).isChecked()) {
                 consoleAnim.reverse();
-            else
+                console.enable(true);
+            } else {
                 consoleAnim.start();
+                console.enable(false);
+            }
         });
 
-        mainPager.setOnTouchCallback(settingsBtn::performClick);
+        sidePanel.clearConsoleButton.setOnClickListener(v -> console.clear());
+        sidePanel.uiTestSwitch.setOnClickListener(v -> UITester.enable(((SwitchMaterial) v).isChecked()));
 
+        SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
+        mainPager.setOnTouchCallback(settingsBtn::performClick);
         settingsBtn.setCallbacks(
                 () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.reverse()),
                 () -> {
                     mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.start());
-                    sidePanel.setChecked(SidePanel.CheckableWidget.consoleSwitch, false);
+                    sidePanel.consoleSwitch.setActionedCheck(false);
                 },
                 locked -> {
                     mainPager.setUserInputEnabled(!locked);
-                    sidePanel.setChecked(SidePanel.CheckableWidget.consoleSwitch, false);
+                    sidePanel.consoleSwitch.setActionedCheck(false);
                 }
         );
+
+        /* FINAL CALLS */
+
+        UITester.addTest(this);
     }
 
     @Override
@@ -98,4 +109,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void testUI(float percent) {
+        console.post(UITester.rndStr((int) (percent * 50)));
+    }
+
+    @Override
+    protected void onDestroy() {
+        UITester.removeTest(this);
+        super.onDestroy();
+    }
 }

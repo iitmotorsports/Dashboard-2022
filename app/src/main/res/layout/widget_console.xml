@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/consoleScoller"
+    <com.iit.dashboard2022.ui.widget.console.ConsoleScroller
+        android:id="@+id/consoleScroller"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/translucent_Black"
@@ -18,7 +18,6 @@
 
         <TextView
             android:id="@+id/consoleText"
-            style="@style/SideLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -29,7 +28,7 @@
             android:textSize="16sp"
             android:textStyle="normal"
             tools:ignore="TextContrastCheck" />
-    </ScrollView>
+    </com.iit.dashboard2022.ui.widget.console.ConsoleScroller>
 
     <LinearLayout
         android:id="@+id/consoleInfoBar"
@@ -46,6 +45,7 @@
             style="@style/SideLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/red"
             android:ems="50"
             android:lines="1"
             android:minEms="6"
@@ -54,6 +54,19 @@
             android:textAlignment="viewStart"
             android:textStyle="normal"
             tools:ignore="TextContrastCheck" />
+
+        <ImageView
+            android:id="@+id/scrollToEndImage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:contentDescription="@string/scroll_to_end"
+            android:focusable="true"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            app:srcCompat="@android:drawable/arrow_down_float"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <Space
             android:layout_width="0dp"
