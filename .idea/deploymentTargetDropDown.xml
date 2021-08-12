@@ -6,12 +6,12 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\Bitwise\.android\avd\Samsung_Galaxy_J7_API_25.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="192.168.1.227:5555" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2021-08-11T21:39:27.265698200Z" />
+    <timeTargetWasSelectedWithDropDown value="2021-08-12T01:02:42.174622Z" />
   </component>
 </project>

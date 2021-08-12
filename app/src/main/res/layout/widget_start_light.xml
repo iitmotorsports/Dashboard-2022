@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -26,13 +26,10 @@
         android:id="@+id/startLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/currentState"
-        android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/currentState"
         android:buttonTint="@color/backgroundText"
         android:enabled="false"
         android:includeFontPadding="false"
@@ -40,4 +37,4 @@
         android:minHeight="0dp"
         android:padding="0dp"
         tools:ignore="TouchTargetSizeCheck" />
-</RelativeLayout>
+</LinearLayout>
