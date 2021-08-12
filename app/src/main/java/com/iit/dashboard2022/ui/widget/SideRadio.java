@@ -15,47 +15,22 @@ public class SideRadio extends MaterialRadioButton {
 
     public SideRadio(@NonNull Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public SideRadio(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public SideRadio(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context);
     }
 
-    private void init() {
-        if (radioOffColorList == null || radioOnColorList == null) {
-            radioOffColorList = new ColorStateList(
-                    new int[][]
-                            {
-                                    new int[]{-android.R.attr.state_enabled},
-                                    new int[]{android.R.attr.state_enabled}
-                            },
-                    new int[]
-                            {
-                                    getResources().getColor(R.color.backgroundText, getContext().getTheme()),
-                                    getResources().getColor(R.color.foregroundText, getContext().getTheme())
-                            }
-            );
-
-            radioOnColorList = new ColorStateList(
-                    new int[][]
-                            {
-                                    new int[]{-android.R.attr.state_enabled},
-                                    new int[]{android.R.attr.state_enabled}
-                            },
-                    new int[]
-                            {
-                                    getResources().getColor(R.color.backgroundText, getContext().getTheme()),
-                                    getResources().getColor(R.color.colorAccent, getContext().getTheme())
-                            }
-            );
-        }
+    private void init(Context context) {
+        radioOffColorList = context.getColorStateList(R.color.foregroundText);
+        radioOnColorList = context.getColorStateList(R.color.colorAccent);
     }
 
     @Override

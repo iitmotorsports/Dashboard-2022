@@ -18,8 +18,8 @@ public class ColorAnim {
     }
 
     public ColorAnim(@NonNull Context context, @ColorRes int from, @ColorRes int to, @NonNull colorUpdater updater) {
-        Color.colorToHSV(context.getResources().getColor(from, context.getTheme()), anim_from);
-        Color.colorToHSV(context.getResources().getColor(to, context.getTheme()), anim_to);
+        Color.colorToHSV(context.getColor(from), anim_from);
+        Color.colorToHSV(context.getColor(to), anim_to);
 
         anim = ValueAnimator.ofFloat(0, 1);
         anim.setDuration(AnimSetting.ANIM_DURATION);

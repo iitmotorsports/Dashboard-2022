@@ -54,6 +54,7 @@ public class StartLight extends RelativeLayout implements UITester.TestUI {
         super.finalize();
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     private static final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     private String rndStr(int count) {
