@@ -104,7 +104,7 @@
                 </RadioGroup>
 
                 <com.iit.dashboard2022.ui.widget.SideButton
-                    android:id="@+id/sideButton2"
+                    android:id="@+id/clearConsoleButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/clear_console"
