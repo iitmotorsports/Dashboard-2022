@@ -9,7 +9,7 @@ import java.util.Set;
 public class UITester {
     private static final Set<TestUI> UITests = new HashSet<>();
     private static final Handler UIHandle = new Handler();
-    private static final Random Rnd = new Random();
+    public static final Random Rnd = new Random();
     private static final int UI_UPDATE_MS = 20;
     private static final float UI_UPDATE_VAL = 0.01f;
     private static final int rndTests = (int) (1.0f / UI_UPDATE_VAL);

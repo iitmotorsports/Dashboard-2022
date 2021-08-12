@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <com.iit.dashboard2022.ui.widget.SideLabel
+        android:id="@+id/currentState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="@null"
+        android:maxEms="12"
+        android:maxLines="1"
+        android:minEms="6"
+        android:padding="2dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="@string/current_state"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/backgroundText"
+        android:textSize="14sp" />
+
+    <RadioButton
+        android:id="@+id/startLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/currentState"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/currentState"
+        android:buttonTint="@color/backgroundText"
+        android:enabled="false"
+        android:includeFontPadding="false"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp"
+        tools:ignore="TouchTargetSizeCheck" />
+</RelativeLayout>
