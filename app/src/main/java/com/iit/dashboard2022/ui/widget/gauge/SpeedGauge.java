@@ -11,6 +11,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -25,17 +27,31 @@ import java.util.Set;
 
 public class SpeedGauge extends View {
     private static final Set<SpeedGauge> gauges = new HashSet<>();
-    private static final Handler updater = new Handler();
-    private static final Runnable update = new Runnable() {
+    private static final HandlerThread consoleThread = new HandlerThread("Speed Gauge Thread");
+    private static Handler gaugeHandler;
+
+    private static final int SETTLE_TIME_MS = 500;
+    private static int settleTime = 0;
+    private static long lastTime = 0;
+
+    private static final Runnable updateGauge = new Runnable() {
         @Override
         public void run() {
+            if (lastTime + AnimSetting.ANIM_UPDATE_MILLIS > SystemClock.uptimeMillis())
+                return;
+
             for (SpeedGauge sg : gauges) {
                 sg.update();
             }
-            updater.postDelayed(this, AnimSetting.ANIM_UPDATE_MILLIS);
+
+            lastTime = SystemClock.uptimeMillis();
+
+            settleTime += AnimSetting.ANIM_UPDATE_MILLIS;
+            if (settleTime < SETTLE_TIME_MS)
+                gaugeHandler.postDelayed(this, AnimSetting.ANIM_UPDATE_MILLIS);
         }
     };
-    private static boolean posted = false;
+
     private Bitmap bitmapBG, bitmapMask, bitmaskDraw;
     private Canvas canvasMask;
     private Paint paint, maskPaint;
@@ -67,6 +83,11 @@ public class SpeedGauge extends View {
     }
 
     void init(Context context, AttributeSet attrs) {
+        if (gaugeHandler == null) {
+            consoleThread.start();
+            gaugeHandler = new Handler(consoleThread.getLooper());
+        }
+
         mask = new Rect();
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -98,10 +119,6 @@ public class SpeedGauge extends View {
 
         a.recycle();
         gauges.add(this);
-        if (!posted) {
-            posted = true;
-            updater.post(update);
-        }
     }
 
     @Override
@@ -213,13 +230,17 @@ public class SpeedGauge extends View {
 
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
+        settleTime = 0;
+        gaugeHandler.post(updateGauge);
     }
 
+
     private void update() {
-        if (oldPercent == percent)
-            return;
-        oldPercent += (percent - oldPercent) * DV(percent);
-        this.currentWidth = maskWidth(oldPercent);
-        invalidate();
+        if (oldPercent != percent) {
+            oldPercent += (percent - oldPercent) * DV(percent);
+            this.currentWidth = maskWidth(oldPercent);
+            postInvalidate();
+        }
     }
+
 }
