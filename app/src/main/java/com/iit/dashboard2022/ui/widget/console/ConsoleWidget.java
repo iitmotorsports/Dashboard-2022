@@ -3,6 +3,7 @@ package com.iit.dashboard2022.ui.widget.console;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,6 +30,9 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private static final Handler uiHandle = new Handler();
     private static Handler textHandle;
 
+    private static final int UPDATE_TIME_MS = 100;
+    private static long lastTime = 0;
+
     private PrecomputedTextCompat.Params textParams;
     private boolean run = false;
 
@@ -39,35 +43,42 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
 
-    private final Runnable textLoad = () -> {
-        while (run) {
-            String nextMsg = (String) rawQueue.poll();
-            if (nextMsg == null)
-                continue;
-            nextMsg = nextMsg.trim() + '\n';
-            PrecomputedTextCompat.create(nextMsg, textParams);
-            outQueue.add(nextMsg);
-        }
-    };
-
     private final Runnable textUpdate = new Runnable() {
         @Override
         public void run() {
-            CharSequence msg;
+            if (run) {
+                CharSequence msg;
 
-            if (text.getLineCount() > 1000) {
-                CharSequence cq = text.getText();
-                int len = cq.length();
-                text.setText(cq.subSequence(len / 2, len));
-            }
+                if (text.getLineCount() > 1000) {
+                    CharSequence cq = text.getText();
+                    int len = cq.length();
+                    text.setText(cq.subSequence(len / 2, len));
+                }
 
-            while ((msg = outQueue.poll()) != null) {
-                text.append(msg);
+                while ((msg = outQueue.poll()) != null) {
+                    text.append(msg);
+                }
+                consoleScroller.scroll();
+                setLineCount();
             }
-            consoleScroller.scroll();
-            setLineCount();
-            if (run)
-                uiHandle.postDelayed(this, 100);
+        }
+    };
+
+    private final Runnable textLoad = () -> {
+        if (run) {
+            String nextMsg = (String) rawQueue.poll();
+            if (nextMsg == null)
+                return;
+
+            nextMsg = nextMsg.trim() + '\n';
+            PrecomputedTextCompat.create(nextMsg, textParams);
+            outQueue.add(nextMsg);
+
+            long curr = SystemClock.uptimeMillis();
+            if (lastTime + UPDATE_TIME_MS < curr) {
+                lastTime = curr;
+                uiHandle.post(textUpdate);
+            }
         }
     };
 
@@ -165,8 +176,6 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
             return;
         if (enabled) {
             run = true;
-            uiHandle.post(textUpdate);
-            textHandle.post(textLoad);
         } else {
             run = false;
             rawQueue.clear();
@@ -197,8 +206,10 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     }
 
     public void post(@NonNull CharSequence msg) {
-        if (run)
+        if (run) {
             rawQueue.add(msg);
+            textHandle.post(textLoad);
+        }
     }
 
 }

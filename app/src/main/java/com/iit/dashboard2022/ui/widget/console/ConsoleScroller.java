@@ -9,15 +9,17 @@ import android.widget.ScrollView;
 public class ConsoleScroller extends ScrollView {
 
     private boolean enabled = true;
-    private boolean runScroll = false;
     private ScrollerStatusListener scrollerStatusListener;
 
     public interface ScrollerStatusListener {
         void run(boolean enabled);
     }
 
-    public void scroll() {
-        runScroll = true;
+    Runnable scroller = () -> fullScroll(ScrollView.FOCUS_DOWN);
+
+    public void scroll() { // TODO: Is there a better way to scroll?
+        if (enabled)
+            post(scroller);
     }
 
     public void enable(boolean enabled) {
@@ -46,17 +48,6 @@ public class ConsoleScroller extends ScrollView {
 
     public ConsoleScroller(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Runnable scroller = new Runnable() { // TODO: Is there a better way to scroll?
-            @Override
-            public void run() {
-                if (enabled && runScroll) {
-                    fullScroll(ScrollView.FOCUS_DOWN);
-                    runScroll = false;
-                }
-                postDelayed(this, 50);
-            }
-        };
-        post(scroller);
     }
 
     @SuppressLint("ClickableViewAccessibility")
