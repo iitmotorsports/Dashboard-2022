@@ -23,9 +23,9 @@
     <string name="_0">0</string>
     <string name="current_state">Current State</string>
     <string name="console_text_scroller">Console Text Scroller</string>
-    <string name="console_line_default">Lines: 1000/1000</string>
-    <string name="console_error_default">Errors: 9999+</string>
-    <string name="console_status_default">Status: Disconnected</string>
+    <string name="console_line_default">Lines: %04d/1000</string>
+    <string name="console_error_default">Errors: %04d</string>
+    <string name="console_status_default">Status: %-13s</string>
     <string name="console_text_default">IIT SAE 2022</string>
     <string name="scroll_to_end">Scroll to end</string>
 </resources>
