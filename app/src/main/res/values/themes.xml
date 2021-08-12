@@ -2,6 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.Dashboard2022" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Colors -->
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorSecondary">@color/backgroundText</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="rippleColor">@color/colorAccent</item>
         <item name="android:colorAccent">@color/colorAccent</item>
