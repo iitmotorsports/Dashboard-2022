@@ -25,6 +25,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
     private boolean isOpen = false;
     private boolean locked = false;
+    private boolean running = false;
 
     public SettingsButton(@NonNull Context context) {
         this(context, null);
@@ -71,11 +72,13 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         close.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                running = true;
                 callbackClose.run();
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                running = false;
                 if (locked)
                     startAnimation(lockSpin);
             }
@@ -89,11 +92,13 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         open.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                running = true;
                 callbackOpen.run();
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                running = false;
             }
 
             @Override
@@ -111,12 +116,14 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
             startAnimation(jiggle);
             return false;
         }
+        if (running)
+            return false;
         if (isOpen) {
             spinColorAnim.reverse();
             startAnimation(close);
         } else {
             spinColorAnim.start();
-            startAnimation(this.open);
+            startAnimation(open);
         }
         isOpen = !isOpen;
         return super.performClick();
