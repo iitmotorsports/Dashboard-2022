@@ -204,6 +204,8 @@ public class SpeedGauge extends View {
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
+        if (x <= 0 || y <= 0)
+            return;
         height = y;
         dst = new RectF(0, 0, x, y);
         drawBars(x, y);
