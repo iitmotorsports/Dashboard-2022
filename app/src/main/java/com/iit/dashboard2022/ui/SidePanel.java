@@ -45,8 +45,6 @@ public class SidePanel extends ConstraintLayout {
         JSONToggle = findViewById(R.id.JSONToggle);
         connToggle = findViewById(R.id.connToggle);
 
-        chargeToggle.setToggleMediator(button -> false);
-
         uiTestSwitch = findViewById(R.id.uiTestSwitch);
         reverseSwitch = findViewById(R.id.reverseSwitch);
         consoleSwitch = findViewById(R.id.consoleSwitch);
