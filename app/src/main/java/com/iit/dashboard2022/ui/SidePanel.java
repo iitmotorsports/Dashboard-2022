@@ -53,15 +53,15 @@ public class SidePanel extends ConstraintLayout {
         canMsgButton = findViewById(R.id.canMsgButton);
         canEchoButton = findViewById(R.id.canEchoButton);
 
-        uiTestSwitch.setOnClickListener(v -> UITester.enable(((SwitchMaterial) v).isChecked()));
+        uiTestSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> UITester.enable(isChecked));
     }
 
-    public void attachConsole(ConsoleWidget console){
+    public void attachConsole(ConsoleWidget console) {
         TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
         consoleAnim.startWhenReady();
 
-        consoleSwitch.setOnClickListener(v -> {
-            if (((SwitchMaterial) v).isChecked()) {
+        consoleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
                 consoleAnim.reverse();
                 console.enable(true);
             } else {
