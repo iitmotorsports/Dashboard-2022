@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
 
 public class CarDashboard extends Page implements UITester.TestUI {
     private SpeedGauge sgL, sgR;
+    private TextView speedometer;
 
     @Nullable
     @Override
@@ -21,6 +23,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.tab_dashboard_layout, container, false);
         sgL = rootView.findViewById(R.id.speedGaugeLeft);
         sgR = rootView.findViewById(R.id.speedGaugeRight);
+        speedometer = rootView.findViewById(R.id.speedometer);
         UITester.addTest(this);
         return rootView;
     }
@@ -36,6 +39,10 @@ public class CarDashboard extends Page implements UITester.TestUI {
         sgR.setPercent(percent);
     }
 
+    public void setSpeed(int mph) {
+        speedometer.setText(String.valueOf(mph));
+    }
+
     @NonNull
     @Override
     public String getTitle() {
@@ -45,5 +52,6 @@ public class CarDashboard extends Page implements UITester.TestUI {
     @Override
     public void testUI(float percent) {
         setPercentage(percent);
+        setSpeed((int) (300 * percent));
     }
 }

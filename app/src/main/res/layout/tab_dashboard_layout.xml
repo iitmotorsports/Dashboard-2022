@@ -26,7 +26,7 @@
         android:id="@+id/speedometer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="24dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -41,19 +41,6 @@
         app:layout_constraintEnd_toEndOf="@+id/GaugeLayout"
         app:layout_constraintStart_toStartOf="@+id/GaugeLayout"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/unitText"
-        style="@style/SideLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:minEms="0"
-        android:text="@string/mph"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="@+id/speedometer"
-        app:layout_constraintEnd_toEndOf="@+id/speedometer"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <com.iit.dashboard2022.ui.widget.Indicators
         android:id="@+id/indicators"
@@ -78,7 +65,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6">
+        app:layout_constraintVertical_bias="0.7">
 
         <com.iit.dashboard2022.ui.widget.gauge.SpeedGauge
             android:id="@+id/speedGaugeLeft"
@@ -91,9 +78,16 @@
             app:colorLow="@color/green"
             app:colorMid="@color/yellow" />
 
-        <Space
-            android:layout_width="32dp"
-            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/unitText"
+            style="@style/SideLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minEms="0"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/mph"
+            android:textAlignment="center" />
 
         <com.iit.dashboard2022.ui.widget.gauge.SpeedGauge
             android:id="@+id/speedGaugeRight"
