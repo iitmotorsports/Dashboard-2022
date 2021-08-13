@@ -178,7 +178,7 @@ public class SpeedGauge extends View {
     }
 
     private int maskWidth(float percent) {
-        int count = (int) Math.ceil((bars + 1) * percent);
+        int count = (int) Math.ceil((bars + 2) * percent);
 
         int xPos = 0;
         boolean draw = true;
@@ -228,16 +228,21 @@ public class SpeedGauge extends View {
         drawBars(x, y);
     }
 
+    private float truncate(float val) {
+        return ((int) Math.ceil(val * 1000)) / 1000.0f;
+    }
+
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
         settleTime = 0;
         gaugeHandler.post(updateGauge);
     }
 
-
     private void update() {
         if (oldPercent != percent) {
-            oldPercent += (percent - oldPercent) * DV(percent);
+            float dv = truncate((percent - oldPercent) * DV(percent));
+            oldPercent += dv;
+            oldPercent = truncate(oldPercent);
             this.currentWidth = maskWidth(oldPercent);
             postInvalidate();
         }
