@@ -115,6 +115,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         Testing(R.color.blue);
 
         @ColorRes
+        final
         int color;
 
         Status(@ColorRes int color) {

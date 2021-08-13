@@ -9,7 +9,7 @@ public class TranslationAnim {
     public static final boolean X_AXIS = true;
     public static final boolean Y_AXIS = false;
     public static final boolean ANIM_BACKWARD = false;
-    public static boolean ANIM_FORWARD = true;
+    public static final boolean ANIM_FORWARD = true;
 
     private final boolean autoSize, direction;
     private float posDX = 0;

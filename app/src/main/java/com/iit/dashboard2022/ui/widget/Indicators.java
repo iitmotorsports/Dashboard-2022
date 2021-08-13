@@ -21,7 +21,7 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
     private final RadioButton lagRadio, faultRadio, waitRadio, chargeRadio;
     private final TextView lagTimer;
     private final String lagTimerFormat;
-    private float lagTimerLarge, LagTimerSmall;
+    private final float lagTimerLarge, LagTimerSmall;
     private String currentLagTime = "";
 
     public enum Indicator {
