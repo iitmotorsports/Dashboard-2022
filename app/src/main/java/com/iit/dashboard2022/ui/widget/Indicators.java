@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,7 +23,8 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
 
     private final RadioButton lagRadio, faultRadio, waitRadio, chargeRadio;
     private final TextView lagTimer;
-    private final String lagTimerFormat;
+    private final LinearLayout indicatorLayout;
+    private final String lagTimerMSFormat, lagTimerSFormat;
     private final float lagTimerLarge, LagTimerSmall;
     private String currentLagTime = "";
 
@@ -43,6 +47,7 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.widget_indicators, this);
 
+        indicatorLayout = findViewById(R.id.indicatorLayout);
         lagRadio = findViewById(R.id.lagRadio);
         faultRadio = findViewById(R.id.faultRadio);
         waitRadio = findViewById(R.id.waitRadio);
@@ -52,12 +57,24 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
         lagTimerLarge = lagTimer.getTextSize() / getResources().getDisplayMetrics().scaledDensity;
         LagTimerSmall = lagTimerLarge / 1.2f;
 
-        lagTimerFormat = context.getString(R.string.indicators_lag_timer_format);
-        updateLagTime();
+        lagTimerMSFormat = context.getString(R.string.indicators_lag_ms_format);
+        lagTimerSFormat = context.getString(R.string.indicators_lag_s_format);
 
-        for (Indicator i : Indicator.values()) {
-            setIndicator(i, false);
-        }
+        indicatorLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                indicatorLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                ViewGroup.LayoutParams lp = indicatorLayout.getLayoutParams();
+                lp.width = indicatorLayout.getMeasuredWidth();
+                lp.height = indicatorLayout.getMeasuredHeight();
+                indicatorLayout.setLayoutParams(lp);
+                updateLagTime();
+
+                for (Indicator i : Indicator.values()) {
+                    setIndicator(i, false);
+                }
+            }
+        });
 
         UITester.addTest(this);
     }
@@ -87,7 +104,7 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
     }
 
     private void updateLagTime() {
-        if (currentLagTime.length() > 5)
+        if (currentLagTime.length() >= 5)
             lagTimer.setTextSize(LagTimerSmall);
         else
             lagTimer.setTextSize(lagTimerLarge);
@@ -98,7 +115,10 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
         if (ms == 0) {
             currentLagTime = "";
         } else {
-            currentLagTime = String.format(Locale.US, lagTimerFormat, ms);
+            if (ms >= 1000)
+                currentLagTime = String.format(Locale.US, lagTimerSFormat, ms / 1000.0f);
+            else
+                currentLagTime = String.format(Locale.US, lagTimerMSFormat, ms);
         }
         uiHandle.post(this::updateLagTime);
     }
@@ -118,9 +138,11 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
             }
         } else {
             for (Indicator i : Indicator.values()) {
-                if (UITester.Rnd.nextFloat() > 0.9)
+                if (i != Indicator.Lag && UITester.Rnd.nextFloat() > 0.9)
                     setIndicator(i, percent > 0.5);
             }
+            setIndicator(Indicator.Lag, true);
+            setLagTime((long) (percent * 5000));
         }
     }
 }

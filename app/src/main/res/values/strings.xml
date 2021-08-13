@@ -28,7 +28,8 @@
     <string name="console_status_default">Status: %-13s</string>
     <string name="console_text_default">IIT SAE 2022</string>
     <string name="scroll_to_end">Scroll to end</string>
-    <string name="indicators_lag_timer_format">%d ms</string>
+    <string name="indicators_lag_ms_format">%d ms</string>
+    <string name="indicators_lag_s_format">%.3g s</string>
     <string name="lag">Lag</string>
     <string name="fault">Fault</string>
     <string name="waiting">Waiting</string>
