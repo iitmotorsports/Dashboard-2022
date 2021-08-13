@@ -63,12 +63,6 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
         this(context, null);
     }
 
-    @Override
-    public void setChecked(boolean checked) {
-        super.setChecked(checked);
-        syncCheckState();
-    }
-
     private void syncCheckState() {
         boolean checked = isChecked();
 
@@ -87,6 +81,33 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
             }
             colorAnim.reverse();
         }
+    }
+
+    private ToggleMediator toggleMediator;
+
+    public interface ToggleMediator {
+        boolean run(SideToggle button);
+    }
+
+    public void setToggleMediator(ToggleMediator toggleMediator) {
+        this.toggleMediator = toggleMediator;
+    }
+
+    @Override
+    public boolean performClick() {
+        if (toggleMediator != null && !toggleMediator.run(this)) {
+            setCheckable(false);
+            super.performClick();
+            setCheckable(true);
+            return false;
+        }
+        return super.performClick();
+    }
+
+    @Override
+    public void setChecked(boolean checked) {
+        super.setChecked(checked);
+        syncCheckState();
     }
 
     @Override
