@@ -11,8 +11,8 @@ public class UITester {
     private static final Handler UIHandle = new Handler();
     public static final Random Rnd = new Random();
     private static final int UI_UPDATE_MS = 20;
-    private static final float UI_UPDATE_VAL = 0.01f;
-    private static final int rndTests = (int) (1.0f / UI_UPDATE_VAL) * 8;
+    private static final float UI_UPDATE_VAL = 0.005f;
+    private static final int rndTests = (int) (1.0f / UI_UPDATE_VAL);
     private static int rndTestC = rndTests;
     private static boolean rndTest = false;
     private static float testVal = 0;
