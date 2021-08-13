@@ -41,6 +41,7 @@ public class TranslationAnim {
         setup(view, axis, from, to, interpolator);
     }
 
+    // FIXME: Sometimes, if there is lag on opening the app, the wrong size is recorded if the lag causes the orientation to be wrong
     private void setup(View view, boolean axis, float from, float to, Interpolator interpolator) {
         if (autoSize) {
             view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
