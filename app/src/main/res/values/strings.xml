@@ -32,4 +32,5 @@
     <string name="lag">Lag</string>
     <string name="fault">Fault</string>
     <string name="waiting">Waiting</string>
+    <string name="mph">MPH</string>
 </resources>
