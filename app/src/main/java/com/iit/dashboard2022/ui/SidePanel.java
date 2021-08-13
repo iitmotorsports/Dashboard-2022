@@ -3,6 +3,7 @@ package com.iit.dashboard2022.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.RadioGroup;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,6 +15,7 @@ import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 
 public class SidePanel extends ConstraintLayout {
+    public final RadioGroup consoleRadioGroup;
     public final SideRadio asciiRadio, hexRadio, rawRadio;
     public final SideSwitch uiTestSwitch, reverseSwitch, consoleSwitch;
     public final SideToggle chargeToggle, JSONToggle, connToggle;
@@ -31,6 +33,7 @@ public class SidePanel extends ConstraintLayout {
         super(context, attrs, defStyleAttr);
         View.inflate(getContext(), R.layout.side_panel_layout, this);
 
+        consoleRadioGroup = findViewById(R.id.consoleRadioGroup);
         asciiRadio = findViewById(R.id.asciiRButton);
         hexRadio = findViewById(R.id.hexRButton);
         rawRadio = findViewById(R.id.rawRButton);
@@ -46,7 +49,6 @@ public class SidePanel extends ConstraintLayout {
         clearConsoleButton = findViewById(R.id.clearConsoleButton);
         canMsgButton = findViewById(R.id.canMsgButton);
         canEchoButton = findViewById(R.id.canEchoButton);
-
     }
 
 }

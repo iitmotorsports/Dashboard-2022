@@ -38,8 +38,8 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
 
     private final ConsoleScroller consoleScroller;
     private final ImageView scrollToEndImage;
-    private final String linesFormat, errorFormat, statusFormat;
-    private final TextView text, consoleLines, consoleError, consoleStatus;
+    private final String linesFormat, errorFormat, statusFormat, modeFormat;
+    private final TextView text, consoleLines, consoleError, consoleStatus, consoleMode;
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
 
@@ -148,21 +148,28 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         consoleLines = findViewById(R.id.consoleLines);
         consoleError = findViewById(R.id.consoleError);
         consoleStatus = findViewById(R.id.consoleStatus);
+        consoleMode = findViewById(R.id.consoleMode);
 
         textParams = new PrecomputedTextCompat.Params.Builder(text.getPaint()).build();
         consoleScroller.setScrollerStatusListener(enabled -> scrollToEndImage.setAlpha(enabled ? 1 : 0.5f));
         scrollToEndImage.setOnClickListener(v -> consoleScroller.toggle());
 
-        linesFormat = context.getString(R.string.console_line_default);
-        errorFormat = context.getString(R.string.console_error_default);
-        statusFormat = context.getString(R.string.console_status_default);
+        linesFormat = context.getString(R.string.console_line_format);
+        errorFormat = context.getString(R.string.console_error_format);
+        statusFormat = context.getString(R.string.console_status_format);
+        modeFormat = context.getString(R.string.console_mode_format);
 
         setLineCount();
         setErrorCount();
         updateStatus();
+        setMode("Nil");
 
         initHandle();
         UITester.addTest(this);
+    }
+
+    public void setMode(String mode) {
+        consoleMode.setText(String.format(Locale.US, modeFormat, mode));
     }
 
     public void clear() {

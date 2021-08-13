@@ -50,10 +50,29 @@
             android:lines="1"
             android:minEms="6"
             android:padding="4dp"
-            android:text="@string/console_status_default"
+            android:text="@string/console_status_format"
             android:textAlignment="viewStart"
             android:textStyle="normal"
             tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/consoleMode"
+            style="@style/SideLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="50"
+            android:lines="1"
+            android:minEms="5"
+            android:padding="4dp"
+            android:text="@string/console_mode_format"
+            android:textAlignment="viewStart"
+            android:textStyle="normal"
+            tools:ignore="TextContrastCheck" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/scrollToEndImage"
@@ -68,11 +87,6 @@
             app:srcCompat="@android:drawable/arrow_down_float"
             tools:ignore="TouchTargetSizeCheck" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
         <TextView
             android:id="@+id/consoleError"
             style="@style/SideLabel"
@@ -80,9 +94,9 @@
             android:layout_height="wrap_content"
             android:ems="50"
             android:lines="1"
-            android:minEms="6"
+            android:minEms="5"
             android:padding="4dp"
-            android:text="@string/console_error_default"
+            android:text="@string/console_error_format"
             android:textAlignment="viewEnd"
             android:textStyle="normal"
             tools:ignore="TextContrastCheck" />
@@ -96,7 +110,7 @@
             android:lines="1"
             android:minEms="6"
             android:padding="4dp"
-            android:text="@string/console_line_default"
+            android:text="@string/console_line_format"
             android:textAlignment="viewEnd"
             android:textStyle="normal"
             tools:ignore="TextContrastCheck" />

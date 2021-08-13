@@ -75,6 +75,7 @@
                 </com.iit.dashboard2022.ui.widget.SideSwitch>
 
                 <RadioGroup
+                    android:id="@+id/consoleRadioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipChildren="false">
@@ -83,7 +84,6 @@
                         android:id="@+id/asciiRButton"
                         style="@style/SideRadioButton"
                         android:layout_width="match_parent"
-                        android:checked="true"
                         android:text="@string/ascii"
                         tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 

@@ -60,6 +60,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        sidePanel.consoleRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.asciiRButton) {
+                console.setMode("Ascii");
+            } else if (checkedId == R.id.hexRButton) {
+                console.setMode("Hex");
+            } else if (checkedId == R.id.rawRButton) {
+                console.setMode("Raw");
+            }
+        });
+        sidePanel.asciiRadio.setChecked(true);
+
         sidePanel.clearConsoleButton.setOnClickListener(v -> console.clear());
         sidePanel.uiTestSwitch.setOnClickListener(v -> UITester.enable(((SwitchMaterial) v).isChecked()));
 
