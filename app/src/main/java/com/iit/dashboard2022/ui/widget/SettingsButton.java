@@ -12,8 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.page.Pager;
+import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
+import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton {
     private static final int ANIM_DEGREES = 60;
@@ -110,6 +113,23 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         lockedColorAnim = new ColorAnim(getContext(), R.color.backgroundText, R.color.foregroundText, color -> setImageTintList(ColorStateList.valueOf(color)));
     }
 
+    public void lock(boolean locked) {
+        if (this.locked != locked) {
+            if (locked) {
+                if (isOpen)
+                    performClick();
+                else
+                    startAnimation(lockSpin);
+                lockedColorAnim.start();
+            } else {
+                lockedColorAnim.reverse();
+            }
+            this.locked = locked;
+
+            lockCallback.run(locked);
+        }
+    }
+
     @Override
     public boolean performClick() {
         if (locked) {
@@ -133,22 +153,5 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
     public boolean performLongClick() {
         lock(!locked);
         return true;
-    }
-
-    public void lock(boolean locked) {
-        if (this.locked != locked) {
-            if (locked) {
-                if (isOpen)
-                    performClick();
-                else
-                    startAnimation(lockSpin);
-                lockedColorAnim.start();
-            } else {
-                lockedColorAnim.reverse();
-            }
-            this.locked = locked;
-
-            lockCallback.run(locked);
-        }
     }
 }

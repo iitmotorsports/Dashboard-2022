@@ -9,22 +9,17 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
-import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
-import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 
 public class MainActivity extends AppCompatActivity {
 
     Pager mainPager;
-    SidePanel sidePanel;
-    ConsoleWidget console;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,39 +37,14 @@ public class MainActivity extends AppCompatActivity {
 
         /* SIDE PANEL */
 
-        console = findViewById(R.id.console);
-        sidePanel = findViewById(R.id.sidePanel);
+        SidePanel sidePanel = findViewById(R.id.sidePanel);
+        sidePanel.attachConsole(findViewById(R.id.console));
 
-        TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
-        sidePanelDrawerAnim.startWhenReady();
-        TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
-        consoleAnim.startWhenReady();
-
-        sidePanel.consoleSwitch.setOnClickListener(v -> {
-            if (((SwitchMaterial) v).isChecked()) {
-                consoleAnim.reverse();
-                console.enable(true);
-            } else {
-                consoleAnim.start();
-                console.enable(false);
-            }
-        });
-
-        sidePanel.consoleRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.asciiRButton) {
-                console.setMode("Ascii");
-            } else if (checkedId == R.id.hexRButton) {
-                console.setMode("Hex");
-            } else if (checkedId == R.id.rawRButton) {
-                console.setMode("Raw");
-            }
-        });
-        sidePanel.asciiRadio.setChecked(true);
-
-        sidePanel.clearConsoleButton.setOnClickListener(v -> console.clear());
-        sidePanel.uiTestSwitch.setOnClickListener(v -> UITester.enable(((SwitchMaterial) v).isChecked()));
+        /* SETTINGS BUTTON */
 
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
+        TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
+        sidePanelDrawerAnim.startWhenReady();
         mainPager.setOnTouchCallback(settingsBtn::performClick);
         settingsBtn.setCallbacks(
                 () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.reverse()),
