@@ -102,22 +102,4 @@
             tools:ignore="TextContrastCheck" />
 
     </LinearLayout>
-
-    <!--    <no.danielzeller.blurbehindlib.BlurBehindLayout-->
-    <!--        android:id="@+id/blurBehindLayout"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        android:textStyle="normal"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:blurRadius="100.0"-->
-    <!--        app:updateMode="onScroll"-->
-    <!--        app:useTextureView="false"-->
-    <!--        app:blurPaddingVertical="50dp"-->
-    <!--        app:blurTextureScale="0.5"-->
-    <!--        app:useChildAlphaAsMask="false">-->
-    <!--        &lt;!&ndash; Add Children &ndash;&gt;-->
-    <!--    </no.danielzeller.blurbehindlib.BlurBehindLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
