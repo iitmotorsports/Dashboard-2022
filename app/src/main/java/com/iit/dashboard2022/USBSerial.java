@@ -100,7 +100,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         try {
             port.open(connection);
             port.setParameters(baudRate, dataBits, stopBits, parity);
-            new SerialInputOutputManager(port, this).start(); // TODO: ensure thread stops when port closes
+            new SerialInputOutputManager(port, this).start();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
