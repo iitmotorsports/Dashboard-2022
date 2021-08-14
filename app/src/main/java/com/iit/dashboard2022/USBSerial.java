@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
-import java.util.Objects;
 
 public class USBSerial implements SerialInputOutputManager.Listener {
 
@@ -34,11 +33,14 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     @interface DataBits {
     }
 
+    private final Context context;
     private final UsbManager usbManager;
     private final PendingIntent deviceIntent;
     private final UsbReadCallback readCallback;
+    private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
+    private boolean active;
     private UsbSerialPort port;
     private Runnable detachCallback;
     private ErrorCallback errorCallback;
@@ -53,25 +55,28 @@ public class USBSerial implements SerialInputOutputManager.Listener {
 
     public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity, @NonNull UsbReadCallback readCallback) {
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-        deviceIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbManager.EXTRA_PERMISSION_GRANTED), PendingIntent.FLAG_IMMUTABLE);
+        deviceIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbManager.EXTRA_PERMISSION_GRANTED),PendingIntent.FLAG_IMMUTABLE);
         this.readCallback = readCallback;
 
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                switch (Objects.requireNonNull(intent.getAction())) {
-                    case UsbManager.EXTRA_PERMISSION_GRANTED:
-                        break;
+                switch (intent.getAction()) {
                     case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                        open();
+                        if (!active)
+                            open();
                         break;
                     case UsbManager.ACTION_USB_DEVICE_DETACHED:
-                        if (detachCallback != null)
+                        if (detachCallback != null && active) {
                             detachCallback.run();
+                            active = false;
+                        }
                         break;
                 }
             }
         };
+
+        this.context = context;
 
         this.baudRate = baudRate;
         this.dataBits = dataBits;
@@ -79,13 +84,13 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         this.parity = parity;
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbManager.EXTRA_PERMISSION_GRANTED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         context.registerReceiver(broadcastReceiver, filter);
     }
 
     public boolean open() {
+        active = false;
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager);
         if (availableDrivers.isEmpty()) {
             return false;
@@ -101,6 +106,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
             port.open(connection);
             port.setParameters(baudRate, dataBits, stopBits, parity);
             new SerialInputOutputManager(port, this).start();
+            active = true;
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,6 +143,13 @@ public class USBSerial implements SerialInputOutputManager.Listener {
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        context.unregisterReceiver(broadcastReceiver);
+        super.finalize();
+    }
+
 
     @Override
     public void onNewData(byte[] data) {
