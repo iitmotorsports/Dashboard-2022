@@ -11,6 +11,7 @@
         android:theme="@style/Theme.Dashboard2022">
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleInstance"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:label="@string/app_name"
