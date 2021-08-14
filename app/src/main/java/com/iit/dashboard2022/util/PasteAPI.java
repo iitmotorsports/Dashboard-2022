@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 
-import com.iit.dashboard2022.util.Toaster;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

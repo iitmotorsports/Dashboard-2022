@@ -72,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
         usb.setAttachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Attached", Toast.LENGTH_SHORT).show()));
         usb.setDetachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Detached", Toast.LENGTH_SHORT).show()));
 
-
-        PasteAPI.getLastJSONPaste(Toaster::showToast);
     }
 
     @Override
