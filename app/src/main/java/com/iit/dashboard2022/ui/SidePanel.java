@@ -8,7 +8,7 @@ import android.widget.RadioGroup;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.iit.dashboard2022.ECU.ECU;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SideButton;
@@ -56,7 +56,7 @@ public class SidePanel extends ConstraintLayout {
         uiTestSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> UITester.enable(isChecked));
     }
 
-    public void attachConsole(ConsoleWidget console) {
+    public void attachConsole(ConsoleWidget console, ECU frontECU) {
         TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
         consoleAnim.startWhenReady();
 
@@ -72,16 +72,27 @@ public class SidePanel extends ConstraintLayout {
 
         consoleRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.asciiRButton) {
-                console.setMode("Ascii");
+                console.setMode(ECU.MODE.ASCII.name());
+                frontECU.setInterpreterMode(ECU.MODE.ASCII);
             } else if (checkedId == R.id.hexRButton) {
-                console.setMode("Hex");
+                console.setMode(ECU.MODE.HEX.name());
+                frontECU.setInterpreterMode(ECU.MODE.HEX);
             } else if (checkedId == R.id.rawRButton) {
-                console.setMode("Raw");
+                console.setMode(ECU.MODE.RAW.name());
+                frontECU.setInterpreterMode(ECU.MODE.RAW);
             }
         });
         asciiRadio.setChecked(true);
 
         clearConsoleButton.setOnClickListener(v -> console.clear());
+
+        JSONToggle.setToggleMediator(button -> {
+            frontECU.loadJSON();
+            return false;
+        });
+
+        frontECU.addStatusListener(JSONToggle::setChecked);
+        frontECU.setLogListener(console::post);
     }
 
 }

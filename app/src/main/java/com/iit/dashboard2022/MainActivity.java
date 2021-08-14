@@ -1,29 +1,29 @@
 package com.iit.dashboard2022;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
-import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.hoho.android.usbserial.driver.UsbSerialPort;
+import com.iit.dashboard2022.ECU.ECU;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
-import com.iit.dashboard2022.util.PasteAPI;
-import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
-import com.iit.dashboard2022.util.USBSerial;
+import com.iit.dashboard2022.util.Toaster;
 
 public class MainActivity extends AppCompatActivity {
 
     Pager mainPager;
+    ECU frontECU;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setupUI();
 
+        /* INITIALIZE */
+        frontECU = new ECU(this);
         Toaster.setContext(this);
 
         /* PAGER */
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         /* SIDE PANEL */
 
         SidePanel sidePanel = findViewById(R.id.sidePanel);
-        sidePanel.attachConsole(findViewById(R.id.console));
+        sidePanel.attachConsole(findViewById(R.id.console), frontECU);
 
         /* SETTINGS BUTTON */
 
@@ -63,15 +65,12 @@ public class MainActivity extends AppCompatActivity {
                     sidePanel.consoleSwitch.setActionedCheck(false);
                 }
         );
+    }
 
-        /* FINAL CALLS */
-
-        USBSerial usb = new USBSerial(this, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
-
-        });
-        usb.setAttachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Attached", Toast.LENGTH_SHORT).show()));
-        usb.setDetachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Detached", Toast.LENGTH_SHORT).show()));
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        frontECU.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
