@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
@@ -65,14 +65,14 @@ public class MainActivity extends AppCompatActivity {
         USBSerial usb = new USBSerial(this, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
 
         });
-        usb.setErrorCallback(exception -> Snackbar.make(findViewById(R.id.mainConstraint), exception.toString(), Snackbar.LENGTH_SHORT).show());
+        usb.setDetachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Detached", Toast.LENGTH_SHORT).show()));
 
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        setupUI();
+        hideUI();
     }
 
     private void setupUI() {
@@ -82,7 +82,10 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
+        hideUI();
+    }
 
+    private void hideUI() {
         // Hide Action bar and navigation
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             getWindow().getInsetsController().hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
