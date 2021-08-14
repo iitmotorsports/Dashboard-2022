@@ -27,16 +27,24 @@ public class PasteAPI {
                     "\"}]}"
             };
 
+    public interface responseCallback {
+        void run(String response);
+    }
+
+    private static class NoPastesUploadedException extends Exception {
+        NoPastesUploadedException() {
+            super();
+        }
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
     private static String getJSON_APIKey() {
         return new String(android.util.Base64.decode("dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=", android.util.Base64.DEFAULT));
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     private static String getLOG_APIKey() {
         return new String(android.util.Base64.decode("dTBXUXZabUNsdVFkZWJycUlUNjZSRHJoR1paTlVXaXE3U09LTVlPUE8=", android.util.Base64.DEFAULT));
-    }
-
-    public interface responseCallback {
-        void run(String response);
     }
 
     public static boolean checkInternetConnection(Context context) {
@@ -71,12 +79,6 @@ public class PasteAPI {
         }
         Toaster.showToast(conn.getResponseCode() + " " + conn.getResponseMessage());
         return response.toString();
-    }
-
-    private static class NoPastesUploadedException extends Exception {
-        NoPastesUploadedException() {
-            super();
-        }
     }
 
     public static void uploadPaste(String data) {
