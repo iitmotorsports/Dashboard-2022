@@ -47,39 +47,35 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private final Runnable textUpdate = new Runnable() {
         @Override
         public void run() {
-            if (run) {
-                CharSequence msg;
+            CharSequence msg;
 
-                if (text.getLineCount() > 1000) {
-                    CharSequence cq = text.getText();
-                    int len = cq.length();
-                    text.setText(cq.subSequence(len / 2, len));
-                }
-
-                while ((msg = outQueue.poll()) != null) {
-                    text.append(msg);
-                }
-                consoleScroller.scroll();
-                setLineCount();
+            if (text.getLineCount() > 1000) {
+                CharSequence cq = text.getText();
+                int len = cq.length();
+                text.setText(cq.subSequence(len / 2, len));
             }
+
+            while ((msg = outQueue.poll()) != null) {
+                text.append(msg);
+            }
+            consoleScroller.scroll();
+            setLineCount();
         }
     };
 
     private final Runnable textLoad = () -> {
-        if (run) {
-            String nextMsg = (String) rawQueue.poll();
-            if (nextMsg == null)
-                return;
+        String nextMsg = (String) rawQueue.poll();
+        if (nextMsg == null)
+            return;
 
-            nextMsg = nextMsg.trim() + '\n';
-            PrecomputedTextCompat.create(nextMsg, textParams);
-            outQueue.add(nextMsg);
+        nextMsg = nextMsg.trim() + '\n';
+        PrecomputedTextCompat.create(nextMsg, textParams);
+        outQueue.add(nextMsg);
 
-            long curr = SystemClock.uptimeMillis();
-            if (lastTime + UPDATE_TIME_MS < curr) {
-                lastTime = curr;
-                uiHandle.post(textUpdate);
-            }
+        long curr = SystemClock.uptimeMillis();
+        if (lastTime + UPDATE_TIME_MS < curr) {
+            lastTime = curr;
+            uiHandle.post(textUpdate);
         }
     };
 
@@ -219,6 +215,12 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
             rawQueue.add(msg);
             textHandle.post(textLoad);
         }
+    }
+
+    private static final String systemPostFormat = "[SYSTEM] [%s] %s";
+    public void systemPost(@NonNull String tag, @NonNull String msg) {
+        rawQueue.add(String.format(Locale.US, systemPostFormat, tag, msg));
+        textHandle.post(textLoad);
     }
 
 }

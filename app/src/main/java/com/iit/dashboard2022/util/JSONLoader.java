@@ -25,25 +25,12 @@ public class JSONLoader {
         jsonFile = new JSONFile(activity);
     }
 
-    public void saveJSONToSystem() {
-        if (loadedJsonStr != null) {
-            File path = activity.getFilesDir();
-            File file = new File(path, fileName);
-            PrintWriter writer;
-            try {
-                writer = new PrintWriter(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Toaster.showToast("Failed to save JSON to system", Toaster.ERROR, Toast.LENGTH_LONG);
-                return;
-            }
-            writer.print(loadedJsonStr);
-            writer.close();
-        }
+    public void requestJSONFile() {
+        jsonFile.requestJSONFile();
     }
 
-    public boolean loaded() {
-        return loadedJsonStr != null;
+    public String getString() {
+        return loadedJsonStr;
     }
 
     public String pop() {
@@ -52,15 +39,32 @@ public class JSONLoader {
         return fnl;
     }
 
-    public void load() {
-        jsonFile.open();
+    public boolean clear() {
+        File path = activity.getFilesDir();
+        File file = new File(path, fileName);
+        boolean deleted = file.delete();
+        if (deleted) {
+            loadedJsonStr = null;
+        }
+        return deleted;
     }
 
-    public String getString() {
-        return loadedJsonStr;
+    public void saveToSystem(@NonNull String jsonStr) {
+        File path = activity.getFilesDir();
+        File file = new File(path, fileName);
+        PrintWriter writer;
+        try {
+            writer = new PrintWriter(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Toaster.showToast("Failed to save JSON to system", Toaster.ERROR, Toast.LENGTH_LONG);
+            return;
+        }
+        writer.print(jsonStr);
+        writer.close();
     }
 
-    public void loadFromSystem() {
+    public String loadFromSystem() {
         File path = activity.getFilesDir();
         File file = new File(path, fileName);
         StringBuilder text = new StringBuilder();
@@ -73,20 +77,11 @@ public class JSONLoader {
                 text.append('\n');
             }
             br.close();
-            loadedJsonStr = text.toString();
+            return text.toString();
         } catch (IOException e) {
             Toaster.showToast("Failed to load JSON from system", Toaster.ERROR, Toast.LENGTH_LONG);
         }
-    }
-
-    public boolean clear() {
-        File path = activity.getFilesDir();
-        File file = new File(path, fileName);
-        boolean deleted = file.delete();
-        if (deleted) {
-            loadedJsonStr = null;
-        }
-        return deleted;
+        return null;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {

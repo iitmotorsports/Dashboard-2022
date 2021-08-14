@@ -65,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
                     sidePanel.consoleSwitch.setActionedCheck(false);
                 }
         );
+
+        /* FINAL CALLS */
+
+        if (!frontECU.loadJSONFromSystem()) {
+            Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
+        }
     }
 
     @Override

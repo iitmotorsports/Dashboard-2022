@@ -17,6 +17,7 @@ import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.PasteAPI;
+import com.iit.dashboard2022.util.Toaster;
 
 public class SidePanel extends ConstraintLayout {
     public final RadioGroup consoleRadioGroup;
@@ -57,6 +58,8 @@ public class SidePanel extends ConstraintLayout {
         uiTestSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> UITester.enable(isChecked));
     }
 
+    ECU.MODE lastChecked = ECU.MODE.ASCII;
+
     public void attachConsole(ConsoleWidget console, ECU frontECU) {
         TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
         consoleAnim.startWhenReady();
@@ -65,7 +68,7 @@ public class SidePanel extends ConstraintLayout {
             if (isChecked) {
                 consoleAnim.reverse();
                 console.enable(true);
-                frontECU.setInterpreterMode(ECU.MODE.ASCII);
+                frontECU.setInterpreterMode(lastChecked);
             } else {
                 consoleAnim.start();
                 console.enable(false);
@@ -75,28 +78,34 @@ public class SidePanel extends ConstraintLayout {
 
         consoleRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.asciiRButton) {
-                console.setMode(ECU.MODE.ASCII.name());
-                frontECU.setInterpreterMode(ECU.MODE.ASCII);
+                lastChecked = ECU.MODE.ASCII;
             } else if (checkedId == R.id.hexRButton) {
-                console.setMode(ECU.MODE.HEX.name());
-                frontECU.setInterpreterMode(ECU.MODE.HEX);
+                lastChecked = ECU.MODE.HEX;
             } else if (checkedId == R.id.rawRButton) {
-                console.setMode(ECU.MODE.RAW.name());
-                frontECU.setInterpreterMode(ECU.MODE.RAW);
+                lastChecked = ECU.MODE.RAW;
             }
+            frontECU.setInterpreterMode(lastChecked);
+            console.setMode(lastChecked.name());
         });
         asciiRadio.setChecked(true);
 
         clearConsoleButton.setOnClickListener(v -> console.clear());
 
         JSONToggle.setOnLongClickListener(v -> {
-            PasteAPI.getLastJSONPaste(frontECU::loadJSON);
+            PasteAPI.getLastJSONPaste(response -> {
+                boolean pasteAPILoad = frontECU.loadJSONString(response);
+                Toaster.showToast(pasteAPILoad ? "Loaded JSON from Paste API" : "Failed to load JSON from Paste API", pasteAPILoad ? Toaster.SUCCESS : Toaster.ERROR);
+            });
             return true;
         });
 
-        JSONToggle.setOnClickListener(v -> frontECU.loadJSON());
+        JSONToggle.setOnClickListener(v -> frontECU.requestJSONFile());
         frontECU.addStatusListener(jsonLoaded -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
         frontECU.setLogListener(console::post);
+        frontECU.setErrorListener((tag, msg) -> {
+            console.systemPost(tag, msg);
+            console.newError();
+        });
     }
 
 }

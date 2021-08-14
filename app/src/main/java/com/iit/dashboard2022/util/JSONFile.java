@@ -48,7 +48,7 @@ public class JSONFile {
         return null;
     }
 
-    public void open() {
+    public void requestJSONFile() {
         try {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("*/*");

@@ -2,7 +2,6 @@ package com.iit.dashboard2022.ECU;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +23,7 @@ public class ECU {
     ECUKeyMap ecuKeyMap;
     private final LogFileIO logFile;
     InterpretListener interpretListener;
+    ErrorListener errorListener;
     MODE interpreterMode = MODE.DISABLED;
     boolean fileLogging = true;
 
@@ -35,7 +35,11 @@ public class ECU {
     }
 
     public interface InterpretListener {
-        void run(String msg);
+        void newMessage(String msg);
+    }
+
+    public interface ErrorListener {
+        void newError(String tag, String msg);
     }
 
     public ECU(Activity activity) {
@@ -55,7 +59,7 @@ public class ECU {
             if (interpreterMode != MODE.DISABLED) {
                 String msg = processData(epoch, data);
                 if (interpretListener != null && msg.length() > 0) {
-                    interpretListener.run(msg);
+                    interpretListener.newMessage(msg);
                 }
             } else {
                 consumeData(epoch, data);
@@ -63,12 +67,16 @@ public class ECU {
         });
     }
 
-    public void loadJSON() {
-        ecuKeyMap.loadJSON();
+    public void requestJSONFile() {
+        ecuKeyMap.requestJSONFile();
     }
 
-    public boolean loadJSON(String jsonString) {
-        return ecuKeyMap.loadJSON(jsonString);
+    public boolean loadJSONFromSystem() {
+        return ecuKeyMap.loadJSONFromSystem();
+    }
+
+    public boolean loadJSONString(String jsonString) {
+        return ecuKeyMap.loadJSONString(jsonString);
     }
 
     public void addStatusListener(@NonNull ECUKeyMap.StatusListener statusListener) {
@@ -81,6 +89,10 @@ public class ECU {
 
     public void setLogListener(InterpretListener interpretListener) {
         this.interpretListener = interpretListener;
+    }
+
+    public void setErrorListener(ErrorListener errorListener) {
+        this.errorListener = errorListener;
     }
 
     public void setOnAttachListener(Runnable onAttachListener) {
@@ -151,7 +163,8 @@ public class ECU {
             try {
                 System.arraycopy(raw_data, i, data_block, 0, 8);
             } catch (ArrayIndexOutOfBoundsException e) {
-                Log.w(LOG_TAG, "Received cutoff array");
+                if (errorListener != null)
+                    errorListener.newError(LOG_TAG, "Received cutoff array");
                 continue;
             }
             updateData(data_block);
@@ -181,7 +194,8 @@ public class ECU {
                 try {
                     System.arraycopy(raw_data, i, data_block, 0, 8);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.w(LOG_TAG, "Received cutoff array");
+                    if (errorListener != null)
+                        errorListener.newError(LOG_TAG, "Received cutoff array");
                     continue;
                 }
                 updateData(data_block);
@@ -206,7 +220,8 @@ public class ECU {
                     output.append(formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value));
             }
             if (output.length() == 0) {
-                Log.w(LOG_TAG, "USB serial might be overwhelmed!");
+                if (errorListener != null)
+                    errorListener.newError(LOG_TAG, "USB serial might be overwhelmed!");
                 return output.toString();
             }
             return output.substring(0, output.length() - 1);

@@ -131,11 +131,18 @@ public class ECUKeyMap {
         return -1;
     }
 
-    public void loadJSON() {
-        jsonLoader.load();
+    public void requestJSONFile() {
+        jsonLoader.requestJSONFile();
     }
 
-    public boolean loadJSON(String jsonString) {
+    public boolean loadJSONFromSystem() {
+        String JSON_INPUT = jsonLoader.loadFromSystem();
+        if (JSON_INPUT != null)
+            return update(JSON_INPUT);
+        return false;
+    }
+
+    public boolean loadJSONString(String jsonString) {
         return update(jsonString);
     }
 
@@ -163,19 +170,14 @@ public class ECUKeyMap {
         return status;
     }
 
-    private boolean interpretJSON(String raw) {
-        String JSON_INPUT = raw;
-        if (JSON_INPUT == null) {
+    private boolean interpretJSON(String rawJSON) {
+        if (rawJSON == null) {
             if (loaded()) {
                 Toaster.showToast("JSON map unchanged", Toaster.INFO);
                 return true;
             }
-            jsonLoader.loadFromSystem();
-            JSON_INPUT = jsonLoader.pop();
-            if (JSON_INPUT == null) {
-                Toaster.showToast("No JSON map has been loaded", Toaster.WARNING, Toast.LENGTH_LONG);
-                return false;
-            }
+            Toaster.showToast("No JSON map has been loaded", Toaster.WARNING, Toast.LENGTH_LONG);
+            return false;
         }
 
         JSONArray json;
@@ -183,7 +185,7 @@ public class ECUKeyMap {
         HashMap<StrID, String> newStringLookup = new HashMap<>();
 
         try {
-            json = new JSONArray(JSON_INPUT);
+            json = new JSONArray(rawJSON);
 
             JSONObject entry = json.getJSONObject(0);
             Iterator<String> keys = entry.keys();
@@ -211,7 +213,7 @@ public class ECUKeyMap {
             Toaster.showToast("JSON map updated", Toaster.SUCCESS);
         else
             Toaster.showToast("Loaded JSON map", Toaster.INFO, Toast.LENGTH_LONG);
-        jsonLoader.saveJSONToSystem();
+        jsonLoader.saveToSystem(rawJSON);
         tagLookUp = newTagLookup;
         stringLookUp = newStringLookup;
         return true;
