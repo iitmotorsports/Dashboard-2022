@@ -9,6 +9,8 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
@@ -59,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
         );
 
         /* FINAL CALLS */
+
+        USBSerial usb = new USBSerial(this, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
+
+        });
+        usb.setErrorCallback(exception -> Snackbar.make(findViewById(R.id.mainConstraint), exception.toString(), Snackbar.LENGTH_SHORT).show());
 
     }
 
