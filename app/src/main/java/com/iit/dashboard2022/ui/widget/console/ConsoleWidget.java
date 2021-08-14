@@ -198,7 +198,10 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
 
     @Override
     public void testUI(float percent) {
-        post(UITester.rndStr((int) (percent * 50)));
+        if (percent > 0.5)
+            post(UITester.rndStr((int) (percent * 50)));
+        else
+            systemPost(UITester.rndStr((int) (percent * 10)), UITester.rndStr((int) (percent * 50)));
 
         if (percent == 0) {
             uiHandle.postDelayed(this::clear, 100);
@@ -218,6 +221,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     }
 
     private static final String systemPostFormat = "[SYSTEM] [%s] %s";
+
     public void systemPost(@NonNull String tag, @NonNull String msg) {
         rawQueue.add(String.format(Locale.US, systemPostFormat, tag, msg));
         textHandle.post(textLoad);
