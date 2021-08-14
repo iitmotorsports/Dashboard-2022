@@ -16,6 +16,7 @@ import com.iit.dashboard2022.ui.widget.SideRadio;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
+import com.iit.dashboard2022.util.PasteAPI;
 
 public class SidePanel extends ConstraintLayout {
     public final RadioGroup consoleRadioGroup;
@@ -64,9 +65,11 @@ public class SidePanel extends ConstraintLayout {
             if (isChecked) {
                 consoleAnim.reverse();
                 console.enable(true);
+                frontECU.setInterpreterMode(ECU.MODE.ASCII);
             } else {
                 consoleAnim.start();
                 console.enable(false);
+                frontECU.setInterpreterMode(ECU.MODE.DISABLED);
             }
         });
 
@@ -86,12 +89,13 @@ public class SidePanel extends ConstraintLayout {
 
         clearConsoleButton.setOnClickListener(v -> console.clear());
 
-        JSONToggle.setToggleMediator(button -> {
-            frontECU.loadJSON();
-            return false;
+        JSONToggle.setOnLongClickListener(v -> {
+            PasteAPI.getLastJSONPaste(frontECU::loadJSON);
+            return true;
         });
 
-        frontECU.addStatusListener(JSONToggle::setChecked);
+        JSONToggle.setOnClickListener(v -> frontECU.loadJSON());
+        frontECU.addStatusListener(jsonLoaded -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
         frontECU.setLogListener(console::post);
     }
 
