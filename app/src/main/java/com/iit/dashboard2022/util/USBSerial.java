@@ -1,4 +1,4 @@
-package com.iit.dashboard2022;
+package com.iit.dashboard2022.util;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
