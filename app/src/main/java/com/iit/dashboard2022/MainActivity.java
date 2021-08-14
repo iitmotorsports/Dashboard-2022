@@ -1,6 +1,5 @@
 package com.iit.dashboard2022;
 
-import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -16,8 +15,10 @@ import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
+import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
+import com.iit.dashboard2022.util.USBSerial;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupUI();
+
+        Toaster.setContext(this);
 
         /* PAGER */
 
