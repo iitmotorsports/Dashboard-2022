@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         USBSerial usb = new USBSerial(this, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
 
         });
+        usb.setAttachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Attached", Toast.LENGTH_SHORT).show()));
         usb.setDetachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Detached", Toast.LENGTH_SHORT).show()));
 
     }

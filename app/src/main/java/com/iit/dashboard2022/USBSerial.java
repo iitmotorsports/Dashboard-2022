@@ -40,9 +40,8 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
-    private boolean active;
     private UsbSerialPort port;
-    private Runnable detachCallback;
+    private Runnable detachCallback, attachCallback;
     private ErrorCallback errorCallback;
 
     public interface UsbReadCallback {
@@ -55,7 +54,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
 
     public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity, @NonNull UsbReadCallback readCallback) {
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-        deviceIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbManager.EXTRA_PERMISSION_GRANTED),PendingIntent.FLAG_IMMUTABLE);
+        deviceIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbManager.EXTRA_PERMISSION_GRANTED), PendingIntent.FLAG_IMMUTABLE);
         this.readCallback = readCallback;
 
         broadcastReceiver = new BroadcastReceiver() {
@@ -63,13 +62,13 @@ public class USBSerial implements SerialInputOutputManager.Listener {
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
                     case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                        if (!active)
-                            open();
+                        if (open() && attachCallback != null) {
+                            attachCallback.run();
+                        }
                         break;
-                    case UsbManager.ACTION_USB_DEVICE_DETACHED:
-                        if (detachCallback != null && active) {
+                    case UsbManager.ACTION_USB_DEVICE_DETACHED: // TODO: ensure the thing detached was the thing that last connected
+                        if (detachCallback != null) {
                             detachCallback.run();
-                            active = false;
                         }
                         break;
                 }
@@ -90,7 +89,6 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     }
 
     public boolean open() {
-        active = false;
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager);
         if (availableDrivers.isEmpty()) {
             return false;
@@ -106,7 +104,6 @@ public class USBSerial implements SerialInputOutputManager.Listener {
             port.open(connection);
             port.setParameters(baudRate, dataBits, stopBits, parity);
             new SerialInputOutputManager(port, this).start();
-            active = true;
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -126,6 +123,10 @@ public class USBSerial implements SerialInputOutputManager.Listener {
 
     public void setDetachCallback(Runnable detachCallback) {
         this.detachCallback = detachCallback;
+    }
+
+    public void setAttachCallback(Runnable attachCallback) {
+        this.attachCallback = attachCallback;
     }
 
     public void setErrorCallback(ErrorCallback errorCallback) {
