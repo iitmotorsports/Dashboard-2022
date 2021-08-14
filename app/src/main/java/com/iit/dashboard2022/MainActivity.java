@@ -15,6 +15,7 @@ import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
+import com.iit.dashboard2022.util.PasteAPI;
 import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
@@ -71,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         usb.setAttachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Attached", Toast.LENGTH_SHORT).show()));
         usb.setDetachCallback(() -> runOnUiThread(() -> Toast.makeText(this, "Detached", Toast.LENGTH_SHORT).show()));
 
+
+        PasteAPI.getLastJSONPaste(Toaster::showToast);
     }
 
     @Override
