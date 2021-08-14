@@ -3,6 +3,7 @@ package com.iit.dashboard2022.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,7 +111,7 @@ public class PasteAPI {
                 JSONObject jObject = new JSONObject(getResponse(listConn));
                 String id = jObject.getString("id");
 
-                Toaster.showToast("ID: " + id, Toaster.SUCCESS);
+                Toaster.showToast("ID: " + id, Toaster.SUCCESS, Toast.LENGTH_LONG);
 
                 listConn.disconnect();
 
