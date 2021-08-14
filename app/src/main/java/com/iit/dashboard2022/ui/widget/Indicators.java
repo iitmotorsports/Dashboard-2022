@@ -2,6 +2,7 @@ package com.iit.dashboard2022.ui.widget;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import com.iit.dashboard2022.ui.UITester;
 import java.util.Locale;
 
 public class Indicators extends RelativeLayout implements UITester.TestUI {
-    private static final Handler uiHandle = new Handler();
+    private static final Handler uiHandle = new Handler(Looper.getMainLooper());
 
     private final RadioButton lagRadio, faultRadio, waitRadio, chargeRadio;
     private final TextView lagTimer;

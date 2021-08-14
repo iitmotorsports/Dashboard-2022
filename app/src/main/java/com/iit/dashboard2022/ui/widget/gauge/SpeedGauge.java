@@ -214,7 +214,7 @@ public class SpeedGauge extends View {
 
         canvas.drawBitmap(bitmapBG, null, dst, null);
 
-        canvas.saveLayer(dst, null, Canvas.ALL_SAVE_FLAG);
+        canvas.saveLayer(dst, null, Canvas.ALL_SAVE_FLAG); // TODO: remove deprecated call
         canvas.drawBitmap(bitmaskDraw, null, dst, null);
         canvas.drawBitmap(bitmapMask, null, dst, maskPaint);
         canvas.restore();

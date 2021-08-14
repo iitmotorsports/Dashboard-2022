@@ -3,6 +3,7 @@ package com.iit.dashboard2022.ui.widget.console;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.View;
@@ -27,7 +28,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private static final ConcurrentLinkedQueue<CharSequence> rawQueue = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<CharSequence> outQueue = new ConcurrentLinkedQueue<>();
     private static final HandlerThread consoleThread = new HandlerThread("Console Thread");
-    private static final Handler uiHandle = new Handler();
+    private static final Handler uiHandle = new Handler(Looper.getMainLooper());
     private static Handler textHandle;
 
     private static final int UPDATE_TIME_MS = 100;

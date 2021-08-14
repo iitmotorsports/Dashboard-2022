@@ -1,6 +1,7 @@
 package com.iit.dashboard2022.ui;
 
 import android.os.Handler;
+import android.os.Looper;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 public class UITester {
     private static final Set<TestUI> UITests = new HashSet<>();
-    private static final Handler UIHandle = new Handler();
+    private static final Handler UIHandle = new Handler(Looper.getMainLooper());
     public static final Random Rnd = new Random();
     private static final int UI_UPDATE_MS = 20;
     private static final float UI_UPDATE_VAL = 0.005f;
