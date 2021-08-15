@@ -8,7 +8,7 @@
     android:background="@color/translucent_Black"
     android:theme="@style/Theme.Dashboard2022">
 
-    <com.iit.dashboard2022.ui.MaskableFrameLayout
+    <com.iit.dashboard2022.ui.widget.MaskableFrameLayout
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginBottom="64dp"
@@ -160,6 +160,6 @@
 
             </LinearLayout>
         </ScrollView>
-    </com.iit.dashboard2022.ui.MaskableFrameLayout>
+    </com.iit.dashboard2022.ui.widget.MaskableFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
