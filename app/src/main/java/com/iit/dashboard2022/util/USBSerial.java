@@ -36,31 +36,31 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     private final Context context;
     private final UsbManager usbManager;
     private final PendingIntent deviceIntent;
-    private final UsbReadCallback readCallback;
+    private final UsbDataListener usbDataListener;
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
     private boolean active;
     private UsbSerialPort port;
     private UsbAttachListener usbAttachListener;
-    private ErrorCallback errorCallback;
+    private ErrorListener errorListener;
 
     public interface UsbAttachListener {
         void run(boolean attached);
     }
 
-    public interface UsbReadCallback {
-        void onNewData(byte[] data);
+    public interface UsbDataListener {
+        void newUsbData(byte[] data);
     }
 
-    public interface ErrorCallback {
-        void run(Exception exception);
+    public interface ErrorListener {
+        void newError(Exception exception);
     }
 
-    public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity, @NonNull UsbReadCallback readCallback) {
+    public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity, @NonNull UsbDataListener usbDataListener) {
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         deviceIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbManager.EXTRA_PERMISSION_GRANTED), PendingIntent.FLAG_IMMUTABLE);
-        this.readCallback = readCallback;
+        this.usbDataListener = usbDataListener;
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -133,8 +133,8 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         this.usbAttachListener = usbAttachListener;
     }
 
-    public void setErrorCallback(ErrorCallback errorCallback) {
-        this.errorCallback = errorCallback;
+    public void setErrorListener(ErrorListener errorListener) {
+        this.errorListener = errorListener;
     }
 
     public boolean isOpen() {
@@ -158,13 +158,13 @@ public class USBSerial implements SerialInputOutputManager.Listener {
 
     @Override
     public void onNewData(byte[] data) {
-        readCallback.onNewData(data);
+        usbDataListener.newUsbData(data);
     }
 
     @Override
     public void onRunError(Exception e) {
-        if (errorCallback != null)
-            errorCallback.run(e);
+        if (errorListener != null)
+            errorListener.newError(e);
     }
 
 }
