@@ -150,7 +150,11 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
 
         textParams = new PrecomputedTextCompat.Params.Builder(text.getPaint()).build();
         consoleScroller.setScrollerStatusListener(enabled -> scrollToEndImage.setAlpha(enabled ? 1 : 0.5f));
-        scrollToEndImage.setOnClickListener(v -> consoleScroller.toggle());
+        scrollToEndImage.setOnClickListener(v -> {
+            consoleScroller.toggle();
+            if (consoleScroller.isEnabled())
+                consoleScroller.scroll();
+        });
 
         linesFormat = context.getString(R.string.console_line_format);
         errorFormat = context.getString(R.string.console_error_format);

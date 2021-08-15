@@ -30,6 +30,10 @@ public class ConsoleScroller extends ScrollView {
         }
     }
 
+    public boolean isEnabled(){
+        return enabled;
+    }
+
     public void toggle() {
         enable(!enabled);
     }
