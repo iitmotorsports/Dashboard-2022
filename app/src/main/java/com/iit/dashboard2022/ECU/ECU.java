@@ -156,16 +156,31 @@ public class ECU {
 
 
     /**
+     * Only update needed values and run callback
+     *
+     * @param data_block 8 byte data block
+     */
+    private void updateData(byte[] data_block) {
+        long[] IDs = interpretMsg(data_block);
+        long msgID = IDs[3];
+        ECUMsg.updateMessages(msgID, IDs[2]);
+    }
+
+    /**
      * Update requested values and run callback
      *
      * @param data_block 8 byte data block
-     * @return the message that was updated
+     * @return the formatted message that was received
      */
-    @Nullable
-    private ECUMsg updateData(byte[] data_block) {
+    private String updateFormattedData(long epoch, byte[] data_block) {
         long[] IDs = interpretMsg(data_block);
         long msgID = IDs[3];
-        return ECUMsg.updateMessages(msgID, IDs[2]);
+        ECUMsg msg = ECUMsg.updateMessages(msgID, IDs[2]);
+        if (msg == null) {
+            return formatMsg(epoch, ecuKeyMap.getTag((int) IDs[0]), ecuKeyMap.getStr((int) IDs[1]), IDs[2]);
+        } else {
+            return formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value);
+        }
     }
 
     /**
@@ -233,9 +248,7 @@ public class ECU {
                 }
 
                 logRawData(epoch, data_block);
-                ECUMsg msg = updateData(data_block);
-                if (msg != null)
-                    output.append(formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value));
+                output.append(updateFormattedData(epoch, data_block));
             }
             if (output.length() == 0) {
                 if (errorListener != null)

@@ -26,24 +26,8 @@ public class ECUKeyMap {
     private final List<StatusListener> statusListeners = new ArrayList<>();
     private final JSONLoader jsonLoader;
 
-    private HashMap<TagID, String> tagLookUp;
-    private HashMap<StrID, String> stringLookUp;
-
-    public static class TagID {
-        public final Integer val;
-
-        public TagID(int val) {
-            this.val = val;
-        }
-    }
-
-    public static class StrID {
-        public final Integer val;
-
-        public StrID(int val) {
-            this.val = val;
-        }
-    }
+    private HashMap<Integer, String> tagLookUp;
+    private HashMap<Integer, String> stringLookUp;
 
     public interface StatusListener {
         void run(boolean jsonLoaded);
@@ -87,19 +71,19 @@ public class ECUKeyMap {
         return null;
     }
 
-    public TagID getTagID(String stringTag) {
+    public Integer getTagID(String stringTag) {
         return getKeyByValue(tagLookUp, stringTag);
     }
 
-    public StrID getStrID(String stringMsg) {
+    public Integer getStrID(String stringMsg) {
         return getKeyByValue(stringLookUp, stringMsg);
     }
 
-    public String getTag(TagID tagID) {
+    public String getTag(Integer tagID) {
         return tagLookUp.get(tagID);
     }
 
-    public String getStr(StrID strID) {
+    public String getStr(Integer strID) {
         return stringLookUp.get(strID);
     }
 
@@ -115,14 +99,14 @@ public class ECUKeyMap {
             Toaster.showToast("JSON map has not been loaded, unable to process request", Toaster.WARNING);
             return -1;
         }
-        TagID tagID = getTagID(stringTag);
-        StrID strID = getStrID(stringMsg);
+        Integer tagID = getTagID(stringTag);
+        Integer strID = getStrID(stringMsg);
 
         if (tagID != null && strID != null) {
             ByteBuffer mapping = ByteBuffer.allocate(4);
             mapping.order(ByteOrder.LITTLE_ENDIAN);
-            mapping.putShort(tagID.val.shortValue());
-            mapping.putShort(strID.val.shortValue());
+            mapping.putShort(tagID.shortValue());
+            mapping.putShort(strID.shortValue());
             return mapping.getInt(0);
         } else {
             Toaster.showToast("Unable to match string " + stringTag + " " + stringMsg, Toaster.WARNING);
@@ -181,8 +165,8 @@ public class ECUKeyMap {
         }
 
         JSONArray json;
-        HashMap<TagID, String> newTagLookup = new HashMap<>();
-        HashMap<StrID, String> newStringLookup = new HashMap<>();
+        HashMap<Integer, String> newTagLookup = new HashMap<>();
+        HashMap<Integer, String> newStringLookup = new HashMap<>();
 
         try {
             json = new JSONArray(rawJSON);
@@ -192,7 +176,7 @@ public class ECUKeyMap {
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                newTagLookup.put(new TagID(entry.getInt(key)), key);
+                newTagLookup.put(entry.getInt(key), key);
             }
 
             entry = json.getJSONObject(1);
@@ -200,7 +184,7 @@ public class ECUKeyMap {
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                newStringLookup.put(new StrID(entry.getInt(key)), key);
+                newStringLookup.put(entry.getInt(key), key);
             }
 
         } catch (JSONException e) {
