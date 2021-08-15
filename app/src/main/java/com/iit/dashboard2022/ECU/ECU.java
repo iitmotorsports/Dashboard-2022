@@ -67,6 +67,18 @@ public class ECU {
         });
     }
 
+    public void open() {
+        serial.open();
+    }
+
+    public void close() {
+        serial.close();
+    }
+
+    public boolean isOpen() {
+        return serial.isOpen();
+    }
+
     public void requestJSONFile() {
         ecuKeyMap.requestJSONFile();
     }
@@ -93,16 +105,13 @@ public class ECU {
 
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
+        if (serial != null)
+            serial.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped"));
     }
 
-    public void setOnAttachListener(Runnable onAttachListener) {
+    public void setUsbAttachListener(USBSerial.UsbAttachListener UsbAttachListener) {
         if (serial != null)
-            serial.setAttachCallback(onAttachListener);
-    }
-
-    public void setOnDetachListener(Runnable onDetachListener) {
-        if (serial != null)
-            serial.setDetachCallback(onDetachListener);
+            serial.setUsbAttachListener(UsbAttachListener);
     }
 
     public void enableFileLogging(boolean enabled) {

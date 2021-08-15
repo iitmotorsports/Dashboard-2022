@@ -100,12 +100,22 @@ public class SidePanel extends ConstraintLayout {
         });
 
         JSONToggle.setOnClickListener(v -> frontECU.requestJSONFile());
+        JSONToggle.setToggleMediator(button -> false);
         frontECU.addStatusListener(jsonLoaded -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
         frontECU.setLogListener(console::post);
         frontECU.setErrorListener((tag, msg) -> {
             console.systemPost(tag, msg);
             console.newError();
         });
+        frontECU.setUsbAttachListener(attached -> connToggle.post(() -> connToggle.setChecked(attached)));
+        connToggle.setOnClickListener(v -> {
+            if (frontECU.isOpen()) {
+                frontECU.close();
+            } else {
+                frontECU.open();
+            }
+        });
+        connToggle.setToggleMediator(button -> false);
     }
 
 }
