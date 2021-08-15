@@ -26,7 +26,6 @@
     <string name="console_line_format">Lines: %04d/1000</string>
     <string name="console_error_format">Errors: %04d</string>
     <string name="console_status_format">Status: %-13s</string>
-    <string name="console_text_default">IIT SAE 2022</string>
     <string name="scroll_to_end">Scroll to end</string>
     <string name="indicators_lag_ms_format">%d ms</string>
     <string name="indicators_lag_s_format">%.3g s</string>
