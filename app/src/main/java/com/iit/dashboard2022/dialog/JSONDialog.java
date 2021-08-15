@@ -2,7 +2,6 @@ package com.iit.dashboard2022.dialog;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
