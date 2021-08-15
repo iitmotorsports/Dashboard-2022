@@ -79,6 +79,10 @@ public class ECU {
         return serial.isOpen();
     }
 
+    public boolean isAttached() {
+        return serial.isAttached();
+    }
+
     public void requestJSONFile() {
         ecuKeyMap.requestJSONFile();
     }

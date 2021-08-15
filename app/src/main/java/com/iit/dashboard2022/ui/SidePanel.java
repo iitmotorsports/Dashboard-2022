@@ -107,8 +107,16 @@ public class SidePanel extends ConstraintLayout {
             console.systemPost(tag, msg);
             console.newError();
         });
-        frontECU.setUsbAttachListener(attached -> console.systemPost(ECU.LOG_TAG, attached ? "Usb Attached" : "Usb Detached"));
-        frontECU.setUsbActiveListener(active -> connToggle.post(() -> connToggle.setChecked(active)));
+        frontECU.setUsbAttachListener(attached -> {
+            console.systemPost(ECU.LOG_TAG, attached ? "Usb Attached" : "Usb Detached");
+            if (!attached) {
+                console.setStatus(ConsoleWidget.Status.Disconnected);
+            }
+        });
+        frontECU.setUsbActiveListener(active -> {
+            connToggle.post(() -> connToggle.setChecked(active));
+            console.setStatus(active ? ConsoleWidget.Status.Connected : (frontECU.isAttached() ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
+        });
         connToggle.setOnClickListener(v -> {
             if (frontECU.isOpen()) {
                 frontECU.close();

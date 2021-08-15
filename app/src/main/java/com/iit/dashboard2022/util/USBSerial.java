@@ -40,7 +40,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
-    private boolean active;
+    private boolean active, attached;
     private UsbSerialPort port;
     private UsbActiveListener usbActiveListener;
     private UsbAttachListener usbAttachListener;
@@ -80,6 +80,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
                     case UsbManager.ACTION_USB_DEVICE_DETACHED: // TODO: ensure the thing detached was the thing that last connected
                         if (usbAttachListener != null) {
                             usbAttachListener.run(false);
+                            attached = false;
                         }
                         break;
                 }
@@ -130,6 +131,11 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         if (usbActiveListener != null)
             usbActiveListener.run(opened);
         active = opened;
+        if (opened && !attached){
+            attached = true;
+            if (usbAttachListener != null)
+                usbAttachListener.run(true);
+        }
         return opened;
     }
 
@@ -153,6 +159,10 @@ public class USBSerial implements SerialInputOutputManager.Listener {
 
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
+    }
+
+    public boolean isAttached() {
+        return attached;
     }
 
     public boolean isOpen() {

@@ -63,7 +63,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         }
     };
 
-    private final Runnable textLoad = () -> {
+    private final Runnable textLoad = () -> { // TODO: ensure queue is emptied after a final post
         String nextMsg = (String) rawQueue.poll();
         if (nextMsg == null)
             return;
@@ -109,7 +109,8 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     public enum Status {
         Disconnected(R.color.red),
         Connected(R.color.green),
-        Testing(R.color.blue);
+        Attached(R.color.blue),
+        Testing(R.color.backgroundText);
 
         @ColorRes
         final
