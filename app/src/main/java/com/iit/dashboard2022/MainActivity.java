@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         Toaster.setContext(this);
 
         /* PAGER */
-
         mainPager = new Pager(this);
 
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(0);
@@ -46,12 +45,10 @@ public class MainActivity extends AppCompatActivity {
         LiveData ldPage = (LiveData) mainPager.getPage(2);
 
         /* SIDE PANEL */
-
         SidePanel sidePanel = findViewById(R.id.sidePanel);
         sidePanel.attachConsole(this, findViewById(R.id.console), frontECU);
 
         /* SETTINGS BUTTON */
-
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
         TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
         sidePanelDrawerAnim.startWhenReady();
@@ -69,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         );
 
         /* FINAL CALLS */
-
         if (!frontECU.loadJSONFromSystem()) {
             Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
         } else if (frontECU.open()) {
