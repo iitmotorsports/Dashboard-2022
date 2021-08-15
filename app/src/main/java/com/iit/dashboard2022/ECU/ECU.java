@@ -123,6 +123,11 @@ public class ECU {
         serial.setUsbActiveListener(usbActiveListener);
     }
 
+    /**
+     * Set whether logging to a local file is enabled
+     *
+     * @param enabled Whether logging is enabled
+     */
     public void enableFileLogging(boolean enabled) {
         if (fileLogging != enabled) {
             fileLogging = enabled;
@@ -131,6 +136,12 @@ public class ECU {
         }
     }
 
+    /**
+     * Log a message's raw data, if possible
+     *
+     * @param epoch    Epoch when message was sent
+     * @param msgBlock The message byte array
+     */
     private void logRawData(long epoch, byte[] msgBlock) {
         if (fileLogging) {
             logFile.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(epoch).array());
@@ -167,8 +178,25 @@ public class ECU {
     }
 
     /**
-     * Update requested values and run callback
+     * Generate a formatted string to be passed to interpretListener
      *
+     * @param epoch     Epoch when message was sent
+     * @param tagString The message's tag
+     * @param msgString The message's string
+     * @param number    The message's value
+     * @return Formatted message string
+     */
+    private static String formatMsg(long epoch, String tagString, String msgString, long number) {
+        if (tagString == null || msgString == null)
+            return "";
+        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(new Date(epoch)) + ' ' : "";
+        return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
+    }
+
+    /**
+     * Update requested values, run callback, and generate a formatted string from message
+     *
+     * @param epoch      Epoch when message was sent
      * @param data_block 8 byte data block
      * @return the formatted message that was received
      */
@@ -188,6 +216,7 @@ public class ECU {
      * <p>
      * Should be faster than processData, but does not output anything
      *
+     * @param epoch    Epoch when message was sent
      * @param raw_data received byte array
      */
     private void consumeData(long epoch, byte[] raw_data) {
@@ -205,16 +234,10 @@ public class ECU {
         }
     }
 
-    private static String formatMsg(long epoch, String tagString, String msgString, long number) {
-        if (tagString == null || msgString == null)
-            return "";
-        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(new Date(epoch)) + ' ' : "";
-        return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
-    }
-
     /**
      * Both Consume and interpret raw data that has been received
      *
+     * @param epoch    Epoch when message was sent
      * @param raw_data received byte array
      * @return The interpreted string of the data
      */
