@@ -40,9 +40,14 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
+    private boolean active;
     private UsbSerialPort port;
-    private Runnable detachCallback, attachCallback;
+    private UsbAttachListener usbAttachListener;
     private ErrorCallback errorCallback;
+
+    public interface UsbAttachListener {
+        void run(boolean attached);
+    }
 
     public interface UsbReadCallback {
         void onNewData(byte[] data);
@@ -62,13 +67,16 @@ public class USBSerial implements SerialInputOutputManager.Listener {
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
                     case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                        if (open() && attachCallback != null) {
-                            attachCallback.run();
+                        if (open()) {
+                            if (usbAttachListener != null)
+                                usbAttachListener.run(true);
+                            active = true;
                         }
                         break;
                     case UsbManager.ACTION_USB_DEVICE_DETACHED: // TODO: ensure the thing detached was the thing that last connected
-                        if (detachCallback != null) {
-                            detachCallback.run();
+                        if (usbAttachListener != null) {
+                            usbAttachListener.run(false);
+                            active = false;
                         }
                         break;
                 }
@@ -121,12 +129,8 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         }
     }
 
-    public void setDetachCallback(Runnable detachCallback) {
-        this.detachCallback = detachCallback;
-    }
-
-    public void setAttachCallback(Runnable attachCallback) {
-        this.attachCallback = attachCallback;
+    public void setUsbAttachListener(UsbAttachListener usbAttachListener) {
+        this.usbAttachListener = usbAttachListener;
     }
 
     public void setErrorCallback(ErrorCallback errorCallback) {
@@ -134,7 +138,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     }
 
     public boolean isOpen() {
-        return port != null && port.isOpen();
+        return port != null && active;
     }
 
     public void write(byte[] buffer) {
