@@ -3,9 +3,11 @@ package com.iit.dashboard2022;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (!frontECU.loadJSONFromSystem()) {
             Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
+        } else if (frontECU.open()) {
+            Toaster.showToast("ECU Connected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         }
     }
 
