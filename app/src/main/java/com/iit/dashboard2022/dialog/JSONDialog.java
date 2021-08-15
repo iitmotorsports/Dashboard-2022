@@ -39,7 +39,10 @@ public class JSONDialog {
         });
 
 //        scanBtn.setOnClickListener(v -> stream.updateQRJson());
-        findBtn.setOnClickListener(v -> frontECU.requestJSONFile());
+        findBtn.setOnClickListener(v -> {
+            frontECU.requestJSONFile();
+            dialog.dismiss();
+        });
         delBtn.setOnClickListener(v -> frontECU.clear());
 
     }
