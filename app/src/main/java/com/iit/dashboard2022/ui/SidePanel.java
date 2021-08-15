@@ -107,7 +107,8 @@ public class SidePanel extends ConstraintLayout {
             console.systemPost(tag, msg);
             console.newError();
         });
-        frontECU.setUsbAttachListener(attached -> connToggle.post(() -> connToggle.setChecked(attached)));
+        frontECU.setUsbAttachListener(attached -> console.systemPost(ECU.LOG_TAG, attached ? "Usb Attached" : "Usb Detached"));
+        frontECU.setUsbActiveListener(active -> connToggle.post(() -> connToggle.setChecked(active)));
         connToggle.setOnClickListener(v -> {
             if (frontECU.isOpen()) {
                 frontECU.close();

@@ -17,7 +17,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class ECU {
-    private final String LOG_TAG = "ECU";
+    public static final String LOG_TAG = "ECU";
 
     USBSerial serial;
     ECUKeyMap ecuKeyMap;
@@ -67,8 +67,8 @@ public class ECU {
         });
     }
 
-    public void open() {
-        serial.open();
+    public boolean open() {
+        return serial.open();
     }
 
     public void close() {
@@ -112,6 +112,11 @@ public class ECU {
     public void setUsbAttachListener(USBSerial.UsbAttachListener UsbAttachListener) {
         if (serial != null)
             serial.setUsbAttachListener(UsbAttachListener);
+    }
+
+    public void setUsbActiveListener(USBSerial.UsbActiveListener usbActiveListener) {
+        if (serial != null)
+            serial.setUsbActiveListener(usbActiveListener);
     }
 
     public void enableFileLogging(boolean enabled) {
