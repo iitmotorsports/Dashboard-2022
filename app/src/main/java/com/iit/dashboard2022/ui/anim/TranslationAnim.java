@@ -13,7 +13,7 @@ public class TranslationAnim {
 
     private final boolean autoSize, direction;
     private float posDX = 0;
-    private boolean startWhenRdy = false;
+    private boolean startWhenRdy = false, reloadingAutoSize = false;
     private Runnable onInitializedListener;
     private ObjectAnimator translator;
 
@@ -41,27 +41,50 @@ public class TranslationAnim {
         setup(view, axis, from, to, interpolator);
     }
 
-    // FIXME: Sometimes, if there is lag on opening the app, the wrong size is recorded if the lag causes the orientation to be wrong
+    View view;
+    boolean axis;
+    float from, to;
+    Interpolator interpolator;
+    boolean state;
+    ViewTreeObserver.OnGlobalLayoutListener autoSizeListener;
+
     private void setup(View view, boolean axis, float from, float to, Interpolator interpolator) {
+        this.view = view;
+        this.axis = axis;
+        this.from = from;
+        this.to = to;
+        this.interpolator = interpolator;
+        state = direction;
         if (autoSize) {
-            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            autoSizeListener = new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    int to = axis ? view.getMeasuredWidth() : view.getMeasuredHeight();
-                    init(view, axis, from, to * (direction ? -1 : 1), interpolator);
+                    autoSizeInit(view, axis, from, interpolator);
                     if (onInitializedListener != null)
                         onInitializedListener.run();
-                    if (startWhenRdy) {
+                    if (!reloadingAutoSize && startWhenRdy) {
                         start();
+                    } else {
+                        if (state == ANIM_FORWARD)
+                            start();
+                        else if (state == ANIM_BACKWARD)
+                            reverse();
                     }
+                    reloadingAutoSize = false;
                 }
-            });
+            };
+            view.getViewTreeObserver().addOnGlobalLayoutListener(autoSizeListener);
         } else {
             init(view, axis, from, to, interpolator);
             if (onInitializedListener != null)
                 onInitializedListener.run();
         }
+    }
+
+    private void autoSizeInit(View view, boolean axis, float from, Interpolator interpolator) {
+        float to = axis ? view.getMeasuredWidth() : view.getMeasuredHeight();
+        init(view, axis, from, to * (direction ? -1 : 1), interpolator);
     }
 
     private void init(View view, boolean axis, float from, float to, Interpolator interpolator) {
@@ -75,6 +98,14 @@ public class TranslationAnim {
         this.onInitializedListener = callback;
     }
 
+    public void reloadAutoSize() {
+        if (autoSizeListener != null && !reloadingAutoSize) {
+            startWhenRdy = true;
+            reloadingAutoSize = true;
+            view.getViewTreeObserver().addOnGlobalLayoutListener(autoSizeListener);
+        }
+    }
+
     public void startWhenReady() {
         if (!startWhenRdy) {
             startWhenRdy = true;
@@ -86,12 +117,14 @@ public class TranslationAnim {
     public float start() {
         if (translator != null)
             translator.start();
+        state = ANIM_FORWARD;
         return posDX;
     }
 
     public float reverse() {
         if (translator != null)
             translator.reverse();
+        state = ANIM_BACKWARD;
         return -posDX;
     }
 
@@ -99,8 +132,4 @@ public class TranslationAnim {
         return posDX;
     }
 
-    public void cancel() {
-        if (translator != null)
-            translator.cancel();
-    }
 }

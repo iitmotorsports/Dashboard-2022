@@ -22,6 +22,7 @@ import com.iit.dashboard2022.util.Toaster;
 
 public class MainActivity extends AppCompatActivity {
 
+    SidePanel sidePanel;
     Pager mainPager;
     ECU frontECU;
 
@@ -43,18 +44,17 @@ public class MainActivity extends AppCompatActivity {
         LiveData ldPage = (LiveData) mainPager.getPage(2);
 
         /* SIDE PANEL */
-        SidePanel sidePanel = findViewById(R.id.sidePanel);
+        sidePanel = findViewById(R.id.sidePanel);
         sidePanel.attachConsole(this, findViewById(R.id.console), frontECU);
 
         /* SETTINGS BUTTON */
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
-        TranslationAnim sidePanelDrawerAnim = new TranslationAnim(sidePanel, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
-        sidePanelDrawerAnim.startWhenReady();
+
         mainPager.setOnTouchCallback(settingsBtn::performClick);
         settingsBtn.setCallbacks(
-                () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.reverse()),
+                () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.reverse()),
                 () -> {
-                    mainPager.setMargin(Pager.RIGHT, (int) -sidePanelDrawerAnim.start());
+                    mainPager.setMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.start());
                     sidePanel.consoleSwitch.setActionedCheck(false);
                 },
                 locked -> {
@@ -69,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
         } else if (frontECU.open()) {
             Toaster.showToast("ECU Connected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         }
+    }
+
+    @Override
+    public void onWindowAttributesChanged(WindowManager.LayoutParams params) {
+        super.onWindowAttributesChanged(params);
+        if (sidePanel != null)
+            sidePanel.onLayoutChange();
     }
 
     @Override

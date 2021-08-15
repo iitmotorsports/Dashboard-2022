@@ -26,6 +26,9 @@ public class SidePanel extends ConstraintLayout {
     public final SideToggle chargeToggle, JSONToggle, connToggle;
     public final SideButton clearConsoleButton, canMsgButton, canEchoButton;
 
+    public TranslationAnim consoleAnim, sidePanelDrawerAnim;
+    public ECU.MODE lastChecked = ECU.MODE.ASCII;
+
     public SidePanel(Context context) {
         this(context, null);
     }
@@ -56,12 +59,13 @@ public class SidePanel extends ConstraintLayout {
         canEchoButton = findViewById(R.id.canEchoButton);
 
         uiTestSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> UITester.enable(isChecked));
+
+        sidePanelDrawerAnim = new TranslationAnim(this, TranslationAnim.X_AXIS, TranslationAnim.ANIM_BACKWARD);
+        sidePanelDrawerAnim.startWhenReady();
     }
 
-    ECU.MODE lastChecked = ECU.MODE.ASCII;
-
     public void attachConsole(Activity activity, ConsoleWidget console, ECU frontECU) {
-        TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
+        consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
         consoleAnim.startWhenReady();
 
         consoleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -119,6 +123,11 @@ public class SidePanel extends ConstraintLayout {
             }
         });
         connToggle.setToggleMediator(button -> false);
+    }
+
+    public void onLayoutChange() {
+        consoleAnim.reloadAutoSize();
+        sidePanelDrawerAnim.reloadAutoSize();
     }
 
 }
