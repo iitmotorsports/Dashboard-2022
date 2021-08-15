@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ui.widget;
+package com.iit.dashboard2022.ui.layout;
 
 import android.content.Context;
 import android.content.res.Resources;
