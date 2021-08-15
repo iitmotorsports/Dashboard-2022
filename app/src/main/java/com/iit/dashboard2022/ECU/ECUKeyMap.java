@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.ECU;
 
-import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,7 +33,7 @@ public class ECUKeyMap {
     }
 
     public ECUKeyMap(@NonNull AppCompatActivity activity) {
-        this.jsonLoader = new JSONLoader(activity, "ECU_JSON_MAP.json");
+        this.jsonLoader = new JSONLoader(activity, "ECU_JSON_MAP.json", this::update);
     }
 
     public void addStatusListener(@NonNull StatusListener statusListener) {
@@ -144,10 +143,6 @@ public class ECUKeyMap {
         return status;
     }
 
-    public boolean update() {
-        return update(jsonLoader.pop());
-    }
-
     public boolean update(String raw) {
         boolean status = interpretJSON(raw);
         notifyStatusListeners(status);
@@ -203,8 +198,4 @@ public class ECUKeyMap {
         return true;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        jsonLoader.onActivityResult(requestCode, resultCode, resultData);
-        update();
-    }
 }

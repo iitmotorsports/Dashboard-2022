@@ -1,7 +1,5 @@
 package com.iit.dashboard2022.ECU;
 
-import android.content.Intent;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -284,7 +282,4 @@ public class ECU {
         }
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        ecuKeyMap.onActivityResult(requestCode, resultCode, resultData);
-    }
 }

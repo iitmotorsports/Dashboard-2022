@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.util;
 
-import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,36 +16,21 @@ public class JSONLoader {
     private final String fileName;
     private final JSONFile jsonFile;
     private final AppCompatActivity activity;
-    private String loadedJsonStr;
 
-    public JSONLoader(@NonNull AppCompatActivity activity, @NonNull String fileName) {
+    public JSONLoader(@NonNull AppCompatActivity activity, @NonNull String fileName, @NonNull JSONFile.JSONListener jsonListener) {
         this.activity = activity;
         this.fileName = fileName;
-        jsonFile = new JSONFile(activity);
+        jsonFile = new JSONFile(activity, jsonListener);
     }
 
     public void requestJSONFile() {
         jsonFile.requestJSONFile();
     }
 
-    public String getString() {
-        return loadedJsonStr;
-    }
-
-    public String pop() {
-        String fnl = loadedJsonStr;
-        loadedJsonStr = null;
-        return fnl;
-    }
-
     public boolean clear() {
         File path = activity.getFilesDir();
         File file = new File(path, fileName);
-        boolean deleted = file.delete();
-        if (deleted) {
-            loadedJsonStr = null;
-        }
-        return deleted;
+        return file.delete();
     }
 
     public void saveToSystem(@NonNull String jsonStr) {
@@ -83,9 +67,4 @@ public class JSONLoader {
         }
         return null;
     }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        loadedJsonStr = jsonFile.onActivityResult(requestCode, resultCode, resultData);
-    }
-
 }
