@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         /* SIDE PANEL */
 
         SidePanel sidePanel = findViewById(R.id.sidePanel);
-        sidePanel.attachConsole(findViewById(R.id.console), frontECU);
+        sidePanel.attachConsole(this, findViewById(R.id.console), frontECU);
 
         /* SETTINGS BUTTON */
 

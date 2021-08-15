@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.ByteSplit;
@@ -67,6 +66,10 @@ public class ECU {
         });
     }
 
+    public boolean clear() {
+        return ecuKeyMap.clear();
+    }
+
     public boolean open() {
         return serial.open();
     }
@@ -109,18 +112,15 @@ public class ECU {
 
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
-        if (serial != null)
-            serial.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped"));
+        serial.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped"));
     }
 
     public void setUsbAttachListener(USBSerial.UsbAttachListener UsbAttachListener) {
-        if (serial != null)
-            serial.setUsbAttachListener(UsbAttachListener);
+        serial.setUsbAttachListener(UsbAttachListener);
     }
 
     public void setUsbActiveListener(USBSerial.UsbActiveListener usbActiveListener) {
-        if (serial != null)
-            serial.setUsbActiveListener(usbActiveListener);
+        serial.setUsbActiveListener(usbActiveListener);
     }
 
     public void enableFileLogging(boolean enabled) {

@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -10,14 +11,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.iit.dashboard2022.ECU.ECU;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SideButton;
 import com.iit.dashboard2022.ui.widget.SideRadio;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
-import com.iit.dashboard2022.util.PasteAPI;
-import com.iit.dashboard2022.util.Toaster;
 
 public class SidePanel extends ConstraintLayout {
     public final RadioGroup consoleRadioGroup;
@@ -60,7 +60,7 @@ public class SidePanel extends ConstraintLayout {
 
     ECU.MODE lastChecked = ECU.MODE.ASCII;
 
-    public void attachConsole(ConsoleWidget console, ECU frontECU) {
+    public void attachConsole(Activity activity, ConsoleWidget console, ECU frontECU) {
         TranslationAnim consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
         consoleAnim.startWhenReady();
 
@@ -91,15 +91,9 @@ public class SidePanel extends ConstraintLayout {
 
         clearConsoleButton.setOnClickListener(v -> console.clear());
 
-        JSONToggle.setOnLongClickListener(v -> {
-            PasteAPI.getLastJSONPaste(response -> {
-                boolean pasteAPILoad = frontECU.loadJSONString(response);
-                Toaster.showToast(pasteAPILoad ? "Loaded JSON from Paste API" : "Failed to load JSON from Paste API", pasteAPILoad ? Toaster.SUCCESS : Toaster.ERROR);
-            });
-            return true;
-        });
+        JSONDialog dialog = new JSONDialog(activity, frontECU);
 
-        JSONToggle.setOnClickListener(v -> frontECU.requestJSONFile());
+        JSONToggle.setOnClickListener(v -> dialog.showDialog());
         JSONToggle.setToggleMediator(button -> false);
         frontECU.addStatusListener(jsonLoaded -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
         frontECU.setLogListener(console::post);

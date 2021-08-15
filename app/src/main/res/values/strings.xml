@@ -34,4 +34,9 @@
     <string name="waiting">Waiting</string>
     <string name="mph">MPH</string>
     <string name="console_mode_format">Mode: %-5s</string>
+    <string name="update_json_map">Update JSON Map</string>
+    <string name="download">Download</string>
+    <string name="scan_qrgif">Scan QRGif</string>
+    <string name="find_json_file">Find JSON File</string>
+    <string name="delete">Delete</string>
 </resources>
