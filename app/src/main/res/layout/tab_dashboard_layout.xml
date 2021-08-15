@@ -23,11 +23,10 @@
 
     </com.iit.dashboard2022.ui.widget.StartLight>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/speedometer"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -35,10 +34,8 @@
         android:paddingEnd="4dp"
         android:text="@string/_0"
         android:textAlignment="center"
-        app:autoSizeMaxTextSize="256sp"
-        app:autoSizeMinTextSize="48sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="@+id/GaugeLayout"
+        android:textSize="200sp"
+        app:layout_constraintBottom_toTopOf="@+id/indicators"
         app:layout_constraintEnd_toEndOf="@+id/GaugeLayout"
         app:layout_constraintStart_toStartOf="@+id/GaugeLayout"
         app:layout_constraintTop_toTopOf="parent" />
