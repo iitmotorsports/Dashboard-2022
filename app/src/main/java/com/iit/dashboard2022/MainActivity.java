@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+    @Override // TODO: use registerForActivityResult?
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         frontECU.onActivityResult(requestCode, resultCode, data);
