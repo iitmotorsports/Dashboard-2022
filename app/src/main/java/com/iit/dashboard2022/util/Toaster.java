@@ -112,9 +112,7 @@ public class Toaster {
             return;
 
         int xOffset = 0;
-        if (gravity == Gravity.START) {
-            xOffset = -32;
-        } else if (gravity == Gravity.END) {
+        if (gravity == Gravity.START || gravity == Gravity.END) {
             xOffset = 32;
         }
 
