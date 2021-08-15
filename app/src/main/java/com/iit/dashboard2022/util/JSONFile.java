@@ -1,9 +1,10 @@
 package com.iit.dashboard2022.util;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,9 +14,9 @@ import java.util.Objects;
 
 public class JSONFile {
     public static final int PICK_JSON_FILE = 22;
-    private final Activity activity;
+    private final AppCompatActivity activity;
 
-    public JSONFile(Activity activity) {
+    public JSONFile(AppCompatActivity activity) {
         this.activity = activity;
     }
 
@@ -34,7 +35,7 @@ public class JSONFile {
 
     // TODO: anyway of getting file without needed activity to explicitly return result?
     public String onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        if (requestCode == PICK_JSON_FILE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == PICK_JSON_FILE && resultCode == AppCompatActivity.RESULT_OK) {
             if (resultData != null) {
                 Uri uri = resultData.getData();
                 try {

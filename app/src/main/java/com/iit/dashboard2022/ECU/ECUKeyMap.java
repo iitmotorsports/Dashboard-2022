@@ -1,10 +1,10 @@
 package com.iit.dashboard2022.ECU;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.iit.dashboard2022.util.JSONLoader;
 import com.iit.dashboard2022.util.Toaster;
@@ -33,7 +33,7 @@ public class ECUKeyMap {
         void run(boolean jsonLoaded);
     }
 
-    public ECUKeyMap(@NonNull Activity activity) {
+    public ECUKeyMap(@NonNull AppCompatActivity activity) {
         this.jsonLoader = new JSONLoader(activity, "ECU_JSON_MAP.json");
     }
 

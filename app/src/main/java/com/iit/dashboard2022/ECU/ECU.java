@@ -1,9 +1,9 @@
 package com.iit.dashboard2022.ECU;
 
-import android.app.Activity;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.ByteSplit;
@@ -41,7 +41,7 @@ public class ECU {
         void newError(String tag, String msg);
     }
 
-    public ECU(Activity activity) {
+    public ECU(AppCompatActivity activity) {
         logFile = new LogFileIO(activity);
         ecuKeyMap = new ECUKeyMap(activity);
 

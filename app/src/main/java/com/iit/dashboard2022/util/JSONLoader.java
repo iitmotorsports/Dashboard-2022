@@ -1,10 +1,10 @@
 package com.iit.dashboard2022.util;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,10 +16,10 @@ import java.io.PrintWriter;
 public class JSONLoader {
     private final String fileName;
     private final JSONFile jsonFile;
-    private final Activity activity;
+    private final AppCompatActivity activity;
     private String loadedJsonStr;
 
-    public JSONLoader(@NonNull Activity activity, @NonNull String fileName) {
+    public JSONLoader(@NonNull AppCompatActivity activity, @NonNull String fileName) {
         this.activity = activity;
         this.fileName = fileName;
         jsonFile = new JSONFile(activity);
