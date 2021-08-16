@@ -103,7 +103,7 @@ public class Toaster {
     }
 
     public static void showToast(String msg, @ToasterStatus int status, @ToasterDuration int duration) {
-        showToast(msg, duration, status, Gravity.CENTER);
+        showToast(msg, status, duration, Gravity.CENTER);
     }
 
     public static void showToast(String msg, @ToasterStatus int status, @ToasterDuration int duration, @ToasterGravity int gravity) {
