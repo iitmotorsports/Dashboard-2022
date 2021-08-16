@@ -7,25 +7,30 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
+import androidx.constraintlayout.solver.state.Dimension;
 
 import com.iit.dashboard2022.R;
 
 public class LinearGauge extends View implements GaugeUpdater.Gauge {
     private RectF dst;
-    private final Paint paint, bgPaint;
+    private final Paint paint, bgPaint, textPaint;
     private final Rect mainBar;
 
-    private boolean flipped;
+    private String text;
+    private final boolean flipped;
     private final int[] colors;
 
     private float percent = 0, oldPercent = 0;
     private int width = 0, height = 0;
+    private float textOffset = 0;
 
     public LinearGauge(Context context) {
         this(context, null);
@@ -46,7 +51,10 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
                 R.attr.colorHigh,
                 R.attr.colorLow,
                 R.attr.colorMid,
-                R.attr.flipped
+                R.attr.flipped,
+                android.R.attr.textColor,
+                android.R.attr.textSize,
+                android.R.attr.text,
         };
 
         final TypedArray a = context.obtainStyledAttributes(attrs, set);
@@ -57,7 +65,10 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         int colorHigh = a.getColor(i++, Color.GREEN);
         int colorLow = a.getColor(i++, Color.WHITE);
         int colorMid = a.getColor(i++, 0);
-        flipped = a.getBoolean(i, false);
+        flipped = a.getBoolean(i++, false);
+        int textColor = a.getColor(i++, Color.WHITE);
+        float textSize = a.getDimensionPixelSize(i++, 24);
+        text = (String) a.getText(i);
 
         if (colorMid != 0) {
             colors = new int[]{
@@ -79,6 +90,13 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         bgPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         bgPaint.setColor(BGColor);
 
+        textPaint = new Paint();
+        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setColor(textColor);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(textSize);
+
         GaugeUpdater.add(this);
     }
 
@@ -90,6 +108,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
     private void setSize(int x, int y) {
         width = x;
         height = y;
+        textOffset = height - height * 0.125f;
 
         dst = new RectF(0, 0, x, y);
     }
@@ -97,6 +116,8 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
     protected void onDraw(Canvas canvas) {
         canvas.drawRect(dst, bgPaint);
         canvas.drawRect(mainBar, paint);
+        if (text != null)
+            canvas.drawText(text, textOffset / 8, textOffset, textPaint);
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
@@ -143,6 +164,10 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
             int sector = (int) (colors.length * ratio);
             return colors[sector];
         }
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override

@@ -119,9 +119,12 @@
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
             android:id="@+id/powerGauge"
             android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_margin="8dp"
             android:backgroundTint="@color/backgroundText"
+            android:text="BattPower"
+            android:textColor="@color/background"
+            android:textSize="14sp"
             app:colorHigh="@color/blue"
             app:colorLow="@color/foregroundText"
             app:flipped="true" />
@@ -134,12 +137,14 @@
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
             android:id="@+id/batteryGauge"
             android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_margin="8dp"
             android:backgroundTint="@color/backgroundText"
+            android:textColor="@color/background"
             app:colorHigh="@color/green"
             app:colorLow="@color/red"
             app:colorMid="@color/yellow" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
