@@ -18,6 +18,7 @@ import androidx.core.text.PrecomputedTextCompat;
 
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
+import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -41,6 +42,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private final ImageView scrollToEndImage;
     private final String linesFormat, errorFormat, statusFormat, modeFormat;
     private final TextView text, consoleLines, consoleError, consoleStatus, consoleMode;
+    private final TranslationAnim consoleAnim;
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
 
@@ -140,6 +142,9 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.widget_console, this);
 
+        consoleAnim = new TranslationAnim(this, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
+        consoleAnim.startWhenReady();
+
         scrollToEndImage = findViewById(R.id.scrollToEndImage);
         consoleScroller = findViewById(R.id.consoleScroller);
         text = findViewById(R.id.consoleText);
@@ -168,6 +173,10 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
 
         initHandle();
         UITester.addTest(this);
+    }
+
+    public TranslationAnim getAnimator() {
+        return consoleAnim;
     }
 
     public void setMode(String mode) {

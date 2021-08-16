@@ -2,6 +2,8 @@ package com.iit.dashboard2022;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowInsets;
@@ -36,11 +38,13 @@ public class MainActivity extends AppCompatActivity {
 
         /* INITIALIZE */
         frontECU = new ECU(this);
-        Toaster.setContext(this);
-
-        /* PAGER */
         mainPager = new Pager(this);
+        Toaster.setContext(this);
+        new Handler(Looper.myLooper()).postDelayed(this::postUpdate, 1000);
+    }
 
+    private void postUpdate() {
+        /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(0);
         Logs logPage = (Logs) mainPager.getPage(1);
         LiveData ldPage = (LiveData) mainPager.getPage(2);

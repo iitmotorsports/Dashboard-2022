@@ -65,9 +65,7 @@ public class SidePanel extends ConstraintLayout {
     }
 
     public void attachConsole(Activity activity, ConsoleWidget console, ECU frontECU) {
-        consoleAnim = new TranslationAnim(console, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
-        consoleAnim.startWhenReady();
-
+        consoleAnim = console.getAnimator();
         consoleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 consoleAnim.reverse();

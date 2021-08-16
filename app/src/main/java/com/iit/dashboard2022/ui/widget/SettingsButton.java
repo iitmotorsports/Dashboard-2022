@@ -12,11 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.page.Pager;
-import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
-import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton {
     private static final int ANIM_DEGREES = 60;
@@ -25,6 +22,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
     private ColorAnim spinColorAnim, lockedColorAnim;
     private LockCallback lockCallback;
     private Runnable callbackOpen, callbackClose;
+    private boolean callbackSet = false;
 
     private boolean isOpen = false;
     private boolean locked = false;
@@ -51,6 +49,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         this.lockCallback = lockCallback;
         this.callbackOpen = callbackOpen;
         this.callbackClose = callbackClose;
+        callbackSet = true;
     }
 
     public void init() {
@@ -132,6 +131,8 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
     @Override
     public boolean performClick() {
+        if (!callbackSet)
+            return false;
         if (locked) {
             startAnimation(jiggle);
             return false;
@@ -151,6 +152,8 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
     @Override
     public boolean performLongClick() {
+        if (!callbackSet)
+            return false;
         lock(!locked);
         return true;
     }
