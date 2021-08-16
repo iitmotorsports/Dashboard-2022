@@ -11,12 +11,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.iit.dashboard2022.ECU.ECU;
+import com.iit.dashboard2022.ECU.ECUUpdater;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
-import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 import com.iit.dashboard2022.util.Toaster;
 
@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
     SidePanel sidePanel;
     Pager mainPager;
+
+    ECUUpdater ecuUpdater;
     ECU frontECU;
 
     @Override
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         );
 
         /* FINAL CALLS */
+        ecuUpdater = new ECUUpdater(cdPage, sidePanel);
+
         if (!frontECU.loadJSONFromSystem()) {
             Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
         } else if (frontECU.open()) {
