@@ -21,9 +21,10 @@ import com.iit.dashboard2022.R;
 public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     private Bitmap bitmapBG, bitmapMask, bitmaskDraw;
     private Canvas canvasMask;
-    private Paint paint, maskPaint;
     private RectF dst;
-    private Rect mask;
+    private final Paint paint, maskPaint;
+    private final Rect mask;
+
     private int height = 0;
     private int bars = 0;
     private int currentWidth = 0;
@@ -31,9 +32,9 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     private float percent = 0, oldPercent = 0;
 
     /* User Managed */
-    private float taper;
-    private float minWidth;
-    private int BGColor;
+    private final float taper;
+    private final float minWidth;
+    private final int BGColor;
     private final int[] colorWheel = new int[3];
 
     public SpeedGauge(Context context) {
@@ -46,10 +47,6 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
 
     public SpeedGauge(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
-    }
-
-    void init(Context context, AttributeSet attrs) {
         GaugeUpdater.start();
 
         mask = new Rect();
