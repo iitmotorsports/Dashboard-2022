@@ -101,4 +101,15 @@
             app:colorMid="@color/yellow" />
     </LinearLayout>
 
+    <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
+        android:id="@+id/batteryGauge"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/backgroundText"
+        app:colorHigh="@color/green"
+        app:colorLow="@color/red"
+        app:colorMid="@color/yellow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

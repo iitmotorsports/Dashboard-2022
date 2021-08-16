@@ -13,11 +13,13 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.StartLight;
+import com.iit.dashboard2022.ui.widget.gauge.LinearGauge;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
 
 public class CarDashboard extends Page implements UITester.TestUI {
     private StartLight dashStartLight;
     private SpeedGauge sgL, sgR;
+    private LinearGauge batteryGauge;
     private TextView speedometer;
     private Indicators indicators;
 
@@ -27,6 +29,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.tab_dashboard_layout, container, false);
         sgL = rootView.findViewById(R.id.speedGaugeLeft);
         sgR = rootView.findViewById(R.id.speedGaugeRight);
+        batteryGauge = rootView.findViewById(R.id.batteryGauge);
         speedometer = rootView.findViewById(R.id.speedometer);
         indicators = rootView.findViewById(R.id.indicators);
         dashStartLight = rootView.findViewById(R.id.dashStartLight);
@@ -43,6 +46,10 @@ public class CarDashboard extends Page implements UITester.TestUI {
     public void setSpeedPercentage(float percent) {
         sgL.setPercent(percent);
         sgR.setPercent(percent);
+    }
+
+    public void setBatteryPercentage(float percent){
+        batteryGauge.setPercent(percent);
     }
 
     public void setSpeedValue(long mph) {
@@ -74,6 +81,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     @Override
     public void testUI(float percent) {
         setSpeedPercentage(percent);
+        setBatteryPercentage(percent);
         setSpeedValue((int) (300 * percent));
     }
 }

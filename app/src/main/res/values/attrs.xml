@@ -49,4 +49,9 @@
         <attr name="colorHigh" format="color"/>
         <attr name="taper" format="float"/>
     </declare-styleable>
+    <declare-styleable name="LinearGauge">
+        <attr name="colorLow"/>
+        <attr name="colorMid"/>
+        <attr name="colorHigh"/>
+    </declare-styleable>
 </resources>
