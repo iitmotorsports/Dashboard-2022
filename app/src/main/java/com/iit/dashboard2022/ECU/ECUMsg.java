@@ -99,8 +99,8 @@ public class ECUMsg {
     private static StateListener stateListener;
     private static ECUKeyMap keyMap;
 
-    public enum STATE {
-        Initializing("Initialize State"),
+    public enum STATE { // Use actual name, brackets are added on when matching to actual state name
+        Initializing("Teensy Initialize"),
         PreCharge("PreCharge State"),
         Idle("Idle State"),
         Charging("Charging State"),
@@ -161,7 +161,7 @@ public class ECUMsg {
         }
         stateMap.clear();
         for (STATE state : STATE.values()) {
-            Integer tagID = keyMap.getTagID(state.title);
+            Integer tagID = keyMap.getTagID(String.format("[%s]", state.title));
             if (tagID == null) {
                 Toaster.showToast("Failed to set State Enum for " + state.title, Toaster.WARNING);
             } else {
