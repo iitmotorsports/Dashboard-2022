@@ -11,11 +11,15 @@ import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
+import com.iit.dashboard2022.ui.widget.Indicators;
+import com.iit.dashboard2022.ui.widget.StartLight;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
 
 public class CarDashboard extends Page implements UITester.TestUI {
+    private StartLight dashStartLight;
     private SpeedGauge sgL, sgR;
     private TextView speedometer;
+    private Indicators indicators;
 
     @Nullable
     @Override
@@ -24,6 +28,8 @@ public class CarDashboard extends Page implements UITester.TestUI {
         sgL = rootView.findViewById(R.id.speedGaugeLeft);
         sgR = rootView.findViewById(R.id.speedGaugeRight);
         speedometer = rootView.findViewById(R.id.speedometer);
+        indicators = rootView.findViewById(R.id.indicators);
+        dashStartLight = rootView.findViewById(R.id.dashStartLight);
         UITester.addTest(this);
         return rootView;
     }
@@ -34,13 +40,29 @@ public class CarDashboard extends Page implements UITester.TestUI {
         super.onDestroy();
     }
 
-    public void setPercentage(float percent) {
+    public void setSpeedPercentage(float percent) {
         sgL.setPercent(percent);
         sgR.setPercent(percent);
     }
 
-    public void setSpeed(int mph) {
+    public void setSpeedValue(long mph) {
         speedometer.setText(String.valueOf(mph));
+    }
+
+    public void setIndicator(Indicators.Indicator indicator, boolean enabled) {
+        indicators.setIndicator(indicator, enabled);
+    }
+
+    public void setLagTime(long ms) {
+        indicators.setLagTime(ms);
+    }
+
+    public void setStartLight(boolean isOn) {
+        dashStartLight.setLight(isOn);
+    }
+
+    public void setState(CharSequence state) {
+        dashStartLight.setState(state);
     }
 
     @NonNull
@@ -51,7 +73,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
 
     @Override
     public void testUI(float percent) {
-        setPercentage(percent);
-        setSpeed((int) (300 * percent));
+        setSpeedPercentage(percent);
+        setSpeedValue((int) (300 * percent));
     }
 }
