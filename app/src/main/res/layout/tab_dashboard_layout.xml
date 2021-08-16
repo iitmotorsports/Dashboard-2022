@@ -22,10 +22,10 @@
 
     </com.iit.dashboard2022.ui.widget.StartLight>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/speedometer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -33,10 +33,12 @@
         android:paddingEnd="4dp"
         android:text="@string/_0"
         android:textAlignment="center"
-        android:textSize="200sp"
+        app:autoSizeMaxTextSize="250sp"
+        app:autoSizeMinTextSize="50sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/indicators"
-        app:layout_constraintEnd_toEndOf="@+id/GaugeLayout"
-        app:layout_constraintStart_toStartOf="@+id/GaugeLayout"
+        app:layout_constraintEnd_toEndOf="@+id/speedGauges"
+        app:layout_constraintStart_toStartOf="@+id/speedGauges"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.8" />
 
@@ -48,13 +50,13 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/GaugeLayout"
-        app:layout_constraintStart_toStartOf="@+id/GaugeLayout"
-        app:layout_constraintTop_toTopOf="@+id/GaugeLayout" />
+        app:layout_constraintEnd_toEndOf="@+id/speedGauges"
+        app:layout_constraintStart_toStartOf="@+id/speedGauges"
+        app:layout_constraintTop_toTopOf="@+id/speedGauges" />
 
     <LinearLayout
-        android:id="@+id/GaugeLayout"
-        android:layout_width="wrap_content"
+        android:id="@+id/speedGauges"
+        android:layout_width="match_parent"
         android:layout_height="72dp"
         android:clipChildren="false"
         android:clipToPadding="false"
@@ -101,15 +103,43 @@
             app:colorMid="@color/yellow" />
     </LinearLayout>
 
-    <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
-        android:id="@+id/batteryGauge"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/backgroundText"
-        app:colorHigh="@color/green"
-        app:colorLow="@color/red"
-        app:colorMid="@color/yellow"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/speedGauges">
+
+        <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
+            android:id="@+id/powerGauge"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/backgroundText"
+            app:colorHigh="@color/blue"
+            app:colorLow="@color/foregroundText"
+            app:flipped="true" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
+            android:id="@+id/batteryGauge"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/backgroundText"
+            app:colorHigh="@color/green"
+            app:colorLow="@color/red"
+            app:colorMid="@color/yellow" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

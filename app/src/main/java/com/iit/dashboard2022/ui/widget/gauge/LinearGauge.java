@@ -19,8 +19,9 @@ import com.iit.dashboard2022.R;
 public class LinearGauge extends View implements GaugeUpdater.Gauge {
     private RectF dst;
     private final Paint paint, bgPaint;
-    private final Rect mask;
+    private final Rect mainBar;
 
+    private boolean flipped;
     private final int[] colors;
 
     private float percent = 0, oldPercent = 0;
@@ -38,13 +39,14 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         super(context, attrs, defStyleAttr);
         GaugeUpdater.start();
 
-        mask = new Rect();
+        mainBar = new Rect();
 
         int[] set = {
                 android.R.attr.backgroundTint,
                 R.attr.colorHigh,
                 R.attr.colorLow,
-                R.attr.colorMid
+                R.attr.colorMid,
+                R.attr.flipped
         };
 
         final TypedArray a = context.obtainStyledAttributes(attrs, set);
@@ -54,7 +56,8 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         int BGColor = a.getColor(i++, Color.BLACK);
         int colorHigh = a.getColor(i++, Color.GREEN);
         int colorLow = a.getColor(i++, Color.WHITE);
-        int colorMid = a.getColor(i, 0);
+        int colorMid = a.getColor(i++, 0);
+        flipped = a.getBoolean(i, false);
 
         if (colorMid != 0) {
             colors = new int[]{
@@ -93,7 +96,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     protected void onDraw(Canvas canvas) {
         canvas.drawRect(dst, bgPaint);
-        canvas.drawRect(mask, paint);
+        canvas.drawRect(mainBar, paint);
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
@@ -154,7 +157,10 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
             oldPercent += dv;
             oldPercent = GaugeUpdater.truncate(oldPercent);
 
-            mask.set(0, 0, (int) (width * percent), height);
+            if (flipped)
+                mainBar.set((int) (width * (1.0f - percent)), 0, width, height);
+            else
+                mainBar.set(0, 0, (int) (width * percent), height);
             paint.setColor(getColor(percent, true));
             postInvalidate();
         }
