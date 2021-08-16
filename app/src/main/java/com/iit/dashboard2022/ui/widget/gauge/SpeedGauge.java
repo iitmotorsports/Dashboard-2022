@@ -10,9 +10,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -20,38 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
 
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.anim.AnimSetting;
 
-import java.util.HashSet;
-import java.util.Set;
-
-public class SpeedGauge extends View {
-    private static final Set<SpeedGauge> gauges = new HashSet<>();
-    private static final HandlerThread consoleThread = new HandlerThread("Speed Gauge Thread");
-    private static Handler gaugeHandler;
-
-    private static final int SETTLE_TIME_MS = 500;
-    private static int settleTime = 0;
-    private static long lastTime = 0;
-
-    private static final Runnable updateGauge = new Runnable() {
-        @Override
-        public void run() {
-            if (lastTime + AnimSetting.ANIM_UPDATE_MILLIS > SystemClock.uptimeMillis())
-                return;
-
-            for (SpeedGauge sg : gauges) {
-                sg.update();
-            }
-
-            lastTime = SystemClock.uptimeMillis();
-
-            settleTime += AnimSetting.ANIM_UPDATE_MILLIS;
-            if (settleTime < SETTLE_TIME_MS)
-                gaugeHandler.postDelayed(this, AnimSetting.ANIM_UPDATE_MILLIS);
-        }
-    };
-
+public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     private Bitmap bitmapBG, bitmapMask, bitmaskDraw;
     private Canvas canvasMask;
     private Paint paint, maskPaint;
@@ -83,10 +50,7 @@ public class SpeedGauge extends View {
     }
 
     void init(Context context, AttributeSet attrs) {
-        if (gaugeHandler == null) {
-            consoleThread.start();
-            gaugeHandler = new Handler(consoleThread.getLooper());
-        }
+        GaugeUpdater.start();
 
         mask = new Rect();
         paint = new Paint();
@@ -118,12 +82,12 @@ public class SpeedGauge extends View {
         taper = a.getFloat(i, 2.5f);
 
         a.recycle();
-        gauges.add(this);
+        GaugeUpdater.add(this);
     }
 
     @Override
     protected void finalize() {
-        gauges.remove(this);
+        GaugeUpdater.remove(this);
     }
 
     int getColor(int barCount) {
@@ -234,11 +198,10 @@ public class SpeedGauge extends View {
 
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
-        settleTime = 0;
-        gaugeHandler.post(updateGauge);
+        GaugeUpdater.post();
     }
 
-    private void update() {
+    public void update() {
         if (oldPercent != percent) {
             float dv = truncate((percent - oldPercent) * DV(percent));
             oldPercent += dv;
