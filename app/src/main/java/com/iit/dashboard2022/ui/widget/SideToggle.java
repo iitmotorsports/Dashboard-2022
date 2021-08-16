@@ -3,6 +3,7 @@ package com.iit.dashboard2022.ui.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 
 import androidx.annotation.StyleableRes;
 
@@ -33,7 +34,7 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
                 R.attr.textOnSize,
         };
 
-        final TypedArray a = context.obtainStyledAttributes(attrs, set);
+        final TypedArray a = context.obtainStyledAttributes(attrs, set, R.attr.sideToggleButtonStyle, R.style.SideToggleButton);
 
         @StyleableRes
         int i = 0;
@@ -42,14 +43,14 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
         mTextOff = a.getText(i++);
         super.setChecked(a.getBoolean(i++, false));
         CharSequence mText = a.getText(i++);
-        float textSize = a.getDimension(i++, 12.0f * getResources().getDisplayMetrics().scaledDensity);
-        mTextOffSize = a.getDimension(i++, textSize) / getResources().getDisplayMetrics().scaledDensity;
-        mTextOnSize = a.getDimension(i, textSize) / getResources().getDisplayMetrics().scaledDensity;
+        int textSize = a.getDimensionPixelSize(i++, 24);
+        mTextOffSize = a.getDimensionPixelSize(i++, textSize);
+        mTextOnSize = a.getDimensionPixelSize(i, textSize);
 
         if (mText != null)
             setText(mText);
 
-        setTextSize(textSize);
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
         a.recycle();
         syncCheckState();
@@ -71,13 +72,13 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
         if (checked) {
             if (mTextOn != null) {
                 setText(mTextOn);
-                setTextSize(mTextOnSize);
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextOnSize);
             }
             colorAnim.start();
         } else {
             if (mTextOff != null) {
                 setText(mTextOff);
-                setTextSize(mTextOffSize);
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextOffSize);
             }
             colorAnim.reverse();
         }

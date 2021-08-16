@@ -45,7 +45,7 @@ public class SideSwitch extends RelativeLayout implements ActionableCheck {
             @StyleableRes
             int i = 0;
 
-            TypedArray a = context.obtainStyledAttributes(attrs, set);
+            TypedArray a = context.obtainStyledAttributes(attrs, set, R.attr.sideSwitchWidgetStyle, R.style.SideSwitch);
             CharSequence t = a.getText(i++);
             boolean enableText = a.getBoolean(i, true);
             a.recycle();
