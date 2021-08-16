@@ -38,15 +38,17 @@
         app:layout_constraintBottom_toTopOf="@+id/indicators"
         app:layout_constraintEnd_toEndOf="@+id/GaugeLayout"
         app:layout_constraintStart_toStartOf="@+id/GaugeLayout"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8" />
 
     <com.iit.dashboard2022.ui.widget.Indicators
         android:id="@+id/indicators"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="16dp"
         android:clipChildren="false"
         android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/GaugeLayout"
         app:layout_constraintStart_toStartOf="@+id/GaugeLayout"
         app:layout_constraintTop_toTopOf="@+id/GaugeLayout" />
@@ -58,7 +60,7 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,6 +71,7 @@
             android:id="@+id/speedGaugeLeft"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/backgroundText"
             android:scaleX="-1"
@@ -91,6 +94,7 @@
             android:id="@+id/speedGaugeRight"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/backgroundText"
             app:colorHigh="@color/red"
