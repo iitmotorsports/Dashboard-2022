@@ -20,7 +20,7 @@
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:minWidth">5dp</item>
         <item name="android:minHeight">5dp</item>
-        <item name="android:windowBackground">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/background</item>
         <!-- Widget Styles -->
         <item name="sideButtonStyle">@style/SideButton</item>
         <item name="sideToggleButtonStyle">@style/SideToggleButton</item>
