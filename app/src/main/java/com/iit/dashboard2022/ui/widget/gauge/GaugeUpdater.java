@@ -59,4 +59,11 @@ public class GaugeUpdater {
     public interface Gauge {
         void update();
     }
+
+    public static float DV(float x) {
+        return (float) Math.max((0.5 - (Math.pow(x, 2)) / 8), 0.01f);
+    }
+    public static float truncate(float val) {
+        return ((int) Math.ceil(val * 1000)) / 1000.0f;
+    }
 }

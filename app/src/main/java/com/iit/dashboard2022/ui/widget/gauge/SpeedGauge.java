@@ -145,10 +145,6 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         }
     }
 
-    private float DV(float x) {
-        return (float) Math.max((0.5 - (Math.pow(x, 2)) / 8), 0.01f);
-    }
-
     private int getCount(float percent) {
         return (int) Math.ceil((bars + 2) * percent);
     }
@@ -202,10 +198,6 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         drawBars(x, y);
     }
 
-    private float truncate(float val) {
-        return ((int) Math.ceil(val * 1000)) / 1000.0f;
-    }
-
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
         GaugeUpdater.post();
@@ -213,9 +205,9 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
 
     public void update() {
         if (oldPercent != percent) {
-            float dv = truncate((percent - oldPercent) * DV(percent));
+            float dv = GaugeUpdater.truncate((percent - oldPercent) * GaugeUpdater.DV(percent));
             oldPercent += dv;
-            oldPercent = truncate(oldPercent);
+            oldPercent = GaugeUpdater.truncate(oldPercent);
 
             mask.set(0, 0, getMaskWidth(oldPercent), height);
             postInvalidate();
