@@ -123,6 +123,7 @@ public class SidePanel extends ConstraintLayout {
             }
         });
         connToggle.setToggleMediator(button -> false);
+        chargeToggle.setToggleMediator(button -> false);
     }
 
     public void onLayoutChange() {
