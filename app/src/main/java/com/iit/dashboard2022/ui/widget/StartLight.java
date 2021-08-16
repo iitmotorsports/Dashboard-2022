@@ -40,7 +40,7 @@ public class StartLight extends LinearLayout implements UITester.TestUI {
         UITester.addTest(this);
     }
 
-    public void light(boolean isOn) {
+    public void setLight(boolean isOn) {
         startLight.setButtonTintList(isOn ? colorOn : colorOff);
     }
 
@@ -56,7 +56,7 @@ public class StartLight extends LinearLayout implements UITester.TestUI {
 
     @Override
     public void testUI(float percent) {
-        light(percent % 0.2 > 0.1f);
+        setLight(percent % 0.2 > 0.1f);
         if (percent == 0)
             setState(defaultText);
         else
