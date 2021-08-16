@@ -98,6 +98,8 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             return colorWheel[0];
     }
 
+    private int[] maskWidths;
+
     void drawBars(int x, int y) {
         bitmapBG = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
         bitmaskDraw = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
@@ -135,22 +137,29 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             draw = !draw;
             count--;
         }
+
+        maskWidths = new int[getCount(1.0f) + 1];
+
+        for (int i = 0; i < maskWidths.length; i++) {
+            maskWidths[i] = maskWidth(i);
+        }
     }
 
     private float DV(float x) {
         return (float) Math.max((0.5 - (Math.pow(x, 2)) / 8), 0.01f);
     }
 
-    private int maskWidth(float percent) { // TODO: memoize
-        int count = (int) Math.ceil((bars + 2) * percent);
+    private int getCount(float percent) {
+        return (int) Math.ceil((bars + 2) * percent);
+    }
 
+    private int maskWidth(int count) {
         int xPos = 0;
         boolean draw = true;
         float varX = incX / taper;
 
         int seq = 0, seqX = 0;
 
-        // TODO: remove need for while loop to get mask width when drawing
         while (count > 0) {
             if (draw) {
                 varX -= incX / (taper * 8.0f);
@@ -169,6 +178,12 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             seq++;
         }
         return (int) (seqX - (minWidth / 2));
+    }
+
+    private int getMaskWidth(float percent) {
+        if (maskWidths != null)
+            return maskWidths[getCount(percent)];
+        return 0;
     }
 
 
@@ -202,7 +217,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             oldPercent += dv;
             oldPercent = truncate(oldPercent);
 
-            mask.set(0, 0, maskWidth(oldPercent), height);
+            mask.set(0, 0, getMaskWidth(oldPercent), height);
             postInvalidate();
         }
     }
