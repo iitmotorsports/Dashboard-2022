@@ -191,7 +191,7 @@ public class ECUKeyMap {
         if (loaded())
             Toaster.showToast("JSON map updated", Toaster.SUCCESS);
         else
-            Toaster.showToast("Loaded JSON map", Toaster.INFO, Toast.LENGTH_LONG);
+            Toaster.showToast("Loaded JSON map", Toaster.INFO, Toast.LENGTH_SHORT);
         jsonLoader.saveToSystem(rawJSON);
         tagLookUp = newTagLookup;
         stringLookUp = newStringLookup;
