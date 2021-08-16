@@ -19,15 +19,14 @@ import androidx.annotation.StyleableRes;
 import com.iit.dashboard2022.R;
 
 public class SpeedGauge extends View implements GaugeUpdater.Gauge {
-    private Bitmap bitmapBG, bitmapMask, bitmaskDraw;
-    private Canvas canvasMask;
+    private Bitmap bitmapBG, bitmaskDraw, bitmaskBuffer;
+    private Canvas canvasBuffer;
     private RectF dst;
-    private final Paint paint, maskPaint;
+    private final Paint paint, maskPaint, dstOver;
     private final Rect mask;
 
     private int height = 0;
     private int bars = 0;
-    private int currentWidth = 0;
     private float incX = 1;
     private float percent = 0, oldPercent = 0;
 
@@ -50,13 +49,16 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         GaugeUpdater.start();
 
         mask = new Rect();
+
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
+        dstOver = new Paint();
+        dstOver.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
+
         maskPaint = new Paint();
-        maskPaint.setColor(Color.WHITE);
-        maskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
         maskPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        maskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 
         int[] set = {
                 android.R.attr.backgroundTint,
@@ -98,10 +100,11 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
 
     void drawBars(int x, int y) {
         bitmapBG = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
-        Canvas canvasBG = new Canvas(bitmapBG);
-        bitmapMask = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
-        canvasMask = new Canvas(bitmapMask);
         bitmaskDraw = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+        bitmaskBuffer = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+
+        canvasBuffer = new Canvas(bitmaskBuffer);
+        Canvas canvasBG = new Canvas(bitmapBG);
         Canvas canvasDraw = new Canvas(bitmaskDraw);
 
         bars = (int) ((x / 8f) / getResources().getDisplayMetrics().scaledDensity);
@@ -138,7 +141,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         return (float) Math.max((0.5 - (Math.pow(x, 2)) / 8), 0.01f);
     }
 
-    private int maskWidth(float percent) {
+    private int maskWidth(float percent) { // TODO: memoize
         int count = (int) Math.ceil((bars + 2) * percent);
 
         int xPos = 0;
@@ -168,17 +171,12 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         return (int) (seqX - (minWidth / 2));
     }
 
+
     protected void onDraw(Canvas canvas) {
-        mask.set(0, 0, currentWidth, height);
-        canvasMask.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        canvasMask.drawRect(mask, paint);
-
-        canvas.drawBitmap(bitmapBG, null, dst, null);
-
-        canvas.saveLayer(dst, null, Canvas.ALL_SAVE_FLAG); // TODO: remove deprecated call
-        canvas.drawBitmap(bitmaskDraw, null, dst, null);
-        canvas.drawBitmap(bitmapMask, null, dst, maskPaint);
-        canvas.restore();
+        canvasBuffer.drawBitmap(bitmapBG, null, dst, null);
+        canvasBuffer.drawRect(mask, maskPaint);
+        canvasBuffer.drawBitmap(bitmaskDraw, null, dst, dstOver);
+        canvas.drawBitmap(bitmaskBuffer, null, dst, null);
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
@@ -203,7 +201,8 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             float dv = truncate((percent - oldPercent) * DV(percent));
             oldPercent += dv;
             oldPercent = truncate(oldPercent);
-            this.currentWidth = maskWidth(oldPercent);
+
+            mask.set(0, 0, maskWidth(oldPercent), height);
             postInvalidate();
         }
     }
