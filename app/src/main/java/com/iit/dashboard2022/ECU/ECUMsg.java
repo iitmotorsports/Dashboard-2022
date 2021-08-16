@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.util.ByteSplit;
+import com.iit.dashboard2022.util.Toaster;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -90,10 +91,34 @@ public class ECUMsg {
     public static final int Lag = 18;
     public static final int Beat = 19;
     public static final int StartLight = 20;
+    public static final int State = 21; // State is special, exclude from available MsgID
 
     private static final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
-    private static final ECUMsg[] messages = new ECUMsg[21];
+    private static final HashMap<Long, STATE> stateMap = new HashMap<>();
+    private static final ECUMsg[] messages = new ECUMsg[22];
+    private static StateListener stateListener;
     private static ECUKeyMap keyMap;
+
+    public enum STATE {
+        Initializing("Initialize State"),
+        PreCharge("PreCharge State"),
+        Idle("Idle State"),
+        Charging("Charging State"),
+        Button("Button State"),
+        Driving("Driving Mode State"),
+        Fault("Fault State");
+
+        String title;
+
+        STATE(String title) {
+            this.title = title;
+        }
+
+    }
+
+    public interface StateListener {
+        void onStateChanged(STATE state);
+    }
 
     public static void loadMessages(@NonNull ECUKeyMap ecuKeyMap) {
         keyMap = ecuKeyMap;
@@ -118,12 +143,30 @@ public class ECUMsg {
         messages[Lag] = new ECUMsg("[HeartBeat]", "[WARN]  Heartbeat is taking too long", UNSIGNED);
         messages[Beat] = new ECUMsg("[HeartBeat]", "[ LOG ] Beat", UNSIGNED);
         messages[StartLight] = new ECUMsg("[Front Teensy]", "[ LOG ] Start Light", UNSIGNED);
+        messages[State] = new ECUMsg("[Front Teensy]", "[ LOG ] Current State", UNSIGNED);
+        messages[State].setMessageListener(val -> {
+            if (stateListener != null)
+                stateListener.onStateChanged(stateMap.get(val));
+        });
+    }
+
+    public static void setGlobalStateListener(StateListener globalStateListener) {
+        stateListener = globalStateListener;
     }
 
     public static void loadMessageKeys() {
         messageMap.clear();
         for (ECUMsg msg : messages) {
             msg.load();
+        }
+        stateMap.clear();
+        for (STATE state : STATE.values()) {
+            Integer tagID = keyMap.getTagID(state.title);
+            if (tagID == null) {
+                Toaster.showToast("Failed to set State Enum for " + state.title, Toaster.WARNING);
+            } else {
+                stateMap.put(Long.valueOf(tagID), state);
+            }
         }
     }
 
@@ -148,9 +191,9 @@ public class ECUMsg {
     private final int dataType;
     public final String stringTag, stringMsg;
 
-    private MessageListener messageListener;
+    public MessageListener messageListener;
     @UpdateMethod
-    private int updateMethod;
+    private int updateMethod = ON_VALUE_CHANGE;
     public long value = 0;
 
     public interface MessageListener {
@@ -185,9 +228,6 @@ public class ECUMsg {
 
         if (messageListener != null)
             switch (updateMethod) {
-                case ON_RECEIVE:
-                    messageListener.run(val);
-                    break;
                 case ON_VALUE_CHANGE:
                     if (prevValue != value)
                         messageListener.run(val);
@@ -199,11 +239,15 @@ public class ECUMsg {
                 case ON_VALUE_INCREASE:
                     if (prevValue < value)
                         messageListener.run(val);
+                case ON_RECEIVE:
+                    messageListener.run(val);
+                    break;
             }
     }
 
-    public void setUpdateMethod(@UpdateMethod int updateMethod) {
+    public ECUMsg setUpdateMethod(@UpdateMethod int updateMethod) {
         this.updateMethod = updateMethod;
+        return this;
     }
 
     public void setMessageListener(MessageListener messageListener) {
