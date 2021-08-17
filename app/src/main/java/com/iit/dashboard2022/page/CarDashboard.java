@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ecu.ECUMsg;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.StartLight;
@@ -34,6 +35,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
         speedometer = rootView.findViewById(R.id.speedometer);
         indicators = rootView.findViewById(R.id.indicators);
         dashStartLight = rootView.findViewById(R.id.dashStartLight);
+        reset();
         UITester.addTest(this);
         return rootView;
     }
@@ -49,11 +51,11 @@ public class CarDashboard extends Page implements UITester.TestUI {
         sgR.setPercent(percent);
     }
 
-    public void setBatteryPercentage(float percent){
+    public void setBatteryPercentage(float percent) {
         batteryGauge.setPercent(percent);
     }
 
-    public void setPowerPercentage(float percent){
+    public void setPowerPercentage(float percent) {
         powerGauge.setPercent(percent);
     }
 
@@ -75,6 +77,21 @@ public class CarDashboard extends Page implements UITester.TestUI {
 
     public void setState(CharSequence state) {
         dashStartLight.setState(state);
+    }
+
+    public void reset() {
+        dashStartLight.postDelayed(() -> {
+            setSpeedPercentage(0);
+            setBatteryPercentage(0);
+            setPowerPercentage(0);
+            setSpeedValue(0);
+            setLagTime(0);
+            for (Indicators.Indicator indicator : Indicators.Indicator.values()) {
+                setIndicator(indicator, false);
+            }
+            setStartLight(false);
+            setState(ECUMsg.STATE.Initializing.toString());
+        }, 20);
     }
 
     @NonNull

@@ -9,9 +9,10 @@ import android.widget.RadioGroup;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
+import com.iit.dashboard2022.ecu.ECU;
+import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SideButton;
 import com.iit.dashboard2022.ui.widget.SideRadio;
@@ -65,7 +66,7 @@ public class SidePanel extends ConstraintLayout {
         sidePanelDrawerAnim.startWhenReady();
     }
 
-    public void attachConsole(Activity activity, ConsoleWidget console, ECU frontECU) {
+    public void attach(Activity activity, ConsoleWidget console, CarDashboard dashboard, ECU frontECU) {
         consoleAnim = console.getAnimator();
         consoleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -113,6 +114,9 @@ public class SidePanel extends ConstraintLayout {
         frontECU.setUsbActiveListener(active -> {
             connToggle.post(() -> connToggle.setChecked(active));
             console.setStatus(active ? ConsoleWidget.Status.Connected : (frontECU.isAttached() ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
+            if (!active) {
+                dashboard.reset();
+            }
         });
         connToggle.setOnClickListener(v -> {
             if (frontECU.isOpen()) {
