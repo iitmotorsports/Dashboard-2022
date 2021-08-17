@@ -45,12 +45,12 @@ public class ECU {
 
         ecuKeyMap.addStatusListener(jsonLoaded -> {
             if (jsonLoaded) {
-                ECUMsg.loadMessageKeys();
+                ECUMsgHandler.loadMessageKeys();
                 logFile.newLog();
             }
         });
 
-        ECUMsg.loadMessages(ecuKeyMap);
+        ECUMsgHandler.loadMessages(ecuKeyMap);
         serial = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
             long epoch = System.nanoTime();
             if (interpreterMode != MODE.DISABLED) {
@@ -172,7 +172,7 @@ public class ECU {
     private void updateData(byte[] data_block) {
         long[] IDs = interpretMsg(data_block);
         long msgID = IDs[3];
-        ECUMsg.updateMessages(msgID, IDs[2]);
+        ECUMsgHandler.updateMessages(msgID, IDs[2]);
     }
 
     /**
@@ -201,7 +201,7 @@ public class ECU {
     private String updateFormattedData(long epoch, byte[] data_block) {
         long[] IDs = interpretMsg(data_block);
         long msgID = IDs[3];
-        ECUMsg msg = ECUMsg.updateMessages(msgID, IDs[2]);
+        ECUMsg msg = ECUMsgHandler.updateMessages(msgID, IDs[2]);
         if (msg == null) {
             return formatMsg(epoch, ecuKeyMap.getTag((int) IDs[0]), ecuKeyMap.getStr((int) IDs[1]), IDs[2]);
         } else {

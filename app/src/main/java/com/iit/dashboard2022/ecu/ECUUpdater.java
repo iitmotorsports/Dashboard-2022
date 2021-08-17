@@ -14,29 +14,29 @@ public class ECUUpdater {
          */
 
         /* GAUGES */
-        ECUMsg.getMessage(ECUMsg.Speedometer).setMessageListener(val -> {
+        ECUMsgHandler.getMessage(ECUMsgHandler.Speedometer).setMessageListener(val -> {
             dashboard.setSpeedValue(val);
             dashboard.setSpeedPercentage(Math.abs(val - lastSpeed) * 0.32f);
             lastSpeed = val;
         });
-        ECUMsg.getMessage(ECUMsg.BatteryLife).setMessageListener(val -> {
+        ECUMsgHandler.getMessage(ECUMsgHandler.BatteryLife).setMessageListener(val -> {
         });
-        ECUMsg.getMessage(ECUMsg.PowerGauge).setMessageListener(val -> {
+        ECUMsgHandler.getMessage(ECUMsgHandler.PowerGauge).setMessageListener(val -> {
         });
         /* INDICATORS */
-        ECUMsg.getMessage(ECUMsg.Beat).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Lag, false));
-        ECUMsg.getMessage(ECUMsg.Lag).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> {
+        ECUMsgHandler.getMessage(ECUMsgHandler.Beat).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Lag, false));
+        ECUMsgHandler.getMessage(ECUMsgHandler.Lag).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> {
             dashboard.setIndicator(Indicators.Indicator.Lag, true);
             dashboard.setLagTime(val);
         });
-        ECUMsg.getMessage(ECUMsg.Fault).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Fault, val > 0));
-        ECUMsg.getMessage(ECUMsg.StartLight).setMessageListener(val -> dashboard.setStartLight(val == 1));
+        ECUMsgHandler.getMessage(ECUMsgHandler.Fault).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Fault, val > 0));
+        ECUMsgHandler.getMessage(ECUMsgHandler.StartLight).setMessageListener(val -> dashboard.setStartLight(val == 1));
         /* State Listener */
-        ECUMsg.setGlobalStateListener(state -> {
+        ECUMsgHandler.setGlobalStateListener(state -> {
             dashboard.setState(state.title);
-            dashboard.setIndicator(Indicators.Indicator.Waiting, state == ECUMsg.STATE.Idle);
-            dashboard.setIndicator(Indicators.Indicator.Charging, state == ECUMsg.STATE.Charging);
-            sidePanel.chargeToggle.setChecked(state == ECUMsg.STATE.Charging);
+            dashboard.setIndicator(Indicators.Indicator.Waiting, state == ECUMsgHandler.STATE.Idle);
+            dashboard.setIndicator(Indicators.Indicator.Charging, state == ECUMsgHandler.STATE.Charging);
+            sidePanel.chargeToggle.setChecked(state == ECUMsgHandler.STATE.Charging);
         });
     }
 }
