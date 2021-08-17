@@ -1,87 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/jsonDialogMainLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:foregroundGravity="center"
-    app:layout_anchorGravity="center">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/updateJsonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:includeFontPadding="false"
+        android:lines="1"
+        android:maxEms="50"
+        android:padding="8dp"
+        android:text="@string/update_json"
+        android:textAlignment="center"
+        android:textSize="60sp" />
 
-        <TextView
-            android:id="@+id/textView2"
+    <LinearLayout
+        android:id="@+id/jsonButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.iit.dashboard2022.ui.widget.SideButton
+            android:id="@+id/downloadBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:includeFontPadding="true"
             android:padding="8dp"
-            android:text="@string/update_json_map"
-            android:textSize="60sp"
-            tools:ignore="TextContrastCheck" />
+            android:text="@string/download"
+            android:textSize="16sp"
+            tools:ignore="TouchTargetSizeCheck" />
 
-        <LinearLayout
+        <com.iit.dashboard2022.ui.widget.SideButton
+            android:id="@+id/scanBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_margin="4dp"
+            android:includeFontPadding="true"
+            android:padding="8dp"
+            android:text="@string/scan_qrgif"
+            android:textSize="16sp"
+            tools:ignore="TouchTargetSizeCheck" />
 
-            <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/downloadBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:includeFontPadding="true"
-                android:padding="8dp"
-                android:text="@string/download"
-                android:textSize="16sp"
-                tools:ignore="TouchTargetSizeCheck" />
+        <com.iit.dashboard2022.ui.widget.SideButton
+            android:id="@+id/findBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:includeFontPadding="true"
+            android:padding="8dp"
+            android:text="@string/find_json_file"
+            android:textSize="16sp"
+            tools:ignore="TouchTargetSizeCheck" />
 
-            <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/scanBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:includeFontPadding="true"
-                android:padding="8dp"
-                android:text="@string/scan_qrgif"
-                android:textSize="16sp"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/findBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:includeFontPadding="true"
-                android:padding="8dp"
-                android:text="@string/find_json_file"
-                android:textSize="16sp"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/delBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:includeFontPadding="true"
-                android:padding="8dp"
-                android:text="@string/delete"
-                android:textSize="16sp"
-                tools:ignore="TouchTargetSizeCheck" />
-        </LinearLayout>
+        <com.iit.dashboard2022.ui.widget.SideButton
+            android:id="@+id/delBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:includeFontPadding="true"
+            android:padding="8dp"
+            android:text="@string/delete"
+            android:textSize="16sp"
+            tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
