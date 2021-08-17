@@ -14,8 +14,8 @@ public class GaugeUpdater {
     private static final HandlerThread gaugeThread = new HandlerThread("Gauge Thread");
     private static Handler gaugeHandler;
 
-    private static final int SETTLE_TIME_MS = 500;
-    private static int settleTime = 0;
+    private static final long SETTLE_TIME_MS = 800;
+    private static long settleTime = 0;
     private static long lastTime = 0;
 
     private static final Runnable updateGauge = new Runnable() {
