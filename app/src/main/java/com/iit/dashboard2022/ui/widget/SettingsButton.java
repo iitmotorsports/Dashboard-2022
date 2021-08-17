@@ -108,8 +108,9 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
             }
         });
-        spinColorAnim = new ColorAnim(getContext(), R.color.midground, R.color.primary, color -> setImageTintList(ColorStateList.valueOf(color)));
-        lockedColorAnim = new ColorAnim(getContext(), R.color.midground, R.color.foreground, color -> setImageTintList(ColorStateList.valueOf(color)));
+        spinColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.primary, color -> setImageTintList(ColorStateList.valueOf(color)));
+        lockedColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.midground, color -> setImageTintList(ColorStateList.valueOf(color)));
+        spinColorAnim.reverse();
     }
 
     public void lock(boolean locked) {
