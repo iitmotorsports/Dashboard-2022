@@ -78,7 +78,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         colorWheel[0] = a.getColor(i++, Color.WHITE);
         colorWheel[1] = a.getColor(i++, Color.WHITE);
         minWidth = a.getDimension(i++, 8f);
-        taper = a.getFloat(i, 2.5f);
+        taper = a.getFloat(i, 0.5f);
 
         a.recycle();
         GaugeUpdater.add(this);
@@ -109,7 +109,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         Canvas canvasBG = new Canvas(bitmapBG);
         Canvas canvasDraw = new Canvas(bitmaskDraw);
 
-        bars = (int) ((x / 8f) / getResources().getDisplayMetrics().scaledDensity);
+        bars = (int) (((x) / 16f));
         int count = bars;
         incX = x / (float) count;
         float incY = y / (float) count;
@@ -136,6 +136,10 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             xPos += incX;
             draw = !draw;
             count--;
+            if (xPos >= x){
+                bars -= count;
+                break;
+            }
         }
 
         maskWidths = new int[getCount(1.0f) + 1];
