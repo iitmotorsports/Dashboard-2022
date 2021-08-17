@@ -1,11 +1,13 @@
 package com.iit.dashboard2022.ui.widget;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
 import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
@@ -63,11 +65,11 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         close.setDuration(AnimSetting.ANIM_DURATION);
         open.setDuration(AnimSetting.ANIM_DURATION);
 
-        lockSpin = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        lockSpin = new RotateAnimation(0, ANIM_DEGREES * 2, Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 1f);
         lockSpin.setInterpolator(new AnticipateOvershootInterpolator());
         lockSpin.setDuration(AnimSetting.ANIM_DURATION * 2);
 
-        jiggle = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        jiggle = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 1f);
         jiggle.setInterpolator(new BounceInterpolator());
         jiggle.setDuration(AnimSetting.ANIM_DURATION);
 
@@ -81,8 +83,10 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
             @Override
             public void onAnimationEnd(Animation animation) {
                 running = false;
-                if (locked)
-                    startAnimation(lockSpin);
+                if (locked) {
+                    lockedColorAnim.start();
+                    translator.start();
+                }
             }
 
             @Override
@@ -110,21 +114,38 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         });
         spinColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.primary, color -> setImageTintList(ColorStateList.valueOf(color)));
         lockedColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.midground, color -> setImageTintList(ColorStateList.valueOf(color)));
-        spinColorAnim.reverse();
+        translator = ValueAnimator.ofFloat(0, 1);
+        Interpolator ant = new AnticipateOvershootInterpolator();
+        translator.setDuration(AnimSetting.ANIM_DURATION);
+        translator.addUpdateListener(animation -> {
+            float fraction = animation.getAnimatedFraction();
+//            setRotation(((90 - getRotation()) * ant.getInterpolation(fraction)));
+            if (locked && fraction == 1.0f) {
+                startAnimation(lockSpin);
+            }
+            fraction = AnimSetting.ANIM_DEFAULT_INTERPOLATOR.getInterpolation(fraction);
+            setTranslationX(getWidth() / 2.0f * fraction);
+            setTranslationY(getHeight() / 2.0f * fraction);
+        });
     }
+
+    ValueAnimator translator;
 
     public void lock(boolean locked) {
         if (this.locked != locked) {
             if (locked) {
-                if (isOpen)
+                if (isOpen) {
                     performClick();
-                else
-                    startAnimation(lockSpin);
-                lockedColorAnim.start();
+                } else {
+                    lockedColorAnim.start();
+                    translator.start();
+                }
+                this.locked = true;
             } else {
+                this.locked = false;
                 lockedColorAnim.reverse();
+                translator.reverse();
             }
-            this.locked = locked;
 
             lockCallback.run(locked);
         }
