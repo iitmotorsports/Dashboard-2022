@@ -25,6 +25,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     private LinearGauge batteryGauge, powerGauge;
     private TextView speedometer;
     private Indicators indicators;
+    private String limitFormat;
 
     @Nullable
     @Override
@@ -37,6 +38,9 @@ public class CarDashboard extends Page implements UITester.TestUI {
         speedometer = rootView.findViewById(R.id.speedometer);
         indicators = rootView.findViewById(R.id.indicators);
         dashStartLight = rootView.findViewById(R.id.dashStartLight);
+
+        limitFormat = inflater.getContext().getString(R.string.limit_format);
+
         reset();
         UITester.addTest(this);
         return rootView;
@@ -64,7 +68,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     }
 
     public void setPowerLimit(int limit) {
-        powerGauge.setBottomText(String.format(Locale.US, "Limit: %dW", limit));
+        powerGauge.setBottomText(String.format(Locale.US, limitFormat, limit));
     }
 
     public void setSpeedValue(long mph) {
@@ -93,6 +97,8 @@ public class CarDashboard extends Page implements UITester.TestUI {
                 setSpeedPercentage(0);
                 setBatteryPercentage(0);
                 setPowerPercentage(0);
+                setPowerLimit(0);
+                powerGauge.invalidate();
                 setSpeedValue(0);
                 setLagTime(0);
                 for (Indicators.Indicator indicator : Indicators.Indicator.values()) {

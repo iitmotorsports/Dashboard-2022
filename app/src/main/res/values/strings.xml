@@ -39,4 +39,7 @@
     <string name="scan_qr_gif">Scan QRGif</string>
     <string name="find_json_file">Find JSON File</string>
     <string name="delete">Delete</string>
+    <string name="pack_power">Pack Power</string>
+    <string name="battery_charge">Battery Charge</string>
+    <string name="limit_format">Limit: %dW</string>
 </resources>
