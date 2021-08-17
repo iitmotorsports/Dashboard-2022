@@ -110,7 +110,7 @@ public class ECU {
 
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
-        serial.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped"));
+        serial.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped: " + exception.getMessage()));
     }
 
     public void setUsbAttachListener(USBSerial.UsbAttachListener UsbAttachListener) {
