@@ -104,7 +104,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
-        android:layout_height="32dp"
+        android:layout_height="48dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
@@ -120,12 +120,14 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="@color/midground"
-            android:text="BattPower"
+            android:text="Limit:"
             android:textColor="@color/background"
             android:textSize="14sp"
+            android:title="Pack Power"
             app:colorHigh="@color/blue"
             app:colorLow="@color/foreground"
-            app:flipped="true" />
+            app:flipped="true"
+            app:unit="W" />
 
         <Space
             android:layout_width="match_parent"
@@ -139,9 +141,12 @@
             android:layout_weight="1"
             android:backgroundTint="@color/midground"
             android:textColor="@color/background"
+            android:textSize="14sp"
+            android:title="Battery Charge"
             app:colorHigh="@color/green"
             app:colorLow="@color/red"
-            app:colorMid="@color/yellow" />
+            app:colorMid="@color/yellow"
+            app:unit="%%" />
 
     </LinearLayout>
 

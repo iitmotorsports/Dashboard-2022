@@ -30,7 +30,6 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
 
     private int width = 0, height = 0;
     private int bars = 0;
-    private float incX = 1;
     private float percent = 0, oldPercent = 0;
 
     /* User Managed */
@@ -113,7 +112,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         Canvas canvasDraw = new Canvas(bitmaskDraw);
 
         int count = (int) (((x) / 8f));
-        incX = x / (float) count;
+        float incX = x / (float) count;
         float incY = y / (float) count;
 
         float sd = getResources().getDisplayMetrics().scaledDensity;

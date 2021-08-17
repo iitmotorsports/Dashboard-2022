@@ -20,16 +20,22 @@ import com.iit.dashboard2022.R;
 
 public class LinearGauge extends View implements GaugeUpdater.Gauge {
     private RectF dst;
-    private final Paint paint, bgPaint, textPaint;
+    private final Paint paint, bgPaint, topTextPaint, bottomTextPaint, valueTextPaint;
     private final Rect mainBar;
+    private Rect valueBounds;
 
-    private String text;
+    private final String topText;
+    private String bottomText;
+    private String unit;
     private final boolean flipped;
     private final int[] colors;
 
+    private String output;
+    private int value = 0;
+
     private float percent = 0, oldPercent = 0;
     private int width = 0, height = 0;
-    private float textOffset = 0;
+    private int textOffset = 0, topTextY = 0, topTextX = 0;
 
     public LinearGauge(Context context) {
         this(context, null);
@@ -51,9 +57,11 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
                 R.attr.colorLow,
                 R.attr.colorMid,
                 R.attr.flipped,
-                android.R.attr.textColor,
+                R.attr.unit,
                 android.R.attr.textSize,
+                android.R.attr.textColor,
                 android.R.attr.text,
+                android.R.attr.title
         };
 
         final TypedArray a = context.obtainStyledAttributes(attrs, set);
@@ -65,9 +73,16 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         int colorLow = a.getColor(i++, Color.WHITE);
         int colorMid = a.getColor(i++, 0);
         flipped = a.getBoolean(i++, false);
+        unit = (String) a.getText(i++);
+        int textSize = a.getDimensionPixelSize(i++, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14, context.getResources().getDisplayMetrics()));
         int textColor = a.getColor(i++, Color.WHITE);
-        int textSize = a.getDimensionPixelSize(i++, 24);
-        text = (String) a.getText(i);
+
+        bottomText = (String) a.getText(i++);
+        topText = (String) a.getText(i);
+
+        if (unit != null) {
+            unit = "%d" + unit;
+        }
 
         if (colorMid != 0) {
             colors = new int[]{
@@ -89,34 +104,72 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         bgPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         bgPaint.setColor(BGColor);
 
-        textPaint = new Paint();
-        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setColor(textColor);
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, textSize, context.getResources().getDisplayMetrics()));
+        topTextPaint = new Paint();
+        topTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        topTextPaint.setStyle(Paint.Style.FILL);
+        topTextPaint.setColor(textColor);
+        topTextPaint.setAntiAlias(true);
+        topTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, textSize, context.getResources().getDisplayMetrics()));
+
+        bottomTextPaint = new Paint(topTextPaint);
+        bottomTextPaint.setTextSize(topTextPaint.getTextSize() / 1.2f);
+
+        valueTextPaint = new Paint(topTextPaint);
+        valueBounds = new Rect();
 
         GaugeUpdater.add(this);
     }
 
+    public void setValue(int value) {
+        this.value = value;
+    }
+
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
+        setValue((int) (this.percent * 100));
         GaugeUpdater.post();
     }
 
     private void setSize(int x, int y) {
         width = x;
         height = y;
-        textOffset = height - height * 0.125f;
-
+        textOffset = (int) (height - height * 0.125f);
+        if (topText != null) {
+            topTextY = (int) (topTextPaint.getTextSize() + height * 0.125f / 2);
+            float[] widths = new float[topText.length()];
+            topTextPaint.getTextWidths(topText, widths);
+            topTextX = 0;
+            for (float width : widths) {
+                topTextX += width;
+            }
+            topTextX /= 2;
+            topTextX = (int) (((float) width / 2) - topTextX);
+        }
+        valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height, getResources().getDisplayMetrics()));
         dst = new RectF(0, 0, x, y);
+        updateValueString();
+        oldValX = valX;
+    }
+
+    float valX, altX;
+    float oldValX = 0;
+    private void updateDrawOffsets() {
+        valX = width - valueBounds.width() - textOffset / 4f;
+        float dv = (valX - oldValX);
+        oldValX += dv / 4;
+        altX = textOffset / 8f;
     }
 
     protected void onDraw(Canvas canvas) {
         canvas.drawRect(dst, bgPaint);
         canvas.drawRect(mainBar, paint);
-        if (text != null)
-            canvas.drawText(text, textOffset / 8, textOffset, textPaint);
+        if (topText != null) {
+            canvas.drawText(topText, altX, topTextY, topTextPaint);
+        }
+        if (bottomText != null) {
+            canvas.drawText(bottomText, altX, textOffset, bottomTextPaint);
+        }
+        canvas.drawText(output, oldValX, textOffset, valueTextPaint);
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
@@ -158,8 +211,8 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setBottomText(String bottomText) {
+        this.bottomText = bottomText;
     }
 
     @Override
@@ -167,8 +220,19 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         GaugeUpdater.remove(this);
     }
 
+    private void updateValueString() {
+        if (unit != null) {
+            output = String.format(unit, value);
+        } else {
+            output = Integer.toString(value);
+        }
+        valueTextPaint.getTextBounds(output, 0, output.length(), valueBounds);
+        updateDrawOffsets();
+    }
+
     @Override
     public void update() {
+        boolean invalid = false;
         if (oldPercent != percent) {
             float dv = GaugeUpdater.truncate((percent - oldPercent) * GaugeUpdater.DV(percent));
             oldPercent += dv;
@@ -179,7 +243,13 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
             else
                 mainBar.set(0, 0, (int) (width * percent), height);
             paint.setColor(getColor(percent));
-            postInvalidate();
+            invalid = true;
         }
+        if (valX != oldValX) {
+            updateValueString();
+            invalid = true;
+        }
+        if (invalid)
+            postInvalidate();
     }
 }
