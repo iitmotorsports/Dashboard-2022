@@ -22,7 +22,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
     private RectF dst;
     private final Paint paint, bgPaint, topTextPaint, bottomTextPaint, valueTextPaint;
     private final Rect mainBar;
-    private Rect valueBounds;
+    private final Rect valueBounds;
 
     private final String topText;
     private String bottomText;
@@ -35,7 +35,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     private float percent = 0, oldPercent = 0;
     private int width = 0, height = 0;
-    private int textOffset = 0, topTextY = 0, topTextX = 0;
+    private int textOffset = 0, topTextY = 0;
 
     public LinearGauge(Context context) {
         this(context, null);
@@ -126,7 +126,6 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
-        setValue((int) (this.percent * 100));
         GaugeUpdater.post();
     }
 
@@ -138,12 +137,6 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
             topTextY = (int) (topTextPaint.getTextSize() + height * 0.125f / 2);
             float[] widths = new float[topText.length()];
             topTextPaint.getTextWidths(topText, widths);
-            topTextX = 0;
-            for (float width : widths) {
-                topTextX += width;
-            }
-            topTextX /= 2;
-            topTextX = (int) (((float) width / 2) - topTextX);
         }
         valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height, getResources().getDisplayMetrics()));
         dst = new RectF(0, 0, x, y);
@@ -153,7 +146,8 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     float valX, altX;
     float oldValX = 0;
-    private void updateDrawOffsets() {
+
+    private void updateDrawOffsets() { // TODO: fix 'jitter' when changing width
         valX = width - valueBounds.width() - textOffset / 4f;
         float dv = (valX - oldValX);
         oldValX += dv / 4;
@@ -245,8 +239,8 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
             paint.setColor(getColor(percent));
             invalid = true;
         }
+        updateValueString();
         if (valX != oldValX) {
-            updateValueString();
             invalid = true;
         }
         if (invalid)
