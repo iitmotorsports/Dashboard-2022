@@ -66,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7">
+        app:layout_constraintVertical_bias="0.68">
 
         <com.iit.dashboard2022.ui.widget.gauge.SpeedGauge
             android:id="@+id/speedGaugeLeft"
@@ -104,7 +104,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="64dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
@@ -132,7 +132,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1.3" />
 
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
             android:id="@+id/batteryGauge"
