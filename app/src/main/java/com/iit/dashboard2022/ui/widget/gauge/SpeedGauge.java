@@ -18,6 +18,9 @@ import androidx.annotation.StyleableRes;
 
 import com.iit.dashboard2022.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     private Bitmap bitmapBG, bitmaskDraw, bitmaskBuffer;
     private Canvas canvasBuffer;
@@ -75,10 +78,10 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         int i = 0;
         BGColor = a.getColor(i++, Color.BLACK);
         colorWheel[2] = a.getColor(i++, Color.WHITE);
-        colorWheel[0] = a.getColor(i++, Color.WHITE);
-        colorWheel[1] = a.getColor(i++, Color.WHITE);
+        colorWheel[0] = a.getColor(i++, Color.DKGRAY);
+        colorWheel[1] = a.getColor(i++, Color.LTGRAY);
         minWidth = a.getDimension(i++, 8f);
-        taper = a.getFloat(i, 0.5f);
+        taper = a.getFloat(i, 64);
 
         a.recycle();
         GaugeUpdater.add(this);
@@ -89,10 +92,10 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         GaugeUpdater.remove(this);
     }
 
-    int getColor(int barCount) {
-        if (barCount < bars / 3)
+    int getColor(float percent) {
+        if (percent > 2 / 3f)
             return colorWheel[2];
-        else if (barCount < bars * 2 / 3)
+        else if (percent > 1 / 3f)
             return colorWheel[1];
         else
             return colorWheel[0];
@@ -109,22 +112,29 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         Canvas canvasBG = new Canvas(bitmapBG);
         Canvas canvasDraw = new Canvas(bitmaskDraw);
 
-        bars = (int) (((x) / 16f));
-        int count = bars;
+        int count = (int) (((x) / 8f));
         incX = x / (float) count;
         float incY = y / (float) count;
 
+        float sd = getResources().getDisplayMetrics().scaledDensity;
         boolean draw = true;
         int xPos = 0, yPos = (int) (incY * 16);
-        float varX = incX / taper;
+        float varX = incX * sd;
+        float varY = 0;
 
-        while (count > 0) {
+        List<Float> widths = new ArrayList<>();
+
+        widths.add(0f);
+
+        while (xPos <= x) {
             if (draw) {
                 paint.setColor(BGColor);
                 canvasBG.drawRect(xPos, 0, xPos + incX + varX, yPos, paint);
-                paint.setColor(getColor(count));
+                paint.setColor(getColor((xPos + incX) / width));
                 canvasDraw.drawRect(xPos, 0, xPos + incX + varX, yPos, paint);
-                varX -= incX / (taper * 8.0f);
+                widths.add(xPos + incX + varX);
+                varX -= incX / 8;
+                varY += (float) (xPos + width) / (width * taper * sd);
                 if (varX < minWidth - incX) {
                     varX = minWidth - incX;
                 }
@@ -132,60 +142,35 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
                 xPos += varX;
             }
 
-            yPos += incY;
+            yPos += (height - yPos) * varY;
             xPos += incX;
             draw = !draw;
-            count--;
-            if (xPos >= x) {
-                bars -= count;
-                break;
-            }
         }
 
-        maskWidths = new int[bars + 2];
-        for (int i = 0; i < maskWidths.length - 1; i++) {
-            maskWidths[i] = maskWidth(i);
+        widths.add((float) width);
+
+        bars = widths.size();
+        maskWidths = new int[widths.size()];
+
+        int c = 0;
+
+        for (Float i : widths) {
+            maskWidths[c++] = (int) (i.intValue() + minWidth / 4);
         }
-        maskWidths[maskWidths.length - 1] = width;
+
+        maskWidths[0] = 0;
+
     }
 
     private int getCount(float percent) {
-        return (int) Math.ceil((bars + 1) * percent);
-    }
-
-    private int maskWidth(int count) {
-        int xPos = 0;
-        boolean draw = true;
-        float varX = incX / taper;
-
-        int seq = 0, seqX = 0;
-
-        while (count > 0) {
-            if (draw) {
-                varX -= incX / (taper * 8.0f);
-                if (varX < minWidth - incX) {
-                    varX = minWidth - incX;
-                }
-            } else {
-                xPos += varX;
-            }
-            if (seq % 2 == 0) {
-                seqX = xPos;
-            }
-            xPos += incX;
-            draw = !draw;
-            count--;
-            seq++;
-            if (xPos >= width) {
-                break;
-            }
-        }
-        return (int) (seqX - (minWidth / 2));
+        return (int) Math.round((bars - 1) * percent);
     }
 
     private int getMaskWidth(float percent) {
-        if (maskWidths != null)
-            return maskWidths[getCount(percent)];
+        if (maskWidths != null) {
+            int gc = getCount(percent);
+            return maskWidths[gc];
+        }
         return 0;
     }
 

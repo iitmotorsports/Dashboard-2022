@@ -49,7 +49,6 @@
         android:layout_marginTop="16dp"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/speedGauges"
         app:layout_constraintStart_toStartOf="@+id/speedGauges"
         app:layout_constraintTop_toTopOf="@+id/speedGauges" />
@@ -57,13 +56,12 @@
     <LinearLayout
         android:id="@+id/speedGauges"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="48dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="horizontal"
-        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +72,6 @@
             android:id="@+id/speedGaugeLeft"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/midground"
             android:scaleX="-1"
@@ -97,7 +94,6 @@
             android:id="@+id/speedGaugeRight"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/midground"
             app:colorHigh="@color/red"
@@ -107,22 +103,22 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/speedGauges">
 
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
             android:id="@+id/powerGauge"
-            android:layout_width="200dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:backgroundTint="@color/midground"
             android:text="BattPower"
             android:textColor="@color/background"
@@ -132,15 +128,15 @@
             app:flipped="true" />
 
         <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
             android:id="@+id/batteryGauge"
-            android:layout_width="200dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:backgroundTint="@color/midground"
             android:textColor="@color/background"
             app:colorHigh="@color/green"
