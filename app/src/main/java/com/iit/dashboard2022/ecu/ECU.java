@@ -1,6 +1,7 @@
 package com.iit.dashboard2022.ecu;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -16,9 +17,9 @@ import java.util.Date;
 public class ECU {
     public static final String LOG_TAG = "ECU";
 
-    final USBSerial serial;
-    private ECUMsgHandler ecuMsgHandler;
-    final ECUKeyMap ecuKeyMap;
+    private final USBSerial serial;
+    private final ECUMsgHandler ecuMsgHandler;
+    private final ECUKeyMap ecuKeyMap;
     private final LogFileIO logFile;
     InterpretListener interpretListener;
     ErrorListener errorListener;
@@ -38,6 +39,28 @@ public class ECU {
 
     public interface ErrorListener {
         void newError(String tag, String msg);
+    }
+
+    @WorkerThread
+    public static String interpretRawData(String jsonStr, byte[] raw_data) {
+        ECUKeyMap localEcuKeyMap = new ECUKeyMap(jsonStr);
+        StringBuilder output = new StringBuilder(raw_data.length);
+
+        if (localEcuKeyMap.loaded()) {
+            for (int i = 0; i < raw_data.length; i += 8) {
+                byte[] data_block = new byte[8];
+                try {
+                    System.arraycopy(raw_data, i, data_block, 0, 8);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    continue;
+                }
+
+                long[] IDs = interpretMsg(data_block);
+                output.append(formatMsg(0, localEcuKeyMap.getTag((int) IDs[0]), localEcuKeyMap.getStr((int) IDs[1]), IDs[2]));
+            }
+        }
+
+        return output.toString();
     }
 
     public ECU(AppCompatActivity activity) {

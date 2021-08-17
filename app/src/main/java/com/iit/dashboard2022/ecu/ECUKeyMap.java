@@ -23,13 +23,19 @@ import java.util.Objects;
 
 public class ECUKeyMap {
     private final List<StatusListener> statusListeners = new ArrayList<>();
-    private final JSONLoader jsonLoader;
+    private JSONLoader jsonLoader;
+    private boolean pseudoMode = false;
 
     private HashMap<Integer, String> tagLookUp;
     private HashMap<Integer, String> stringLookUp;
 
     public interface StatusListener {
         void run(boolean jsonLoaded);
+    }
+
+    public ECUKeyMap(String jsonStr) {
+        pseudoMode = true;
+        update(jsonStr);
     }
 
     public ECUKeyMap(@NonNull AppCompatActivity activity) {
@@ -150,6 +156,8 @@ public class ECUKeyMap {
 
     private boolean interpretJSON(String rawJSON) {
         if (rawJSON == null) {
+            if (pseudoMode)
+                return false;
             if (loaded()) {
                 Toaster.showToast("JSON map unchanged", Toaster.INFO);
                 return true;
@@ -187,11 +195,14 @@ public class ECUKeyMap {
             return loaded();
         }
 
-        if (loaded())
-            Toaster.showToast("JSON map updated", Toaster.SUCCESS);
-        else
-            Toaster.showToast("Loaded JSON map", Toaster.INFO, Toast.LENGTH_SHORT);
-        jsonLoader.saveToSystem(rawJSON);
+        if (!pseudoMode) {
+            if (loaded())
+                Toaster.showToast("JSON map updated", Toaster.SUCCESS);
+            else
+                Toaster.showToast("Loaded JSON map", Toaster.INFO, Toast.LENGTH_SHORT);
+            jsonLoader.saveToSystem(rawJSON);
+        }
+
         tagLookUp = newTagLookup;
         stringLookUp = newStringLookup;
         return true;
