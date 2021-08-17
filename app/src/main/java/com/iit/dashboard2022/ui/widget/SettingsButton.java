@@ -120,8 +120,10 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         translator.addUpdateListener(animation -> {
             float fraction = animation.getAnimatedFraction();
 //            setRotation(((90 - getRotation()) * ant.getInterpolation(fraction)));
-            if (locked && fraction == 1.0f) {
-                startAnimation(lockSpin);
+            if (fraction == 1.0f) {
+                if (locked)
+                    startAnimation(lockSpin);
+                moving = false;
             }
             fraction = AnimSetting.ANIM_DEFAULT_INTERPOLATOR.getInterpolation(fraction);
             setTranslationX(getWidth() / 2.0f * fraction);
@@ -129,6 +131,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         });
     }
 
+    boolean moving = false;
     ValueAnimator translator;
 
     public void lock(boolean locked) {
@@ -140,6 +143,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
                     lockedColorAnim.start();
                     translator.start();
                 }
+                moving = true;
                 this.locked = true;
             } else {
                 this.locked = false;
@@ -153,7 +157,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
     @Override
     public boolean performClick() {
-        if (!callbackSet)
+        if (moving || !callbackSet)
             return false;
         if (locked) {
             startAnimation(jiggle);
