@@ -17,6 +17,8 @@ import com.iit.dashboard2022.ui.widget.StartLight;
 import com.iit.dashboard2022.ui.widget.gauge.LinearGauge;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
 
+import java.util.Locale;
+
 public class CarDashboard extends Page implements UITester.TestUI {
     private StartLight dashStartLight;
     private SpeedGauge sgL, sgR;
@@ -53,10 +55,16 @@ public class CarDashboard extends Page implements UITester.TestUI {
 
     public void setBatteryPercentage(float percent) {
         batteryGauge.setPercent(percent);
+        batteryGauge.setValue((int) Math.round(percent * 100f));
     }
 
     public void setPowerPercentage(float percent) {
         powerGauge.setPercent(percent);
+        powerGauge.setValue((int) (250f * percent));
+    }
+
+    public void setPowerLimit(int limit) {
+        powerGauge.setBottomText(String.format(Locale.US, "Limit: %dW", limit));
     }
 
     public void setSpeedValue(long mph) {
@@ -106,6 +114,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
         setSpeedPercentage(percent);
         setBatteryPercentage(percent);
         setPowerPercentage(percent);
+        setPowerLimit((int) (percent * 1000));
         setSpeedValue((int) (300 * percent));
     }
 }
