@@ -20,6 +20,7 @@ import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
+import com.iit.dashboard2022.ui.widget.gauge.GaugeUpdater;
 import com.iit.dashboard2022.util.Toaster;
 
 public class MainActivity extends AppCompatActivity {
@@ -58,14 +59,19 @@ public class MainActivity extends AppCompatActivity {
 
         mainPager.setOnTouchCallback(settingsBtn::performClick);
         settingsBtn.setCallbacks(
-                () -> mainPager.setMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.reverse()),
+                () -> {
+                    mainPager.setMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.reverse());
+                    GaugeUpdater.post();
+                },
                 () -> {
                     mainPager.setMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.start());
                     sidePanel.consoleSwitch.setActionedCheck(false);
+                    GaugeUpdater.post();
                 },
                 locked -> {
                     mainPager.setUserInputEnabled(!locked);
                     sidePanel.consoleSwitch.setActionedCheck(false);
+                    GaugeUpdater.post();
                 }
         );
 
