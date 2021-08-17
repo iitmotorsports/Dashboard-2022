@@ -21,14 +21,14 @@ public class GaugeUpdater {
     private static final Runnable updateGauge = new Runnable() {
         @Override
         public void run() {
-            if (lastTime + AnimSetting.ANIM_UPDATE_MILLIS > SystemClock.elapsedRealtime())
+            if (lastTime + AnimSetting.ANIM_UPDATE_MILLIS > SystemClock.uptimeMillis())
                 return;
 
             for (Gauge sg : gauges) {
                 sg.update();
             }
 
-            lastTime = SystemClock.elapsedRealtime();
+            lastTime = SystemClock.uptimeMillis();
 
             settleTime += AnimSetting.ANIM_UPDATE_MILLIS;
             if (settleTime < SETTLE_TIME_MS)

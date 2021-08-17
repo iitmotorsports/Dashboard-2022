@@ -74,7 +74,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         PrecomputedTextCompat.create(nextMsg, textParams);
         outQueue.add(nextMsg);
 
-        long curr = SystemClock.elapsedRealtime();
+        long curr = SystemClock.uptimeMillis();
         if (lastTime + UPDATE_TIME_MS < curr) {
             lastTime = curr;
             uiHandle.post(textUpdate);
