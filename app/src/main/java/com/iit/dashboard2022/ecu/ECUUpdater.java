@@ -8,31 +8,31 @@ public class ECUUpdater {
 
     private long lastSpeed = 0;
 
-    public ECUUpdater(CarDashboard dashboard, SidePanel sidePanel) {
+    public ECUUpdater(CarDashboard dashboard, SidePanel sidePanel, ECUMsgHandler ecuMsgHandler) {
         /*
          *  DASHBOARD
          */
 
         /* GAUGES */
-        ECUMsgHandler.getMessage(ECUMsgHandler.Speedometer).setMessageListener(val -> {
+        ecuMsgHandler.getMessage(ECUMsgHandler.Speedometer).setMessageListener(val -> {
             dashboard.setSpeedValue(val);
             dashboard.setSpeedPercentage(Math.abs(val - lastSpeed) * 0.32f);
             lastSpeed = val;
         });
-        ECUMsgHandler.getMessage(ECUMsgHandler.BatteryLife).setMessageListener(val -> {
+        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).setMessageListener(val -> {
         });
-        ECUMsgHandler.getMessage(ECUMsgHandler.PowerGauge).setMessageListener(val -> {
+        ecuMsgHandler.getMessage(ECUMsgHandler.PowerGauge).setMessageListener(val -> {
         });
         /* INDICATORS */
-        ECUMsgHandler.getMessage(ECUMsgHandler.Beat).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Lag, false));
-        ECUMsgHandler.getMessage(ECUMsgHandler.Lag).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> {
+        ecuMsgHandler.getMessage(ECUMsgHandler.Beat).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Lag, false));
+        ecuMsgHandler.getMessage(ECUMsgHandler.Lag).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> {
             dashboard.setIndicator(Indicators.Indicator.Lag, true);
             dashboard.setLagTime(val);
         });
-        ECUMsgHandler.getMessage(ECUMsgHandler.Fault).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Fault, val > 0));
-        ECUMsgHandler.getMessage(ECUMsgHandler.StartLight).setMessageListener(val -> dashboard.setStartLight(val == 1));
+        ecuMsgHandler.getMessage(ECUMsgHandler.Fault).setMessageListener(val -> dashboard.setIndicator(Indicators.Indicator.Fault, val > 0));
+        ecuMsgHandler.getMessage(ECUMsgHandler.StartLight).setMessageListener(val -> dashboard.setStartLight(val == 1));
         /* State Listener */
-        ECUMsgHandler.setGlobalStateListener(state -> {
+        ecuMsgHandler.setGlobalStateListener(state -> {
             dashboard.setState(state.title);
             dashboard.setIndicator(Indicators.Indicator.Waiting, state == ECUMsgHandler.STATE.Idle);
             dashboard.setIndicator(Indicators.Indicator.Charging, state == ECUMsgHandler.STATE.Charging);

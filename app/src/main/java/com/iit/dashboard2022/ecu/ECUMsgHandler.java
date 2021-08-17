@@ -62,11 +62,11 @@ public class ECUMsgHandler {
     public static final int StartLight = 20;
     public static final int State = 21; // State is special, exclude from available MsgID
 
-    private static final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
-    private static final HashMap<Long, STATE> stateMap = new HashMap<>();
-    private static final ECUMsg[] messages = new ECUMsg[22];
-    private static StateListener stateListener;
-    private static ECUKeyMap keyMap;
+    private final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
+    private final HashMap<Long, STATE> stateMap = new HashMap<>();
+    private final ECUMsg[] messages = new ECUMsg[22];
+    private StateListener stateListener;
+    private ECUKeyMap keyMap;
 
     public enum STATE { // Use actual name, brackets are added on when matching to actual state name
         Initializing("Teensy Initialize"),
@@ -89,7 +89,7 @@ public class ECUMsgHandler {
         void onStateChanged(STATE state);
     }
 
-    public static void loadMessages(@NonNull ECUKeyMap ecuKeyMap) {
+    public ECUMsgHandler(@NonNull ECUKeyMap ecuKeyMap) {
         keyMap = ecuKeyMap;
         messages[MC0Voltage] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 DC BUS Voltage:", ECUMsg.SIGNED_SHORT);
         messages[MC1Voltage] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 DC BUS Voltage:", ECUMsg.SIGNED_SHORT);
@@ -119,11 +119,11 @@ public class ECUMsgHandler {
         });
     }
 
-    public static void setGlobalStateListener(StateListener globalStateListener) {
+    public void setGlobalStateListener(StateListener globalStateListener) {
         stateListener = globalStateListener;
     }
 
-    public static void loadMessageKeys() {
+    public void loadMessageKeys() {
         messageMap.clear();
         for (ECUMsg msg : messages) {
             msg.load(messageMap, keyMap);
@@ -140,7 +140,7 @@ public class ECUMsgHandler {
     }
 
     @Nullable
-    public static ECUMsg updateMessages(long msgKey, long value) {
+    public ECUMsg updateMessages(long msgKey, long value) {
         ECUMsg msg = messageMap.get(msgKey);
         if (msg != null)
             msg.update(value);
@@ -148,11 +148,11 @@ public class ECUMsgHandler {
     }
 
     @Nullable
-    public static ECUMsg getMessage(long msgKey) {
+    public ECUMsg getMessage(long msgKey) {
         return messageMap.get(msgKey);
     }
 
-    public static ECUMsg getMessage(@MsgID int msgID) {
+    public ECUMsg getMessage(@MsgID int msgID) {
         return messages[msgID];
     }
 }

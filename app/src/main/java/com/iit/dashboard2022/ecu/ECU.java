@@ -17,6 +17,7 @@ public class ECU {
     public static final String LOG_TAG = "ECU";
 
     final USBSerial serial;
+    private ECUMsgHandler ecuMsgHandler;
     final ECUKeyMap ecuKeyMap;
     private final LogFileIO logFile;
     InterpretListener interpretListener;
@@ -42,15 +43,15 @@ public class ECU {
     public ECU(AppCompatActivity activity) {
         logFile = new LogFileIO(activity);
         ecuKeyMap = new ECUKeyMap(activity);
+        ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
 
         ecuKeyMap.addStatusListener(jsonLoaded -> {
             if (jsonLoaded) {
-                ECUMsgHandler.loadMessageKeys();
+                ecuMsgHandler.loadMessageKeys();
                 logFile.newLog();
             }
         });
 
-        ECUMsgHandler.loadMessages(ecuKeyMap);
         serial = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
             long epoch = System.nanoTime();
             if (interpreterMode != MODE.DISABLED) {
@@ -121,6 +122,10 @@ public class ECU {
         serial.setUsbActiveListener(usbActiveListener);
     }
 
+    public ECUMsgHandler getEcuMsgHandler() {
+        return ecuMsgHandler;
+    }
+
     /**
      * Set whether logging to a local file is enabled
      *
@@ -172,7 +177,7 @@ public class ECU {
     private void updateData(byte[] data_block) {
         long[] IDs = interpretMsg(data_block);
         long msgID = IDs[3];
-        ECUMsgHandler.updateMessages(msgID, IDs[2]);
+        ecuMsgHandler.updateMessages(msgID, IDs[2]);
     }
 
     /**
@@ -201,7 +206,7 @@ public class ECU {
     private String updateFormattedData(long epoch, byte[] data_block) {
         long[] IDs = interpretMsg(data_block);
         long msgID = IDs[3];
-        ECUMsg msg = ECUMsgHandler.updateMessages(msgID, IDs[2]);
+        ECUMsg msg = ecuMsgHandler.updateMessages(msgID, IDs[2]);
         if (msg == null) {
             return formatMsg(epoch, ecuKeyMap.getTag((int) IDs[0]), ecuKeyMap.getStr((int) IDs[1]), IDs[2]);
         } else {

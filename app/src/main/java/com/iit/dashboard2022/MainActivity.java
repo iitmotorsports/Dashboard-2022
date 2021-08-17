@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         /* FINAL CALLS */
-        ecuUpdater = new ECUUpdater(cdPage, sidePanel);
+        ecuUpdater = new ECUUpdater(cdPage, sidePanel, frontECU.getEcuMsgHandler());
 
         if (!frontECU.loadJSONFromSystem()) {
             Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
