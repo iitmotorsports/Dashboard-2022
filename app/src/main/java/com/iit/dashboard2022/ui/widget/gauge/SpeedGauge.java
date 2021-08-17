@@ -25,7 +25,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     private final Paint paint, maskPaint, dstOver;
     private final Rect mask;
 
-    private int height = 0;
+    private int width = 0, height = 0;
     private int bars = 0;
     private float incX = 1;
     private float percent = 0, oldPercent = 0;
@@ -136,21 +136,21 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             xPos += incX;
             draw = !draw;
             count--;
-            if (xPos >= x){
+            if (xPos >= x) {
                 bars -= count;
                 break;
             }
         }
 
-        maskWidths = new int[getCount(1.0f) + 1];
-
-        for (int i = 0; i < maskWidths.length; i++) {
+        maskWidths = new int[bars + 2];
+        for (int i = 0; i < maskWidths.length - 1; i++) {
             maskWidths[i] = maskWidth(i);
         }
+        maskWidths[maskWidths.length - 1] = width;
     }
 
     private int getCount(float percent) {
-        return (int) Math.ceil((bars + 2) * percent);
+        return (int) Math.ceil((bars + 1) * percent);
     }
 
     private int maskWidth(int count) {
@@ -176,6 +176,9 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             draw = !draw;
             count--;
             seq++;
+            if (xPos >= width) {
+                break;
+            }
         }
         return (int) (seqX - (minWidth / 2));
     }
@@ -197,6 +200,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     protected void onSizeChanged(int x, int y, int ox, int oy) {
         if (x <= 0 || y <= 0)
             return;
+        width = x;
         height = y;
         dst = new RectF(0, 0, x, y);
         drawBars(x, y);
