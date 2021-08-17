@@ -23,13 +23,12 @@ public class ECU {
     private final USBSerial serial;
     private final ECUMsgHandler ecuMsgHandler;
     private final ECUKeyMap ecuKeyMap;
-    private final LogFileIO logFile;
+    private final ECULogger ecuLogger;
+
     InterpretListener interpretListener;
     ErrorListener errorListener;
     MODE interpreterMode = MODE.DISABLED;
     boolean fileLogging = true;
-    private static final String LOG_MAP_START = "---[ LOG MAP START ]---\n";
-    private static final String LOG_MAP_END = "---[ LOG MAP END ]---\n";
 
     public enum MODE {
         DISABLED,
@@ -46,30 +45,8 @@ public class ECU {
         void newError(String tag, String msg);
     }
 
-    @WorkerThread
-    public static String interpretRawData(String jsonStr, byte[] raw_data) {
-        ECUKeyMap localEcuKeyMap = new ECUKeyMap(jsonStr);
-        StringBuilder output = new StringBuilder(raw_data.length);
-
-        if (localEcuKeyMap.loaded()) {
-            for (int i = 0; i < raw_data.length; i += 8) {
-                byte[] data_block = new byte[8];
-                try {
-                    System.arraycopy(raw_data, i, data_block, 0, 8);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    continue;
-                }
-
-                long[] IDs = interpretMsg(data_block);
-                output.append(formatMsg(0, localEcuKeyMap.getTag((int) IDs[0]), localEcuKeyMap.getStr((int) IDs[1]), IDs[2]));
-            }
-        }
-
-        return output.toString();
-    }
-
     public ECU(AppCompatActivity activity) {
-        logFile = new LogFileIO(activity);
+        ecuLogger = new ECULogger(activity);
         ecuKeyMap = new ECUKeyMap(activity);
         ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
 
@@ -77,11 +54,7 @@ public class ECU {
             if (jsonLoaded) {
                 ecuMsgHandler.loadMessageKeys();
                 if (rawJson != null) {
-                    logFile.newLog();
-                    logFile.write(LOG_MAP_START.getBytes());
-                    logFile.write(rawJson.getBytes());
-                    logFile.write("\n".getBytes());
-                    logFile.write(LOG_MAP_END.getBytes());
+                    ecuLogger.newLog(rawJson);
                 }
             }
         });
@@ -168,8 +141,6 @@ public class ECU {
     public void enableFileLogging(boolean enabled) {
         if (fileLogging != enabled) {
             fileLogging = enabled;
-            if (enabled)
-                logFile.newLog();
         }
     }
 
@@ -182,8 +153,8 @@ public class ECU {
     private void logRawData(long epoch, byte[] msgBlock) {
         if (fileLogging) {
             logBuffer.clear();
-            logFile.write(logBuffer.putLong(epoch).array());
-            logFile.write(msgBlock);
+            ecuLogger.write(logBuffer.putLong(epoch).array());
+            ecuLogger.write(msgBlock);
         }
     }
 
@@ -224,7 +195,7 @@ public class ECU {
      * @param number    The message's value
      * @return Formatted message string
      */
-    private static String formatMsg(long epoch, String tagString, String msgString, long number) {
+    static String formatMsg(long epoch, String tagString, String msgString, long number) {
         if (tagString == null || msgString == null)
             return "";
         String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(new Date(epoch)) + ' ' : "";

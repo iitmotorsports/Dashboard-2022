@@ -7,8 +7,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.iit.dashboard2022.util.Toaster;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -108,6 +106,10 @@ public class LogFileIO {
 
     public boolean isOpen() {
         return opened;
+    }
+
+    public File getActiveFile() {
+        return activeFile;
     }
 
     public List<LogFile> listFiles() {
