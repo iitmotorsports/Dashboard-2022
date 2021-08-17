@@ -22,7 +22,7 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
         super(context, attrs, R.attr.sideToggleButtonStyle);
         setCheckable(true);
 
-        colorAnim = new ColorAnim(context, R.color.foregroundText, R.color.colorAccent, this::setBackgroundColor);
+        colorAnim = new ColorAnim(context, R.color.foreground, R.color.primary, this::setBackgroundColor);
 
         int[] set = {
                 android.R.attr.textOn,

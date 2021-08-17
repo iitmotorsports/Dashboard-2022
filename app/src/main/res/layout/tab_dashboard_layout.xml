@@ -74,7 +74,7 @@
             android:layout_height="match_parent"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/backgroundText"
+            android:backgroundTint="@color/midground"
             android:scaleX="-1"
             app:colorHigh="@color/red"
             app:colorLow="@color/green"
@@ -97,7 +97,7 @@
             android:layout_height="match_parent"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/backgroundText"
+            android:backgroundTint="@color/midground"
             app:colorHigh="@color/red"
             app:colorLow="@color/green"
             app:colorMid="@color/yellow" />
@@ -121,12 +121,12 @@
             android:layout_width="200dp"
             android:layout_height="48dp"
             android:layout_margin="8dp"
-            android:backgroundTint="@color/backgroundText"
+            android:backgroundTint="@color/midground"
             android:text="BattPower"
             android:textColor="@color/background"
             android:textSize="14sp"
             app:colorHigh="@color/blue"
-            app:colorLow="@color/foregroundText"
+            app:colorLow="@color/foreground"
             app:flipped="true" />
 
         <Space
@@ -139,7 +139,7 @@
             android:layout_width="200dp"
             android:layout_height="48dp"
             android:layout_margin="8dp"
-            android:backgroundTint="@color/backgroundText"
+            android:backgroundTint="@color/midground"
             android:textColor="@color/background"
             app:colorHigh="@color/green"
             app:colorLow="@color/red"

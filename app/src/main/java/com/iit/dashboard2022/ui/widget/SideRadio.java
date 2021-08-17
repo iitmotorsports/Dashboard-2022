@@ -29,8 +29,8 @@ public class SideRadio extends MaterialRadioButton implements ActionableCheck{
     }
 
     private void init(Context context) {
-        radioOffColorList = context.getColorStateList(R.color.foregroundText);
-        radioOnColorList = context.getColorStateList(R.color.colorAccent);
+        radioOffColorList = context.getColorStateList(R.color.foreground);
+        radioOnColorList = context.getColorStateList(R.color.primary);
     }
 
     @Override

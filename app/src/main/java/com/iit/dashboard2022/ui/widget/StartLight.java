@@ -35,7 +35,7 @@ public class StartLight extends LinearLayout implements UITester.TestUI {
         startLight = findViewById(R.id.startLight);
 
         colorOn = context.getColorStateList(R.color.green);
-        colorOff = context.getColorStateList(R.color.backgroundText);
+        colorOff = context.getColorStateList(R.color.midground);
 
         UITester.addTest(this);
     }

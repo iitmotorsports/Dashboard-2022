@@ -112,7 +112,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         Disconnected(R.color.red),
         Connected(R.color.green),
         Attached(R.color.blue),
-        Testing(R.color.backgroundText);
+        Testing(R.color.midground);
 
         @ColorRes
         final

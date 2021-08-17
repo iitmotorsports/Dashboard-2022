@@ -26,7 +26,7 @@
             android:maxLines="2"
             android:minLines="1"
             android:text="@string/indicators_lag_ms_format"
-            android:textColor="@color/backgroundText"
+            android:textColor="@color/midground"
             android:textSize="11sp" />
 
         <RadioButton
@@ -42,7 +42,7 @@
             android:paddingEnd="0dp"
             android:text="@string/lag"
             android:textAlignment="viewStart"
-            android:textColor="@color/backgroundText"
+            android:textColor="@color/midground"
             android:textSize="14sp"
             tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
     </RelativeLayout>
@@ -60,7 +60,7 @@
         android:paddingEnd="8dp"
         android:text="@string/fault"
         android:textAlignment="viewStart"
-        android:textColor="@color/backgroundText"
+        android:textColor="@color/midground"
         android:textSize="14sp"
         tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
@@ -77,7 +77,7 @@
         android:paddingEnd="8dp"
         android:text="@string/waiting"
         android:textAlignment="viewStart"
-        android:textColor="@color/backgroundText"
+        android:textColor="@color/midground"
         android:textSize="14sp"
         tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
@@ -94,7 +94,7 @@
         android:paddingEnd="8dp"
         android:text="@string/charging"
         android:textAlignment="viewStart"
-        android:textColor="@color/backgroundText"
+        android:textColor="@color/midground"
         android:textSize="14sp"
         tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 

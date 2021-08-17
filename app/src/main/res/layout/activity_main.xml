@@ -49,16 +49,16 @@
             app:tabGravity="center"
             app:tabIndicatorAnimationDuration="100"
             app:tabIndicatorAnimationMode="elastic"
-            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorColor="@color/primary"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorGravity="top"
             app:tabIndicatorHeight="5dp"
             app:tabMinWidth="5dp"
             app:tabMode="auto"
             app:tabRippleColor="@android:color/transparent"
-            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabSelectedTextColor="@color/primary"
             app:tabTextAppearance="@style/TabText"
-            app:tabTextColor="@color/backgroundText"
+            app:tabTextColor="@color/midground"
             app:tabUnboundedRipple="false">
 
             <com.google.android.material.tabs.TabItem

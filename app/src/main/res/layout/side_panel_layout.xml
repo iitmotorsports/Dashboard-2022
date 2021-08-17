@@ -5,9 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@color/translucent_Black"
-    android:theme="@style/Theme.Dashboard2022"
-    tools:ignore="Overdraw">
+    android:background="@color/translucent_bg">
 
     <com.iit.dashboard2022.ui.layout.MaskableFrameLayout
         android:layout_width="wrap_content"
