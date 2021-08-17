@@ -80,18 +80,19 @@ public class CarDashboard extends Page implements UITester.TestUI {
     }
 
     public void reset() {
-        dashStartLight.postDelayed(() -> {
-            setSpeedPercentage(0);
-            setBatteryPercentage(0);
-            setPowerPercentage(0);
-            setSpeedValue(0);
-            setLagTime(0);
-            for (Indicators.Indicator indicator : Indicators.Indicator.values()) {
-                setIndicator(indicator, false);
-            }
-            setStartLight(false);
-            setState(ECUMsg.STATE.Initializing.toString());
-        }, 20);
+        if (dashStartLight != null)
+            dashStartLight.postDelayed(() -> {
+                setSpeedPercentage(0);
+                setBatteryPercentage(0);
+                setPowerPercentage(0);
+                setSpeedValue(0);
+                setLagTime(0);
+                for (Indicators.Indicator indicator : Indicators.Indicator.values()) {
+                    setIndicator(indicator, false);
+                }
+                setStartLight(false);
+                setState(ECUMsg.STATE.Initializing.toString());
+            }, 20);
     }
 
     @NonNull
