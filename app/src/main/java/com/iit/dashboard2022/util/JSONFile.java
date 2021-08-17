@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class JSONFile {
     private final AppCompatActivity activity;
-    ActivityResultLauncher<String> mGetContent;
+    final ActivityResultLauncher<String> mGetContent;
 
     public interface JSONListener {
         void newJSON(String jsonString);

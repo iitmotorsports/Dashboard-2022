@@ -12,8 +12,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.iit.dashboard2022.ECU.ECU;
-import com.iit.dashboard2022.ECU.ECUUpdater;
+import com.iit.dashboard2022.ecu.ECU;
+import com.iit.dashboard2022.ecu.ECUUpdater;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;

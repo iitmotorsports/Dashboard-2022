@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ECU;
+package com.iit.dashboard2022.ecu;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -108,7 +108,7 @@ public class ECUMsg {
         Driving("Driving Mode State"),
         Fault("Fault State");
 
-        String title;
+        final String title;
 
         STATE(String title) {
             this.title = title;

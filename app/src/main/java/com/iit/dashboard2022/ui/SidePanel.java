@@ -9,7 +9,7 @@ import android.widget.RadioGroup;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.iit.dashboard2022.ECU.ECU;
+import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
@@ -26,7 +26,8 @@ public class SidePanel extends ConstraintLayout {
     public final SideToggle chargeToggle, JSONToggle, connToggle;
     public final SideButton clearConsoleButton, canMsgButton, canEchoButton;
 
-    public TranslationAnim consoleAnim, sidePanelDrawerAnim;
+    public TranslationAnim consoleAnim;
+    public final TranslationAnim sidePanelDrawerAnim;
     public ECU.MODE lastChecked = ECU.MODE.ASCII;
 
     public SidePanel(Context context) {
@@ -96,7 +97,7 @@ public class SidePanel extends ConstraintLayout {
         JSONDialog dialog = new JSONDialog(activity, frontECU);
 
         JSONToggle.setOnClickListener(v -> dialog.showDialog());
-        JSONToggle.setToggleMediator(button -> false);
+        JSONToggle.setHasToggleMediator(true);
         frontECU.addStatusListener(jsonLoaded -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
         frontECU.setLogListener(console::post);
         frontECU.setErrorListener((tag, msg) -> {
@@ -120,8 +121,8 @@ public class SidePanel extends ConstraintLayout {
                 frontECU.open();
             }
         });
-        connToggle.setToggleMediator(button -> false);
-        chargeToggle.setToggleMediator(button -> false);
+        connToggle.setHasToggleMediator(true);
+        chargeToggle.setHasToggleMediator(true);
     }
 
     public void onLayoutChange() {

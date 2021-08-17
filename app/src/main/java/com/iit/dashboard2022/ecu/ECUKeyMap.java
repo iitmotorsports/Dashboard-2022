@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ECU;
+package com.iit.dashboard2022.ecu;
 
 import android.widget.Toast;
 
@@ -129,7 +129,7 @@ public class ECUKeyMap {
         return update(jsonString);
     }
 
-    public boolean clear() {
+    public void clear() {
         boolean status = loaded();
         if (jsonLoader.clear()) {
             tagLookUp = null;
@@ -140,7 +140,6 @@ public class ECUKeyMap {
             Toaster.showToast("Failed to delete JSON map", Toaster.ERROR);
         }
         notifyStatusListeners(status);
-        return status;
     }
 
     public boolean update(String raw) {

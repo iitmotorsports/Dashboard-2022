@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ECU;
+package com.iit.dashboard2022.ecu;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +16,8 @@ import java.util.Date;
 public class ECU {
     public static final String LOG_TAG = "ECU";
 
-    USBSerial serial;
-    ECUKeyMap ecuKeyMap;
+    final USBSerial serial;
+    final ECUKeyMap ecuKeyMap;
     private final LogFileIO logFile;
     InterpretListener interpretListener;
     ErrorListener errorListener;
@@ -64,8 +64,8 @@ public class ECU {
         });
     }
 
-    public boolean clear() {
-        return ecuKeyMap.clear();
+    public void clear() {
+        ecuKeyMap.clear();
     }
 
     public boolean open() {

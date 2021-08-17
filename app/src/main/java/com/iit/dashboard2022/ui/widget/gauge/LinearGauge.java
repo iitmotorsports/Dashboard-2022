@@ -9,13 +9,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
-import androidx.constraintlayout.solver.state.Dimension;
 
 import com.iit.dashboard2022.R;
 
@@ -127,43 +125,36 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
     }
 
     @ColorInt
-    private int getColor(float ratio, boolean isSmooth) {
+    private int getColor(float ratio) {
         if (ratio <= 0 || colors.length == 1)
             return colors[0];
         if (ratio >= 1)
             return colors[colors.length - 1];
 
-        // Smooth value
-        if (isSmooth) {
-            // Calc the sector
-            float position = ((colors.length - 1) * ratio);
-            int sector = (int) position;
-            ratio = position - sector;
+        // Calc the sector
+        float position = ((colors.length - 1) * ratio);
+        int sector = (int) position;
+        ratio = position - sector;
 
-            // Get the color to mix
-            int sColor = colors[sector];
-            int eColor = colors[sector + 1];
+        // Get the color to mix
+        int sColor = colors[sector];
+        int eColor = colors[sector + 1];
 
-            // Manage the transparent case
-            if (sColor == Color.TRANSPARENT)
-                sColor = Color.argb(0, Color.red(eColor), Color.green(eColor), Color.blue(eColor));
-            if (eColor == Color.TRANSPARENT)
-                eColor = Color.argb(0, Color.red(sColor), Color.green(sColor), Color.blue(sColor));
+        // Manage the transparent case
+        if (sColor == Color.TRANSPARENT)
+            sColor = Color.argb(0, Color.red(eColor), Color.green(eColor), Color.blue(eColor));
+        if (eColor == Color.TRANSPARENT)
+            eColor = Color.argb(0, Color.red(sColor), Color.green(sColor), Color.blue(sColor));
 
-            // Calculate the result color
-            int alpha = (int) (Color.alpha(eColor) * ratio + Color.alpha(sColor) * (1 - ratio));
-            int red = (int) (Color.red(eColor) * ratio + Color.red(sColor) * (1 - ratio));
-            int green = (int) (Color.green(eColor) * ratio + Color.green(sColor) * (1 - ratio));
-            int blue = (int) (Color.blue(eColor) * ratio + Color.blue(sColor) * (1 - ratio));
+        // Calculate the result color
+        int alpha = (int) (Color.alpha(eColor) * ratio + Color.alpha(sColor) * (1 - ratio));
+        int red = (int) (Color.red(eColor) * ratio + Color.red(sColor) * (1 - ratio));
+        int green = (int) (Color.green(eColor) * ratio + Color.green(sColor) * (1 - ratio));
+        int blue = (int) (Color.blue(eColor) * ratio + Color.blue(sColor) * (1 - ratio));
 
-            // Get the color
-            return Color.argb(alpha, red, green, blue);
+        // Get the color
+        return Color.argb(alpha, red, green, blue);
 
-        } else {
-            // Rough value
-            int sector = (int) (colors.length * ratio);
-            return colors[sector];
-        }
     }
 
     public void setText(String text) {
@@ -186,7 +177,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
                 mainBar.set((int) (width * (1.0f - percent)), 0, width, height);
             else
                 mainBar.set(0, 0, (int) (width * percent), height);
-            paint.setColor(getColor(percent, true));
+            paint.setColor(getColor(percent));
             postInvalidate();
         }
     }

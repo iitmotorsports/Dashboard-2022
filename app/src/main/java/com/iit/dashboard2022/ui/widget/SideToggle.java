@@ -84,19 +84,15 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
         }
     }
 
-    private ToggleMediator toggleMediator;
+    private boolean toggleMediator = false;
 
-    public interface ToggleMediator {
-        boolean run(SideToggle button);
-    }
-
-    public void setToggleMediator(ToggleMediator toggleMediator) {
+    public void setHasToggleMediator(boolean toggleMediator) {
         this.toggleMediator = toggleMediator;
     }
 
     @Override
     public boolean performClick() {
-        if (toggleMediator != null && !toggleMediator.run(this)) {
+        if (toggleMediator) {
             setCheckable(false);
             super.performClick();
             setCheckable(true);

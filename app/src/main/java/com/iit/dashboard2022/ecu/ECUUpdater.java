@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.ECU;
+package com.iit.dashboard2022.ecu;
 
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.ui.SidePanel;

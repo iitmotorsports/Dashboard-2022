@@ -45,13 +45,16 @@ public class Toaster {
 
     private static class ToastMessage {
         @ToasterDuration
+        final
         int duration;
         @ToasterGravity
+        final
         int gravity;
         @ToasterStatus
+        final
         int status;
-        int xOffset;
-        String msg;
+        final int xOffset;
+        final String msg;
 
         public ToastMessage(int duration, int gravity, int status, int xOffset, String msg) {
             this.duration = duration;

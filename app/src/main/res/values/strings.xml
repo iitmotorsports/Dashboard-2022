@@ -36,7 +36,7 @@
     <string name="console_mode_format">Mode: %-5s</string>
     <string name="update_json">Update JSON</string>
     <string name="download">Download</string>
-    <string name="scan_qrgif">Scan QRGif</string>
+    <string name="scan_qr_gif">Scan QRGif</string>
     <string name="find_json_file">Find JSON File</string>
     <string name="delete">Delete</string>
 </resources>
