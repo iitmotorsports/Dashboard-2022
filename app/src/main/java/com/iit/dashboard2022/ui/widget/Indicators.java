@@ -86,7 +86,7 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
         switch (indicator) {
             case Lag:
                 rb = lagRadio;
-                lagTimer.setVisibility(visibility);
+                lagTimer.postDelayed(() -> lagTimer.setVisibility(visibility), 10);
                 break;
             case Fault:
                 rb = faultRadio;
@@ -100,8 +100,10 @@ public class Indicators extends RelativeLayout implements UITester.TestUI {
             default:
                 throw new IllegalStateException("Unexpected value: " + indicator);
         }
-        rb.setChecked(enabled);
-        rb.setVisibility(visibility);
+        rb.postDelayed(() -> {
+            rb.setChecked(enabled);
+            rb.setVisibility(visibility);
+        }, 10);
     }
 
     private void updateLagTime() {
