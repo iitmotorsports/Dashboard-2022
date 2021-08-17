@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
@@ -65,7 +66,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         int colorMid = a.getColor(i++, 0);
         flipped = a.getBoolean(i++, false);
         int textColor = a.getColor(i++, Color.WHITE);
-        float textSize = a.getDimensionPixelSize(i++, 24);
+        int textSize = a.getDimensionPixelSize(i++, 24);
         text = (String) a.getText(i);
 
         if (colorMid != 0) {
@@ -93,7 +94,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setColor(textColor);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(textSize);
+        textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, textSize, context.getResources().getDisplayMetrics()));
 
         GaugeUpdater.add(this);
     }
