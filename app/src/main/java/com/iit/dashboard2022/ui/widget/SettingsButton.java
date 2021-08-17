@@ -115,11 +115,9 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         spinColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.primary, color -> setImageTintList(ColorStateList.valueOf(color)));
         lockedColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.midground, color -> setImageTintList(ColorStateList.valueOf(color)));
         translator = ValueAnimator.ofFloat(0, 1);
-        Interpolator ant = new AnticipateOvershootInterpolator();
         translator.setDuration(AnimSetting.ANIM_DURATION);
         translator.addUpdateListener(animation -> {
             float fraction = animation.getAnimatedFraction();
-//            setRotation(((90 - getRotation()) * ant.getInterpolation(fraction)));
             if (fraction == 1.0f) {
                 if (locked)
                     startAnimation(lockSpin);
