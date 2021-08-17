@@ -3,6 +3,7 @@ package com.iit.dashboard2022.ecu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.iit.dashboard2022.util.JSONLoader;
@@ -30,7 +31,7 @@ public class ECUKeyMap {
     private HashMap<Integer, String> stringLookUp;
 
     public interface StatusListener {
-        void run(boolean jsonLoaded);
+        void run(boolean jsonLoaded, @Nullable String rawJson);
     }
 
     public ECUKeyMap(String jsonStr) {
@@ -46,9 +47,9 @@ public class ECUKeyMap {
         statusListeners.add(statusListener);
     }
 
-    private void notifyStatusListeners(boolean jsonLoaded) {
+    private void notifyStatusListeners(boolean jsonLoaded, String rawJson) {
         for (StatusListener sl : statusListeners) {
-            sl.run(jsonLoaded);
+            sl.run(jsonLoaded, rawJson);
         }
     }
 
@@ -145,12 +146,12 @@ public class ECUKeyMap {
         } else {
             Toaster.showToast("Failed to delete JSON map", Toaster.ERROR);
         }
-        notifyStatusListeners(status);
+        notifyStatusListeners(status, null);
     }
 
     public boolean update(String raw) {
         boolean status = interpretJSON(raw);
-        notifyStatusListeners(status);
+        notifyStatusListeners(status, raw);
         return status;
     }
 

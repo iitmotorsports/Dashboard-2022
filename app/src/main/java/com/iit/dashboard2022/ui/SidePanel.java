@@ -99,7 +99,7 @@ public class SidePanel extends ConstraintLayout {
 
         JSONToggle.setOnClickListener(v -> dialog.showDialog());
         JSONToggle.setHasToggleMediator(true);
-        frontECU.addStatusListener(jsonLoaded -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
+        frontECU.addStatusListener((jsonLoaded, raw) -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
         frontECU.setLogListener(console::post);
         frontECU.setErrorListener((tag, msg) -> {
             console.systemPost(tag, msg);

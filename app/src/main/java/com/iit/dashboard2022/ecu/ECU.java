@@ -1,5 +1,7 @@
 package com.iit.dashboard2022.ecu;
 
+import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import java.util.Date;
 
 public class ECU {
     public static final String LOG_TAG = "ECU";
+    private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
 
     private final USBSerial serial;
     private final ECUMsgHandler ecuMsgHandler;
@@ -25,6 +28,8 @@ public class ECU {
     ErrorListener errorListener;
     MODE interpreterMode = MODE.DISABLED;
     boolean fileLogging = true;
+    private static final String LOG_MAP_START = "---[ LOG MAP START ]---\n";
+    private static final String LOG_MAP_END = "---[ LOG MAP END ]---\n";
 
     public enum MODE {
         DISABLED,
@@ -68,15 +73,21 @@ public class ECU {
         ecuKeyMap = new ECUKeyMap(activity);
         ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
 
-        ecuKeyMap.addStatusListener(jsonLoaded -> {
+        ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
             if (jsonLoaded) {
                 ecuMsgHandler.loadMessageKeys();
-                logFile.newLog();
+                if (rawJson != null) {
+                    logFile.newLog();
+                    logFile.write(LOG_MAP_START.getBytes());
+                    logFile.write(rawJson.getBytes());
+                    logFile.write("\n".getBytes());
+                    logFile.write(LOG_MAP_END.getBytes());
+                }
             }
         });
 
         serial = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
-            long epoch = System.nanoTime();
+            long epoch = SystemClock.elapsedRealtime();
             if (interpreterMode != MODE.DISABLED) {
                 String msg = processData(epoch, data);
                 if (interpretListener != null && msg.length() > 0) {
@@ -170,7 +181,8 @@ public class ECU {
      */
     private void logRawData(long epoch, byte[] msgBlock) {
         if (fileLogging) {
-            logFile.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(epoch).array());
+            logBuffer.clear();
+            logFile.write(logBuffer.putLong(epoch).array());
             logFile.write(msgBlock);
         }
     }
