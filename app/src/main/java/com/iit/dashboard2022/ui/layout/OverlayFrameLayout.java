@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
@@ -22,7 +23,8 @@ public class OverlayFrameLayout extends FrameLayout {
     @Nullable
     private Drawable drawableMask;
     @Nullable
-    private Bitmap overlay;
+    private final Bitmap overlay, mask;
+    Canvas canvas;
 
     public OverlayFrameLayout(Context context) {
         this(context, null);
@@ -57,6 +59,12 @@ public class OverlayFrameLayout extends FrameLayout {
         dstOver.setColor(color);
         dstOver.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
 
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+
+        mask = Bitmap.createBitmap(dm.widthPixels, dm.heightPixels, Bitmap.Config.ARGB_8888);
+        overlay = Bitmap.createBitmap(dm.widthPixels, dm.heightPixels, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas();
+
         if (drawableResId != -1) {
             drawableMask = AppCompatResources.getDrawable(context, drawableResId);
         }
@@ -65,22 +73,20 @@ public class OverlayFrameLayout extends FrameLayout {
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         super.onSizeChanged(w, h, ow, oh);
-        if (w > 0 && h > 0 && drawableMask != null) {
-            Bitmap mask = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(mask);
+        if (w > 0 && h > 0 && drawableMask != null && mask != null && overlay != null) {
+            mask.reconfigure(w, h, Bitmap.Config.ARGB_8888);
+            canvas.setBitmap(mask);
+            mask.eraseColor(0);
+
             drawableMask.setBounds(0, 0, w, h);
             drawableMask.draw(canvas);
 
-            Bitmap overlay = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            canvas = new Canvas(overlay);
+            overlay.reconfigure(w, h, Bitmap.Config.ARGB_8888);
+            canvas.setBitmap(overlay);
+            overlay.eraseColor(0);
 
             canvas.drawPaint(dstOver);
             canvas.drawBitmap(mask, 0, 0, paint);
-
-            if (this.overlay != null) {
-                this.overlay.recycle();
-            }
-            this.overlay = overlay;
         }
     }
 

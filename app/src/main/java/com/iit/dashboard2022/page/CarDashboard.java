@@ -60,7 +60,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
 
     public void setBatteryPercentage(float percent) {
         batteryGauge.setPercent(percent);
-        batteryGauge.setValue((int) Math.round(percent * 100f));
+        batteryGauge.setValue(Math.round(percent * 100f));
     }
 
     public void setPowerPercentage(float percent) {
@@ -73,7 +73,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     }
 
     public void setSpeedValue(long mph) {
-        speedometer.setText(String.valueOf(mph));
+        speedometer.setText(String.valueOf(mph)); // Auto-sized textView seems to cause a lot of allocations
     }
 
     public void setIndicator(Indicators.Indicator indicator, boolean enabled) {

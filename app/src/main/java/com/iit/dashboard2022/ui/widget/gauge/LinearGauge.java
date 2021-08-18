@@ -81,7 +81,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         topText = (String) a.getText(i);
 
         if (unit != null) {
-            unit = "%d" + unit;
+            unit = String.format(unit, 0);
         }
 
         if (colorMid != 0) {
@@ -216,7 +216,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     private void updateValueString() {
         if (unit != null) {
-            output = String.format(unit, value);
+            output = value + unit;
         } else {
             output = Integer.toString(value);
         }

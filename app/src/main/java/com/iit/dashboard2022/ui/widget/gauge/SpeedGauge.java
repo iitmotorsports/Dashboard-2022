@@ -11,6 +11,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -22,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpeedGauge extends View implements GaugeUpdater.Gauge {
-    private Bitmap bitmapBG, bitmaskDraw, bitmaskBuffer;
-    private Canvas canvasBuffer;
+    private final Bitmap bitmapBG, bitmaskDraw, bitmaskBuffer;
+    private final Canvas canvasBuffer, canvasBG, canvasDraw;
     private RectF dst;
     private final Paint paint, maskPaint, dstOver;
     private final Rect mask;
@@ -37,6 +38,8 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     private final float minWidth;
     private final int BGColor;
     private final int[] colorWheel = new int[3];
+    private int[] maskWidths;
+
 
     public SpeedGauge(Context context) {
         this(context, null);
@@ -82,6 +85,19 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         minWidth = a.getDimension(i++, 8f);
         taper = a.getFloat(i, 64);
 
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+
+        int x = dm.widthPixels;
+        int y = dm.heightPixels;
+
+        bitmapBG = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+        bitmaskDraw = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+        bitmaskBuffer = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+
+        canvasBuffer = new Canvas();
+        canvasBG = new Canvas();
+        canvasDraw = new Canvas();
+
         a.recycle();
         GaugeUpdater.add(this);
     }
@@ -100,16 +116,18 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
             return colorWheel[0];
     }
 
-    private int[] maskWidths;
-
     void drawBars(int x, int y) {
-        bitmapBG = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
-        bitmaskDraw = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
-        bitmaskBuffer = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+        bitmapBG.reconfigure(x, y, Bitmap.Config.ARGB_8888);
+        bitmaskDraw.reconfigure(x, y, Bitmap.Config.ARGB_8888);
+        bitmaskBuffer.reconfigure(x, y, Bitmap.Config.ARGB_8888);
 
-        canvasBuffer = new Canvas(bitmaskBuffer);
-        Canvas canvasBG = new Canvas(bitmapBG);
-        Canvas canvasDraw = new Canvas(bitmaskDraw);
+        canvasBG.setBitmap(bitmapBG);
+        canvasDraw.setBitmap(bitmaskDraw);
+        canvasBuffer.setBitmap(bitmaskBuffer);
+
+        bitmapBG.eraseColor(0);
+        bitmaskDraw.eraseColor(0);
+        bitmaskBuffer.eraseColor(0);
 
         int count = (int) (((x) / 8f));
         float incX = x / (float) count;
@@ -162,7 +180,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
     }
 
     private int getCount(float percent) {
-        return (int) Math.round((bars - 1) * percent);
+        return Math.round((bars - 1) * percent);
     }
 
     private int getMaskWidth(float percent) {

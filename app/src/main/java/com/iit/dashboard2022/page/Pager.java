@@ -51,6 +51,7 @@ public class Pager {
         edgeAnim = ValueAnimator.ofFloat(0, 1);
         edgeAnim.setDuration(AnimSetting.ANIM_DURATION);
         edgeAnim.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+        // FIXME: Performance: Instead of resizing the actual View, take a screenshot and resize that instead
         edgeAnim.addUpdateListener(animation -> {
             float f = animation.getAnimatedFraction();
             params.leftMargin += (int) ((l - params.leftMargin) * f);
