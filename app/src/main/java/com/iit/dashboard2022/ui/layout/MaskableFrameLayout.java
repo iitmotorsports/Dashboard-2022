@@ -81,7 +81,7 @@ public class MaskableFrameLayout extends FrameLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if (mask != null) {
+        if (mask != null) { // FIXME: When in pop-up view, masked area is FULLY transparent
             canvas.drawBitmap(mask, 0, 0, paint);
         }
     }
