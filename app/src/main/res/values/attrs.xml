@@ -19,8 +19,9 @@
         <attr name="android:text" format="string" />
         <attr name="enableText" format="boolean" />
     </declare-styleable>
-    <declare-styleable name="MaskableLayout">
+    <declare-styleable name="OverlayFrameLayout">
         <attr name="mask" format="reference" />
+        <attr name="android:color" />
     </declare-styleable>
     <declare-styleable name="SpeedGauge">
         <attr name="colorLow" format="color" />

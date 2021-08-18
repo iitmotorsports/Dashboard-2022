@@ -6,8 +6,10 @@
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable-v24/round_settings.xml" value="0.37222222222222223" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable-v24/round_settings_20.xml" value="0.3779487179487179" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable-v24/round_settings_24.xml" value="0.382051282051282" />
+        <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/corners.xml" value="0.3453703703703704" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3416666666666667" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.3416666666666667" />
+        <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/overlay_mask.xml" value="0.3453703703703704" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/round_settings.xml" value="0.3416666666666667" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/side_panel_cover.xml" value="0.34444444444444444" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/side_panel_gradient.xml" value="0.34444444444444444" />
@@ -18,7 +20,7 @@
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/dialog_json_selection.xml" value="0.371875" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/sample_side_button.xml" value="0.371875" />
-        <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/side_panel_layout.xml" value="0.33" />
+        <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/side_panel_layout.xml" value="0.4077669902912621" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/tab_dashboard_layout.xml" value="0.33" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/tab_live_data_layout.xml" value="0.3582427536231884" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/tab_logs_layout.xml" value="0.3582427536231884" />

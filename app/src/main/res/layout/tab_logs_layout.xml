@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.Dashboard2022">
 
-    <com.iit.dashboard2022.ui.layout.MaskableFrameLayout
+    <com.iit.dashboard2022.ui.layout.OverlayFrameLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
@@ -14,24 +13,30 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@color/midground"
+        android:color="@color/midground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:mask="@drawable/side_panel_mask">
+        app:mask="@drawable/overlay_mask">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="Log scroller">
+            android:contentDescription="@string/log_scroller"
+            android:overScrollMode="always">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"/>
         </ScrollView>
-    </com.iit.dashboard2022.ui.layout.MaskableFrameLayout>
+    </com.iit.dashboard2022.ui.layout.OverlayFrameLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -56,7 +61,7 @@
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:minWidth="28dp"
-                android:text="-" />
+                android:text="@string/minus" />
 
             <com.iit.dashboard2022.ui.widget.SideButton
                 android:id="@+id/sideButton8"
@@ -64,46 +69,46 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:minWidth="28dp"
-                android:text="+" />
+                android:text="@string/plus" />
         </LinearLayout>
 
         <com.iit.dashboard2022.ui.widget.SideButton
             android:id="@+id/sideButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Update" />
+            android:text="@string/update" />
 
         <com.iit.dashboard2022.ui.widget.SideButton
             android:id="@+id/sideButton2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="↑"
+            android:text="@string/up"
             android:textSize="34sp" />
 
         <com.iit.dashboard2022.ui.widget.SideButton
             android:id="@+id/sideButton3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Show" />
+            android:text="@string/show" />
 
         <com.iit.dashboard2022.ui.widget.SideButton
             android:id="@+id/sideButton4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="↓"
+            android:text="@string/down"
             android:textSize="34sp" />
 
         <com.iit.dashboard2022.ui.widget.SideButton
             android:id="@+id/sideButton5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Delete" />
+            android:text="@string/delete" />
 
         <com.iit.dashboard2022.ui.widget.SideButton
             android:id="@+id/sideButton6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Upload" />
+            android:text="@string/upload" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
