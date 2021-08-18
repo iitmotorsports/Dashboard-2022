@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -19,7 +20,7 @@ import com.iit.dashboard2022.ui.UITester;
 
 import java.util.Locale;
 
-public class Indicators extends RelativeLayout implements UITester.TestUI {
+public class Indicators extends FrameLayout implements UITester.TestUI {
     private static final Handler uiHandle = new Handler(Looper.getMainLooper());
 
     private final RadioButton lagRadio, faultRadio, waitRadio, chargeRadio;

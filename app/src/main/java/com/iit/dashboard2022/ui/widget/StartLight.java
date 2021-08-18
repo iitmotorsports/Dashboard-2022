@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -11,7 +12,7 @@ import android.widget.TextView;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 
-public class StartLight extends LinearLayout implements UITester.TestUI {
+public class StartLight extends FrameLayout implements UITester.TestUI {
     private final TextView currentState;
     private final RadioButton startLight;
     private final ColorStateList colorOn, colorOff;
