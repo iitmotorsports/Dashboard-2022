@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
@@ -110,7 +108,7 @@ public class ListedFile extends FrameLayout {
                 animViewShow.showButton.setAlpha(fraction);
                 animViewShow.uploadButton.setAlpha(fraction);
                 animViewShow.deleteButton.setAlpha(fraction);
-                animViewShow.listedFileMain.getBackground().setAlpha((int) (fraction * 255));
+                animViewShow.listedFileMain.getBackground().setAlpha(32 + (int) (fraction * 191));
             });
             animatorShow.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -129,7 +127,7 @@ public class ListedFile extends FrameLayout {
                 animViewHide.showButton.setAlpha(fraction);
                 animViewHide.uploadButton.setAlpha(fraction);
                 animViewHide.deleteButton.setAlpha(fraction);
-                animViewHide.listedFileMain.getBackground().setAlpha((int) (fraction * 255));
+                animViewHide.listedFileMain.getBackground().setAlpha(64 + (int) (fraction * 191));
             });
             animatorHide.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -162,7 +160,7 @@ public class ListedFile extends FrameLayout {
         showButton.setVisibility(GONE);
         uploadButton.setVisibility(GONE);
         deleteButton.setVisibility(GONE);
-        listedFileMain.getBackground().setAlpha(0);
+        listedFileMain.getBackground().setAlpha(64);
         file = null;
         setVisibility(GONE);
         inactiveEntries.add(this);
