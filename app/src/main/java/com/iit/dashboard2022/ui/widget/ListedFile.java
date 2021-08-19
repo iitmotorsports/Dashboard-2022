@@ -108,7 +108,7 @@ public class ListedFile extends FrameLayout {
                 animViewShow.showButton.setAlpha(fraction);
                 animViewShow.uploadButton.setAlpha(fraction);
                 animViewShow.deleteButton.setAlpha(fraction);
-                animViewShow.listedFileMain.getBackground().setAlpha(32 + (int) (fraction * 191));
+                animViewShow.listedFileMain.getBackground().setAlpha(64 + (int) (fraction * 191));
             });
             animatorShow.addListener(new AnimatorListenerAdapter() {
                 @Override
