@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.PrecomputedTextCompat;
 
@@ -33,7 +34,8 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private static final Handler uiHandle = new Handler(Looper.getMainLooper());
     private static Handler textHandle;
 
-    private static final int UPDATE_TIME_MS = 100;
+    private static final int SETTLE_TIME_MS = 80;
+    private static final int UPDATE_TIME_MS = 20;
     private static long lastTime = 0;
 
     private PrecomputedTextCompat.Params textParams;
@@ -82,19 +84,31 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         }
     };
 
-    private final Runnable textLoad = () -> { // TODO: ensure queue is emptied after a final post
-        CharSequence nextMsg = rawQueue.poll();
-        if (nextMsg == null)
-            return;
+    private final Runnable textLoad = new Runnable() {
+        long settleTime = 0;
 
-        nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
-        PrecomputedTextCompat.create(nextMsg, textParams);
-        outQueue.add(nextMsg);
-
-        long curr = SystemClock.uptimeMillis();
-        if (lastTime + UPDATE_TIME_MS < curr) {
+        @Override
+        public void run() {
+            long curr = SystemClock.uptimeMillis();
+            if (lastTime + UPDATE_TIME_MS > curr)
+                return;
             lastTime = curr;
+
+            CharSequence nextMsg = rawQueue.poll();
+            if (nextMsg == null)
+                return;
+            else
+                settleTime = 0;
+
+            nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
+            PrecomputedTextCompat.create(nextMsg, textParams);
+            outQueue.add(nextMsg);
+
             uiHandle.post(textUpdate);
+
+            settleTime += UPDATE_TIME_MS;
+            if (settleTime < SETTLE_TIME_MS)
+                textHandle.postDelayed(this, UPDATE_TIME_MS);
         }
     };
 
