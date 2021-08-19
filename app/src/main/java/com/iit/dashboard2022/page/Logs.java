@@ -3,6 +3,8 @@ package com.iit.dashboard2022.page;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.text.Spannable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,9 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.textview.MaterialTextView;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ecu.ECUColor;
 import com.iit.dashboard2022.ecu.ECULogger;
 import com.iit.dashboard2022.ui.widget.ListedFile;
 import com.iit.dashboard2022.ui.widget.SideButton;
@@ -133,7 +137,9 @@ public class Logs extends Page {
                         Toaster.showToast("File returned empty", Toaster.WARNING);
                         return;
                     }
-                    console.systemPost("Log", file.getTitle() + "\n" + msg);
+
+                    Spannable str = ECUColor.colorMsgString(rootView.getContext(), msg);
+                    console.systemPost("Log", TextUtils.concat(file.getTitle(), "\n", str));
                     Toaster.showToast("Showing file on console", Toaster.INFO);
                     showConsole.run();
                 });

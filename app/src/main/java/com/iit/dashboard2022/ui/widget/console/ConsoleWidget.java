@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,6 +47,19 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
 
+    public CharSequence trimCharSequence(CharSequence sequence) {
+        int len = sequence.length();
+        int st = 0;
+
+        while ((st < len) && (sequence.charAt(st) <= ' ')) {
+            st++;
+        }
+        while ((st < len) && (sequence.charAt(len - 1) <= ' ')) {
+            len--;
+        }
+        return ((st > 0) || (len < sequence.length())) ? sequence.subSequence(st, len) : sequence;
+    }
+
     private final Runnable textUpdate = new Runnable() {
         @Override
         public void run() {
@@ -66,11 +80,11 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     };
 
     private final Runnable textLoad = () -> { // TODO: ensure queue is emptied after a final post
-        String nextMsg = (String) rawQueue.poll();
+        CharSequence nextMsg = rawQueue.poll();
         if (nextMsg == null)
             return;
 
-        nextMsg = nextMsg.trim() + '\n';
+        nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
         PrecomputedTextCompat.create(nextMsg, textParams);
         outQueue.add(nextMsg);
 
@@ -234,10 +248,10 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         }
     }
 
-    private static final String systemPostFormat = "[SYSTEM] [%s] %s";
+    private static final String systemPostFormat = "[SYSTEM] [%s] ";
 
-    public void systemPost(@NonNull String tag, @NonNull String msg) {
-        rawQueue.add(String.format(Locale.US, systemPostFormat, tag, msg));
+    public void systemPost(@NonNull String tag, @NonNull CharSequence msg) {
+        rawQueue.add(TextUtils.concat(String.format(Locale.US, systemPostFormat, tag), msg));
         textHandle.post(textLoad);
     }
 
