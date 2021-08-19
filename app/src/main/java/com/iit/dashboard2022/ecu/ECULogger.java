@@ -11,6 +11,7 @@ import com.iit.dashboard2022.util.Toaster;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.List;
 
 public class ECULogger {
     private static final String LOG_MAP_START = "---[ LOG MAP START ]---\n";
@@ -23,6 +24,8 @@ public class ECULogger {
 
     @WorkerThread
     public static String stringifyLogFile(File file) {
+        if (file == null)
+            return null;
         byte[] bytes = LogFileIO.getBytes(file);
         String jsonStr = LogFileIO.getString(file, LOG_MAP_END);
         int logStart = jsonStr.getBytes().length;
@@ -80,7 +83,7 @@ public class ECULogger {
     }
 
     @WorkerThread
-    public static String interpretLogFile(File file) {
+    public static String interpretLogFile(@NonNull File file) {
         byte[] bytes = LogFileIO.getBytes(file);
         String jsonStr = LogFileIO.getString(file, LOG_MAP_END);
         int logStart = jsonStr.getBytes().length;
@@ -92,8 +95,12 @@ public class ECULogger {
         return output;
     }
 
-    public File getActiveFile() {
+    public File getActiveLog() {
         return logFile.getActiveFile();
+    }
+
+    public List<LogFileIO.LogFile> getLocalLogs() {
+        return logFile.listFiles();
     }
 
     public void newLog(@NonNull String rawJson) {

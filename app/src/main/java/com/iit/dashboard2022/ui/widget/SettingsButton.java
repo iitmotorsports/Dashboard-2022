@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
-import android.view.animation.Interpolator;
 import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
@@ -17,7 +16,7 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
 
-public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton {
+public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton implements ActionableCheck {
     private static final int ANIM_DEGREES = 60;
 
     private RotateAnimation close, open, lockSpin, jiggle;
@@ -180,5 +179,11 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
             return false;
         lock(!locked);
         return true;
+    }
+
+    @Override
+    public void setActionedCheck(boolean checked) {
+        if (isOpen != checked)
+            performClick();
     }
 }

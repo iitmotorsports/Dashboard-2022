@@ -3,7 +3,6 @@ package com.iit.dashboard2022.ecu;
 import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -15,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class ECU {
     public static final String LOG_TAG = "ECU";
@@ -131,6 +131,10 @@ public class ECU {
 
     public ECUMsgHandler getEcuMsgHandler() {
         return ecuMsgHandler;
+    }
+
+    public List<LogFileIO.LogFile> getLocalLogs() {
+        return ecuLogger.getLocalLogs();
     }
 
     /**

@@ -20,7 +20,9 @@ import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
+import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.ui.widget.gauge.GaugeUpdater;
+import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void postUpdate() {
+        ConsoleWidget console = findViewById(R.id.console);
+
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(0);
         Logs logPage = (Logs) mainPager.getPage(1);
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
-        sidePanel.attach(this, findViewById(R.id.console), cdPage, frontECU);
+        sidePanel.attach(this, console, cdPage, frontECU);
 
         /* SETTINGS BUTTON */
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
@@ -83,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
         } else if (frontECU.open()) {
             Toaster.showToast("ECU Connected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         }
+
+        logPage.displayFiles(frontECU.getLocalLogs().toArray(new LogFileIO.LogFile[0]));
+        logPage.attachConsole(console, () -> settingsBtn.post(() -> {
+            settingsBtn.setActionedCheck(true);
+            sidePanel.consoleSwitch.setActionedCheck(true);
+        }));
     }
 
     @Override

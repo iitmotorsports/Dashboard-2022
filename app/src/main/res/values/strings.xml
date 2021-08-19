@@ -50,7 +50,7 @@
     <string name="show">Show</string>
     <string name="down">↓</string>
     <string name="upload">Upload</string>
-    <string name="listed_file_format_kb">%s - %.4g KB</string>
-    <string name="listed_file_format_mb">%s - %.4g MB</string>
     <string name="listed_file_fail">Failed to get info</string>
+    <string name="delete_all">Delete All</string>
+    <string name="update_all">Update All</string>
 </resources>

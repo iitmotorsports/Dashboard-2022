@@ -35,7 +35,7 @@ public class LogFileIO {
 
     public class LogFile extends File {
 
-        public LogFile(File file) {
+        public LogFile(@NonNull File file) {
             super(file.getAbsolutePath());
         }
 
@@ -45,7 +45,7 @@ public class LogFileIO {
 
         @Override
         public boolean delete() {
-            if (activeFile != null && compareTo(activeFile) == 0)
+            if (isActiveFile())
                 return false;
             return super.delete();
         }
@@ -61,6 +61,24 @@ public class LogFileIO {
                 e.printStackTrace();
             }
             return name;
+        }
+
+        public String getFileSize() {
+            long bytes = length();
+            double b = bytes / 1000.0;
+            if (b >= 1000) {
+                return String.format(Locale.US, "%.4g mb", b / 1000.0);
+            } else {
+                return String.format(Locale.US, "%.4g kb", b);
+            }
+        }
+
+        public String getTitle() {
+            return getFormattedName() + " - " + getFileSize();
+        }
+
+        public boolean isActiveFile() {
+            return activeFile != null && compareTo(activeFile) == 0;
         }
 
         @Nullable
@@ -98,10 +116,6 @@ public class LogFileIO {
             activeFileStream = null;
             Toaster.showToast("Failed to open new file for logging", Toaster.ERROR, Toast.LENGTH_LONG);
         }
-    }
-
-    public boolean isActiveFile(File file) {
-        return file.equals(activeFile);
     }
 
     public boolean isOpen() {
