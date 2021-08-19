@@ -1,17 +1,13 @@
 package com.iit.dashboard2022.ecu;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
 
 import com.iit.dashboard2022.R;
 
@@ -81,7 +77,7 @@ public class ECUColor {
     public static Spannable colorMsgString(@NonNull Context context, @NonNull String msg) {
         SpannableStringBuilder spannable = new SpannableStringBuilder();
         new BufferedReader(new StringReader(msg)).lines().forEachOrdered((line) -> {
-            Spannable lineSpan = getMemoSpannable(context, line + "\n");
+            Spannable lineSpan = getMemoSpannable(context, line + "\n"); // TODO: remove the trailing number for memo, then re-add it
             spannable.append(lineSpan);
         });
         msgMemo.clear();
