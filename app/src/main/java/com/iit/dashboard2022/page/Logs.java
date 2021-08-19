@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.material.textview.MaterialTextView;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECUColor;
 import com.iit.dashboard2022.ecu.ECULogger;
@@ -62,15 +61,23 @@ public class Logs extends Page {
         this.showConsole = showConsole;
     }
 
-    public void displayFile(@NonNull LogFileIO.LogFile file) {
-        fileEntries.addView(ListedFile.getInstance(rootView.getContext(), file));
+    public void displayListedFile(@NonNull ListedFile listedFile) {
+        fileEntries.addView(listedFile);
     }
 
     public void displayFiles(LogFileIO.LogFile[] files) {
-        for (LogFileIO.LogFile file : files) {
-            if (file != null)
-                displayFile(file);
-        }
+        worker.post(new Runnable() {
+            int c = 0;
+
+            @Override
+            public void run() {
+                LogFileIO.LogFile file = files[c++];
+                if (file != null)
+                    rootView.post(() -> displayListedFile(ListedFile.getInstance(rootView.getContext(), file)));
+                if (c != files.length)
+                    worker.postDelayed(this, 100);
+            }
+        });
     }
 
     public void updateAll() {
@@ -110,7 +117,7 @@ public class Logs extends Page {
                     Toaster.showToast("Done deleting", Toaster.INFO);
                     return;
                 }
-                worker.postDelayed(this, 50);
+                worker.postDelayed(this, 100);
             }
         });
     }
@@ -138,10 +145,21 @@ public class Logs extends Page {
                         return;
                     }
 
-                    Spannable str = ECUColor.colorMsgString(rootView.getContext(), msg);
-                    console.systemPost("Log", TextUtils.concat(file.getTitle(), "\n", str));
+                    Spannable[] msgBlocks = ECUColor.colorMsgString(rootView.getContext(), msg);
                     Toaster.showToast("Showing file on console", Toaster.INFO);
                     showConsole.run();
+                    worker.post(new Runnable() {
+                        int c = 0;
+
+                        @Override
+                        public void run() {
+                            Spannable span = msgBlocks[c++];
+                            if (span != null)
+                                console.systemPost("Log", TextUtils.concat(file.getTitle(), "\n", span));
+                            if (c != msgBlocks.length)
+                                worker.postDelayed(this, 64);
+                        }
+                    });
                 });
                 break;
             case UPLOAD:
