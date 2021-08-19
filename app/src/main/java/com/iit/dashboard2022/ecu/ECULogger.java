@@ -20,6 +20,11 @@ public class ECULogger {
 
     public ECULogger(Activity activity) {
         this.logFile = new LogFileIO(activity);
+        LogFileIO.setGlobalLogFileSanitizer(file -> {
+            String jsonStr = LogFileIO.getString(file, LOG_MAP_END);
+            int logStart = jsonStr.getBytes().length;
+            return logStart == file.length();
+        });
     }
 
     @WorkerThread

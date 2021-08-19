@@ -1,7 +1,6 @@
 package com.iit.dashboard2022.util;
 
 import android.app.Activity;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,9 +29,18 @@ public class LogFileIO {
     private FileOutputStream activeFileStream;
     private final Activity activity;
     private boolean opened = false;
+    private static LogFileSanitizer logFileSanitizer;
     private static final String PREFIX = "ECU_LOG-";
     private static final String SUFFIX = ".log";
     private static final String simpleDataFormatString = "yyyy-MM-dd-HH-mm-ss";
+
+    public static void setGlobalLogFileSanitizer(LogFileSanitizer logFileSanitizer) {
+        LogFileIO.logFileSanitizer = logFileSanitizer;
+    }
+
+    public interface LogFileSanitizer {
+        boolean shouldSanitize(LogFile file);
+    }
 
     public class LogFile extends File {
 
@@ -134,15 +142,14 @@ public class LogFileIO {
         List<LogFile> fileList = new ArrayList<>();
         if (files != null) {
             for (LogFile file : files) {
-                if (file.length() == 0) { // TODO: Check that file only has JSON map and nothing else
-                    if (!file.delete()) {
-                        Log.w("Data", "Failed to delete empty log file");
-                    }
-                } else {
-                    if (file.getName().endsWith(".log")) {
+                if (file.getName().endsWith(".log"))
+                    if (logFileSanitizer != null && !file.isActiveFile() && logFileSanitizer.shouldSanitize(file)) {
+                        if (!file.delete()) {
+                            Toaster.showToast("Failed to delete empty log: " + file.getFormattedName(), Toaster.WARNING);
+                        }
+                    } else {
                         fileList.add(file);
                     }
-                }
             }
         }
         fileList.sort(Comparator.naturalOrder());

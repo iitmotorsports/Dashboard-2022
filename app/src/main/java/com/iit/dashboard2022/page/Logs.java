@@ -67,6 +67,8 @@ public class Logs extends Page {
     }
 
     public void displayFiles(LogFileIO.LogFile[] files) {
+        if (files.length == 0)
+            return;
         worker.post(new Runnable() {
             int c = 0;
             final HashMap<LogFileIO.LogFile, ListedFile> currentFiles = getCurrentFiles();
@@ -83,10 +85,10 @@ public class Logs extends Page {
                     rootView.post(() -> displayListedFile(ListedFile.getInstance(rootView.getContext(), file)));
                 }
                 if (c == files.length) {
-                    for (LogFileIO.LogFile f : files) {
+                    for (LogFileIO.LogFile f : currentFiles.keySet()) {
                         ListedFile toRemove = currentFiles.get(f);
                         if (toRemove != null)
-                            removeEntry(toRemove);
+                            rootView.post(() -> removeEntry(toRemove));
                     }
                 } else {
                     worker.postDelayed(this, 100);
