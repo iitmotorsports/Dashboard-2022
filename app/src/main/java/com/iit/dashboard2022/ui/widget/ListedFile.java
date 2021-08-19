@@ -51,9 +51,6 @@ public class ListedFile extends FrameLayout {
         ListedFile entry = inactiveEntries.get(0);
         entry.setFile(file);
 
-        if (lastSelected == null) // Nothing has been selected yet, select this first
-            entry.select();
-
         if (entry.getParent() != null) {
             ((ViewGroup) entry.getParent()).removeView(entry);
         }
@@ -191,11 +188,11 @@ public class ListedFile extends FrameLayout {
 
     public void updateInfo() {
         try {
-            fileInfo.setText(file.getTitle());
+            fileInfo.post(() -> fileInfo.setText(file.getTitle()));
         } catch (Exception e) {
             e.printStackTrace();
             if (fileInfo != null) {
-                fileInfo.setText(R.string.listed_file_fail);
+                fileInfo.post(() -> fileInfo.setText(R.string.listed_file_fail));
             }
         }
     }

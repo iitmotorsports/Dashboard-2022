@@ -24,6 +24,7 @@ import com.iit.dashboard2022.util.PasteAPI;
 import com.iit.dashboard2022.util.Toaster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Logs extends Page {
     private final static HandlerThread workerThread = new HandlerThread("Logging Thread");
@@ -62,20 +63,34 @@ public class Logs extends Page {
     }
 
     public void displayListedFile(@NonNull ListedFile listedFile) {
-        fileEntries.addView(listedFile);
+        fileEntries.addView(listedFile, 1);
     }
 
     public void displayFiles(LogFileIO.LogFile[] files) {
         worker.post(new Runnable() {
             int c = 0;
+            final HashMap<LogFileIO.LogFile, ListedFile> currentFiles = getCurrentFiles();
 
             @Override
             public void run() {
                 LogFileIO.LogFile file = files[c++];
-                if (file != null)
+                if (currentFiles.containsKey(file)) {
+                    ListedFile toUpdate = currentFiles.get(file);
+                    if (toUpdate != null)
+                        toUpdate.updateInfo();
+                    currentFiles.remove(file);
+                } else if (file != null) {
                     rootView.post(() -> displayListedFile(ListedFile.getInstance(rootView.getContext(), file)));
-                if (c != files.length)
+                }
+                if (c == files.length) {
+                    for (LogFileIO.LogFile f : files) {
+                        ListedFile toRemove = currentFiles.get(f);
+                        if (toRemove != null)
+                            removeEntry(toRemove);
+                    }
+                } else {
                     worker.postDelayed(this, 100);
+                }
             }
         });
     }
@@ -95,7 +110,18 @@ public class Logs extends Page {
         return true;
     }
 
-    private void deleteAllEntries() {
+    @NonNull
+    private HashMap<LogFileIO.LogFile, ListedFile> getCurrentFiles() {
+        ArrayList<ListedFile> views = getCurrentListedFiles();
+        HashMap<LogFileIO.LogFile, ListedFile> files = new HashMap<>();
+        for (ListedFile view : views) {
+            files.put(view.getFile(), view);
+        }
+        return files;
+    }
+
+    @NonNull
+    private ArrayList<ListedFile> getCurrentListedFiles() {
         ArrayList<ListedFile> views = new ArrayList<>();
 
         for (int i = 0; i < fileEntries.getChildCount(); i++) {
@@ -104,6 +130,12 @@ public class Logs extends Page {
                 views.add((ListedFile) view);
             }
         }
+
+        return views;
+    }
+
+    private void deleteAllEntries() {
+        ArrayList<ListedFile> views = getCurrentListedFiles();
 
         worker.post(new Runnable() {
             @Override

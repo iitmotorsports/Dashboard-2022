@@ -25,9 +25,10 @@ public class ECU {
     private final ECUKeyMap ecuKeyMap;
     private final ECULogger ecuLogger;
 
-    InterpretListener interpretListener;
-    ErrorListener errorListener;
-    MODE interpreterMode = MODE.DISABLED;
+    private Runnable jsonLoadListener;
+    private InterpretListener interpretListener;
+    private ErrorListener errorListener;
+    private MODE interpreterMode = MODE.DISABLED;
     boolean fileLogging = true;
 
     public enum MODE {
@@ -53,9 +54,10 @@ public class ECU {
         ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
             if (jsonLoaded) {
                 ecuMsgHandler.loadMessageKeys();
-                if (rawJson != null) {
+                if (rawJson != null)
                     ecuLogger.newLog(rawJson);
-                }
+                if (jsonLoadListener != null)
+                    jsonLoadListener.run();
             }
         });
 
@@ -102,6 +104,10 @@ public class ECU {
 
     public boolean loadJSONString(String jsonString) {
         return ecuKeyMap.loadJSONString(jsonString);
+    }
+
+    public void setJSONLoadListener(Runnable listener) {
+        this.jsonLoadListener = listener;
     }
 
     public void addStatusListener(@NonNull ECUKeyMap.StatusListener statusListener) {

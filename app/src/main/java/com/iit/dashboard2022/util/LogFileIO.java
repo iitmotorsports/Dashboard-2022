@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -74,7 +75,7 @@ public class LogFileIO {
         }
 
         public String getTitle() {
-            return getFormattedName() + " - " + getFileSize();
+            return getFormattedName() + " - " + getFileSize() + (isActiveFile() ? " - Active" : "");
         }
 
         public boolean isActiveFile() {
@@ -133,9 +134,9 @@ public class LogFileIO {
         List<LogFile> fileList = new ArrayList<>();
         if (files != null) {
             for (LogFile file : files) {
-                if (file.length() == 0) {
+                if (file.length() == 0) { // TODO: Check that file only has JSON map and nothing else
                     if (!file.delete()) {
-                        Log.w("Data", "Failed to delete empty file");
+                        Log.w("Data", "Failed to delete empty log file");
                     }
                 } else {
                     if (file.getName().endsWith(".log")) {
@@ -144,6 +145,8 @@ public class LogFileIO {
                 }
             }
         }
+        fileList.sort(Comparator.naturalOrder());
+
         return fileList;
     }
 
