@@ -34,7 +34,40 @@
                 android:paddingStart="8dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="8dp"
-                android:paddingBottom="4dp"/>
+                android:paddingBottom="4dp">
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
         </ScrollView>
     </com.iit.dashboard2022.ui.layout.OverlayFrameLayout>
 
