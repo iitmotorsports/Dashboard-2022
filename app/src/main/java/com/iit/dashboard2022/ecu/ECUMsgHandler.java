@@ -147,6 +147,10 @@ public class ECUMsgHandler {
         return msg;
     }
 
+    public long requestValue(@MsgID int msgID) {
+        return messages[msgID].value;
+    }
+
     @Nullable
     public ECUMsg getMessage(long msgKey) {
         return messageMap.get(msgKey);

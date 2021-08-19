@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         frontECU = new ECU(this);
         mainPager = new Pager(this);
         Toaster.setContext(this);
-        new Handler(Looper.myLooper()).postDelayed(this::postUpdate, 1000);
+        new Handler(Looper.myLooper()).postDelayed(this::postUpdate, 500);
     }
 
     private void postUpdate() {
@@ -79,21 +79,23 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        /* FINAL CALLS */
-        ecuUpdater = new ECUUpdater(cdPage, sidePanel, frontECU.getEcuMsgHandler());
+        new Handler(Looper.myLooper()).postDelayed(() -> {
+            /* FINAL CALLS */
+            ecuUpdater = new ECUUpdater(cdPage, ldPage, sidePanel, frontECU);
 
-        frontECU.setJSONLoadListener(() -> logPage.displayFiles(frontECU.getLocalLogs().toArray(new LogFileIO.LogFile[0])));
+            frontECU.setJSONLoadListener(() -> logPage.displayFiles(frontECU.getLocalLogs().toArray(new LogFileIO.LogFile[0])));
 
-        if (!frontECU.loadJSONFromSystem()) {
-            Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
-        } else if (frontECU.open()) {
-            Toaster.showToast("ECU Connected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
-        }
+            if (!frontECU.loadJSONFromSystem()) {
+                Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
+            } else if (frontECU.open()) {
+                Toaster.showToast("ECU Connected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
+            }
 
-        logPage.attachConsole(console, () -> settingsBtn.post(() -> {
-            settingsBtn.setActionedCheck(true);
-            sidePanel.consoleSwitch.setActionedCheck(true);
-        }));
+            logPage.attachConsole(console, () -> settingsBtn.post(() -> {
+                settingsBtn.setActionedCheck(true);
+                sidePanel.consoleSwitch.setActionedCheck(true);
+            }));
+        }, 500);
     }
 
     @Override

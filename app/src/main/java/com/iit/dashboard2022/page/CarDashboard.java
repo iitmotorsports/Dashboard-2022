@@ -63,9 +63,12 @@ public class CarDashboard extends Page implements UITester.TestUI {
         batteryGauge.setValue(Math.round(percent * 100f));
     }
 
+    public void setPowerValue(int value) {
+        powerGauge.setValue(value);
+    }
+
     public void setPowerPercentage(float percent) {
         powerGauge.setPercent(percent);
-        powerGauge.setValue((int) (250f * percent));
     }
 
     public void setPowerLimit(int limit) {
@@ -98,6 +101,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
                 setSpeedPercentage(0);
                 setBatteryPercentage(0);
                 setPowerPercentage(0);
+                setPowerValue(0);
                 setPowerLimit(0);
                 powerGauge.invalidate();
                 setSpeedValue(0);
@@ -121,6 +125,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
         setSpeedPercentage(percent);
         setBatteryPercentage(percent);
         setPowerPercentage(percent);
+        setPowerValue((int) (percent * 1000));
         setPowerLimit((int) (percent * 1000));
         setSpeedValue((int) (300 * percent));
     }
