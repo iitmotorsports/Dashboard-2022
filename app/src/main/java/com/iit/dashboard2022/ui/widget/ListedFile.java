@@ -7,10 +7,12 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.util.Toaster;
 
 import java.io.File;
 import java.util.Locale;
@@ -50,6 +52,10 @@ public class ListedFile extends FrameLayout {
         uploadButton = findViewById(R.id.uploadButton);
         deleteButton = findViewById(R.id.deleteButton);
 
+        ConstraintLayout listedFileMain = findViewById(R.id.listedFileMain);
+
+        listedFileMain.setOnClickListener(this::onViewPressed);
+
         if (fileListFormatKB == null || fileListFormatMB == null) {
             fileListFormatKB = context.getString(R.string.listed_file_format_kb);
             fileListFormatMB = context.getString(R.string.listed_file_format_mb);
@@ -58,6 +64,8 @@ public class ListedFile extends FrameLayout {
         showButton.setOnClickListener(this::onShowPressed);
         uploadButton.setOnClickListener(this::onUploadPressed);
         deleteButton.setOnLongClickListener(this::onDeleteLongPressed);
+
+        deselect();
     }
 
     public static void setGlobalFileListListener(GlobalFileListListener globalFileListListener) {
@@ -99,5 +107,28 @@ public class ListedFile extends FrameLayout {
     private boolean onDeleteLongPressed(View v) {
         notifyListener(ListedFilePress.DELETE);
         return true;
+    }
+
+    private void onViewPressed(View view) {
+        select();
+    }
+
+    private static ListedFile lastSelected;
+
+    public void deselect() {
+        showButton.setVisibility(INVISIBLE);
+        uploadButton.setVisibility(INVISIBLE);
+        deleteButton.setVisibility(INVISIBLE);
+    }
+
+    public void select() {
+        if (lastSelected == this)
+            return;
+        if (lastSelected != null)
+            lastSelected.deselect();
+        showButton.setVisibility(VISIBLE);
+        uploadButton.setVisibility(VISIBLE);
+        deleteButton.setVisibility(VISIBLE);
+        lastSelected = this;
     }
 }

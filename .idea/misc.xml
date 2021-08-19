@@ -10,6 +10,7 @@
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3416666666666667" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.3416666666666667" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/listed_file_bg.xml" value="0.3416666666666667" />
+        <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/log_overlay_mask.xml" value="0.3416666666666667" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/overlay_mask.xml" value="0.3453703703703704" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/round_settings.xml" value="0.3416666666666667" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/drawable/side_panel_cover.xml" value="0.34444444444444444" />
@@ -24,7 +25,7 @@
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/side_panel_layout.xml" value="0.4077669902912621" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/tab_dashboard_layout.xml" value="0.33" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/tab_live_data_layout.xml" value="0.3582427536231884" />
-        <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/tab_logs_layout.xml" value="0.3582427536231884" />
+        <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/tab_logs_layout.xml" value="0.33" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/widget_console.xml" value="0.33" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/widget_indicators.xml" value="0.67" />
         <entry key="..\:/GitHub/SAEGit/Dashboard-2022/app/src/main/res/layout/widget_listed_file.xml" value="0.35190217391304346" />

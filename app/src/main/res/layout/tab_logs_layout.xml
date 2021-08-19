@@ -12,20 +12,19 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/midground"
-        android:color="@color/midground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:mask="@drawable/overlay_mask">
+        app:mask="@drawable/log_overlay_mask">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/log_scroller"
-            android:overScrollMode="always">
+            android:overScrollMode="always"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,81 +66,40 @@
                 <com.iit.dashboard2022.ui.widget.ListedFile
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <com.iit.dashboard2022.ui.widget.ListedFile
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </ScrollView>
     </com.iit.dashboard2022.ui.layout.OverlayFrameLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/sideButton7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                android:minWidth="28dp"
-                android:text="@string/minus" />
-
-            <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/sideButton8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minWidth="28dp"
-                android:text="@string/plus" />
-        </LinearLayout>
-
-        <com.iit.dashboard2022.ui.widget.SideButton
-            android:id="@+id/sideButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/update" />
-
-        <com.iit.dashboard2022.ui.widget.SideButton
-            android:id="@+id/sideButton2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/up"
-            android:textSize="34sp" />
-
-        <com.iit.dashboard2022.ui.widget.SideButton
-            android:id="@+id/sideButton3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/show" />
-
-        <com.iit.dashboard2022.ui.widget.SideButton
-            android:id="@+id/sideButton4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/down"
-            android:textSize="34sp" />
-
-        <com.iit.dashboard2022.ui.widget.SideButton
-            android:id="@+id/sideButton5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/delete" />
-
-        <com.iit.dashboard2022.ui.widget.SideButton
-            android:id="@+id/sideButton6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/upload" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
