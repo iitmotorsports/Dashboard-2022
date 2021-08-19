@@ -3,6 +3,7 @@ package com.iit.dashboard2022.ecu;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
 import androidx.annotation.ColorRes;
@@ -57,13 +58,13 @@ public class ECUColor {
     }
 
     @NonNull
-    private static Spannable colorSpannableType(Context context, @NonNull Spannable spannable, @NonNull MsgType type) {
+    private static SpannableStringBuilder colorSpannableType(Context context, @NonNull SpannableStringBuilder spannable, @NonNull MsgType type) {
         spannable.setSpan(new ForegroundColorSpan(context.getColor(type.color)), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannable;
     }
 
     @NonNull
-    private static Spannable getMemoSpannable(@NonNull Context context, @NonNull String msg) {
+    private static SpannableStringBuilder getMemoSpannable(@NonNull Context context, @NonNull String msg) {
         MsgMemo memo = msgMemo.get(msg);
         if (memo == null) {
             SpannableStringBuilder spannable = new SpannableStringBuilder(msg);
@@ -71,6 +72,14 @@ public class ECUColor {
             msgMemo.put(msg, memo);
         }
         return colorSpannableType(context, memo.spannable, memo.type);
+    }
+
+    @NonNull
+    private static CharSequence getTrimmedSpannable(@NonNull Context context, @NonNull String msg) {
+        String trimmed = msg.replaceAll("\\d*$", "");
+        String number = msg.substring(trimmed.length());
+        SpannableStringBuilder memo = getMemoSpannable(context, trimmed);
+        return TextUtils.concat(memo, number, "\n");
     }
 
     @WorkerThread
