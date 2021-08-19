@@ -14,6 +14,7 @@ import com.iit.dashboard2022.R;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class ECUColor {
@@ -82,15 +83,31 @@ public class ECUColor {
         return TextUtils.concat(memo, number, "\n");
     }
 
+    private static SpannableStringBuilder spannable;
+    private static int c = 0;
+
     @WorkerThread
-    public static Spannable colorMsgString(@NonNull Context context, @NonNull String msg) {
-        SpannableStringBuilder spannable = new SpannableStringBuilder();
+    public static Spannable[] colorMsgString(@NonNull Context context, @NonNull String msg) {
+        ArrayList<Spannable> msgBlocks = new ArrayList<>();
+        spannable = new SpannableStringBuilder();
+
+        c = 0;
         new BufferedReader(new StringReader(msg)).lines().forEachOrdered((line) -> {
             Spannable lineSpan = getMemoSpannable(context, line + "\n"); // TODO: remove the trailing number for memo, then re-add it
             spannable.append(lineSpan);
+            c++;
+            if (c >= 64){
+                msgBlocks.add(spannable);
+                spannable = new SpannableStringBuilder();
+                c = 0;
+            }
         });
+
+        msgBlocks.add(spannable);
+        spannable = null;
+
         msgMemo.clear();
-        return spannable;
+        return msgBlocks.toArray(new Spannable[0]);
     }
 
 }
