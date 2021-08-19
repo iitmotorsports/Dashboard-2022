@@ -38,6 +38,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
 
     private PrecomputedTextCompat.Params textParams;
     private boolean run = false;
+    private int limit = 0;
 
     private final ConsoleScroller consoleScroller;
     private final ImageView scrollToEndImage;
@@ -65,10 +66,12 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         public void run() {
             CharSequence msg;
 
-            if (text.getLineCount() > 1000) {
+            if (limit == 0 && text.getLineCount() > 1000) {
                 CharSequence cq = text.getText();
                 int len = cq.length();
                 text.setText(cq.subSequence(len / 2, len));
+            } else if (limit > 0) {
+                limit--;
             }
 
             while ((msg = outQueue.poll()) != null) {
@@ -251,6 +254,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private static final String systemPostFormat = "[SYSTEM] [%s] ";
 
     public void systemPost(@NonNull String tag, @NonNull CharSequence msg) {
+        limit++;
         rawQueue.add(TextUtils.concat(String.format(Locale.US, systemPostFormat, tag), msg));
         textHandle.post(textLoad);
     }
