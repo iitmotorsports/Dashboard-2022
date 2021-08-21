@@ -189,7 +189,7 @@ public class Logs extends Page {
                         public void run() {
                             Spannable span = msgBlocks[c++];
                             if (span != null)
-                                console.systemPost("Log", TextUtils.concat(file.getTitle(), "\n", span));
+                                console.systemPost("Log", TextUtils.concat(file.getTitle(), " - " + c + "/" + msgBlocks.length + "\n", span));
                             if (c != msgBlocks.length)
                                 worker.postDelayed(this, 64);
                         }
