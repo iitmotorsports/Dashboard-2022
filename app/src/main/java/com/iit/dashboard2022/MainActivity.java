@@ -17,6 +17,7 @@ import com.iit.dashboard2022.ecu.ECUUpdater;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
+import com.iit.dashboard2022.page.PageManager;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
@@ -50,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         ConsoleWidget console = findViewById(R.id.console);
 
         /* PAGER */
-        CarDashboard cdPage = (CarDashboard) mainPager.getPage(0);
-        Logs logPage = (Logs) mainPager.getPage(1);
-        LiveData ldPage = (LiveData) mainPager.getPage(2);
+        CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
+        LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
+        Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             logPage.attachConsole(console, () -> settingsBtn.post(() -> {
+                if (settingsBtn.isLocked())
+                    settingsBtn.performLongClick();
                 settingsBtn.setActionedCheck(true);
                 sidePanel.consoleSwitch.setActionedCheck(true);
             }));
