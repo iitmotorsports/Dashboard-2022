@@ -126,8 +126,8 @@ public class Pager {
         }
     }
 
-    public Page getPage(int index) {
-        return pageManager.getPage(index);
+    public Page getPage(@PageManager.PageIndex int page) {
+        return pageManager.getPage(page);
     }
 
 }
