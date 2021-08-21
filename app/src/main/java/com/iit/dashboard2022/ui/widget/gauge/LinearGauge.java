@@ -147,7 +147,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
     float valX, altX;
     float oldValX = 0;
 
-    private void updateDrawOffsets() { // TODO: fix 'jitter' when changing width
+    private void updateDrawOffsets() { // TODO: fix 'jitter' when changing width, may have todo with kerning
         valX = width - valueBounds.width() - textOffset / 4f;
         float dv = (valX - oldValX);
         oldValX += dv / 4;
