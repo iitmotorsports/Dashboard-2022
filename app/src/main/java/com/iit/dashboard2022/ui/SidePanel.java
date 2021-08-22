@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
+import com.iit.dashboard2022.ecu.ECUCommunication;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
@@ -20,14 +21,13 @@ import com.iit.dashboard2022.ui.widget.SideRadio;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
-import com.iit.dashboard2022.util.SerialCom;
 
-public class SidePanel extends ConstraintLayout{
+public class SidePanel extends ConstraintLayout {
     public final RadioGroup consoleRadioGroup;
     public final SideRadio asciiRadio, hexRadio, rawRadio;
-    public final SideSwitch uiTestSwitch, reverseSwitch, consoleSwitch;
+    public final SideSwitch uiTestSwitch, nearbyAPISwitch, reverseSwitch, consoleSwitch;
     public final SideToggle chargeToggle, JSONToggle, connToggle;
-    public final SideButton clearConsoleButton, canMsgButton, canEchoButton;
+    public final SideButton clearConsoleButton, canMsgButton, canEchoButton, enableNearby;
 
     public TranslationAnim consoleAnim;
     public final TranslationAnim sidePanelDrawerAnim;
@@ -54,6 +54,7 @@ public class SidePanel extends ConstraintLayout{
         JSONToggle = findViewById(R.id.JSONToggle);
         connToggle = findViewById(R.id.connToggle);
 
+        nearbyAPISwitch = findViewById(R.id.nearbyAPISwitch);
         uiTestSwitch = findViewById(R.id.uiTestSwitch);
         reverseSwitch = findViewById(R.id.reverseSwitch);
         consoleSwitch = findViewById(R.id.consoleSwitch);
@@ -61,6 +62,7 @@ public class SidePanel extends ConstraintLayout{
         clearConsoleButton = findViewById(R.id.clearConsoleButton);
         canMsgButton = findViewById(R.id.canMsgButton);
         canEchoButton = findViewById(R.id.canEchoButton);
+        enableNearby = findViewById(R.id.enableNearby);
 
         uiTestSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> UITester.enable(isChecked));
 
@@ -106,6 +108,15 @@ public class SidePanel extends ConstraintLayout{
         frontECU.setErrorListener((tag, msg) -> {
             console.systemPost(tag, msg);
             console.newError();
+        });
+
+        ECUCommunication com = frontECU.getEcuCommunicator();
+
+        enableNearby.setOnClickListener(v -> com.openNearby());
+        nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            com.changeMethod(isChecked ? ECUCommunication.NEARBY : ECUCommunication.USB);
+            if (isChecked)
+                com.openNearby();
         });
 
         frontECU.setConnectionListener(connected -> {

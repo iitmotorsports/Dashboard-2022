@@ -54,4 +54,7 @@
     <string name="accept_connection_to">Accept connection to </string>
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
+    <string name="nearby_switch_text">Use API</string>
+    <string name="enable_relay">Enable Relay</string>
+    <string name="nearbyapi">NearbyAPI</string>
 </resources>

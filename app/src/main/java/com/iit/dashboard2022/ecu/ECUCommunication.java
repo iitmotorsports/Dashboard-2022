@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.NearbySerial;
 import com.iit.dashboard2022.util.SerialCom;
+import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.USBSerial;
 
 import java.lang.annotation.Retention;
@@ -48,40 +49,43 @@ public class ECUCommunication extends SerialCom {
     public void changeMethod(@SerialUpdateMethod int updateMethod) {
         switch (updateMethod) {
             case USB:
+                Toaster.showToast("Using USB Serial", Toaster.WARNING);
                 switchCurrentMethod(USBMethod);
                 current = updateMethod;
                 break;
             case NEARBY:
+                Toaster.showToast("Using Nearby Serial, do not connect an ECU", Toaster.WARNING);
                 switchCurrentMethod(nearbyMethod);
                 current = updateMethod;
                 break;
         }
     }
 
+    public void openNearby() {
+        nearbyMethod.open();
+    }
+
     private void switchCurrentMethod(@NonNull SerialCom newMethod) {
         currentMethod.close();
         currentMethod = newMethod;
-        currentMethod.setConnectionListener(connectionListener);
-        currentMethod.setConnectionStateListener(connectionStateListener);
-        currentMethod.setErrorListener(errorListener);
     }
 
     @Override
     public void setConnectionListener(SerialCom.ConnectionListener connectionListener) {
-        this.connectionListener = connectionListener;
-        currentMethod.setConnectionListener(connectionListener);
+        USBMethod.setConnectionListener(connectionListener);
+        nearbyMethod.setConnectionListener(connectionListener);
     }
 
     @Override
     public void setConnectionStateListener(SerialCom.ConnectionStateListener connectionStateListener) {
-        this.connectionStateListener = connectionStateListener;
-        currentMethod.setConnectionStateListener(connectionStateListener);
+        USBMethod.setConnectionStateListener(connectionStateListener);
+        nearbyMethod.setConnectionStateListener(connectionStateListener);
     }
 
     @Override
     public void setErrorListener(SerialCom.ErrorListener errorListener) {
-        this.errorListener = errorListener;
-        currentMethod.setErrorListener(errorListener);
+        USBMethod.setErrorListener(errorListener);
+        nearbyMethod.setErrorListener(errorListener);
     }
 
     @Override

@@ -154,6 +154,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/test_ui"
+                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" >
+
+                </com.iit.dashboard2022.ui.widget.SideSwitch>
+
+                <com.iit.dashboard2022.ui.widget.SideLabel
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nearbyapi"
+                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+
+                <com.iit.dashboard2022.ui.widget.SideButton
+                    android:id="@+id/enableNearby"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enable_relay"
+                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+
+                <com.iit.dashboard2022.ui.widget.SideSwitch
+                    android:id="@+id/nearbyAPISwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/nearby_switch_text"
                     tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
             </LinearLayout>

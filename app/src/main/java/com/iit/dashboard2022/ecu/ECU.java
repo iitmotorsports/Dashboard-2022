@@ -138,6 +138,10 @@ public class ECU {
         return ecuMsgHandler;
     }
 
+    public ECUCommunication getEcuCommunicator() {
+        return com;
+    }
+
     public List<LogFileIO.LogFile> getLocalLogs() {
         return ecuLogger.getLocalLogs();
     }

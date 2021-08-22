@@ -1,13 +1,17 @@
 package com.iit.dashboard2022.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.pm.PackageManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
@@ -23,6 +27,7 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
+import com.iit.dashboard2022.MainActivity;
 import com.iit.dashboard2022.R;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -166,17 +171,28 @@ public class NearbySerial extends SerialCom {
     private void startAdvertising() {
         client.startAdvertising(USERNAME, SERVICE_ID, connectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener((Void unused) -> Toaster.showToast("Searching for receiver", Toaster.INFO))
-                .addOnFailureListener((Exception e) -> Toaster.showToast("Failed to start search for a receiver", Toaster.ERROR, Toast.LENGTH_LONG));
+                .addOnFailureListener((Exception e) -> {
+                    Toaster.showToast("Failed to start search for a receiver", Toaster.ERROR, Toast.LENGTH_LONG);
+                    e.printStackTrace();
+                });
     }
 
     private void startDiscovery() {
         client.startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
                 .addOnSuccessListener((Void unused) -> Toaster.showToast("Searching for broadcaster", Toaster.INFO))
-                .addOnFailureListener((Exception e) -> Toaster.showToast("Failed to start search for a broadcaster", Toaster.ERROR, Toast.LENGTH_LONG));
+                .addOnFailureListener((Exception e) -> {
+                    Toaster.showToast("Failed to start search for a broadcaster", Toaster.ERROR, Toast.LENGTH_LONG);
+                    e.printStackTrace();
+                });
     }
 
     @Override
     public boolean open() {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            Toaster.showToast("Try reopening after giving access", Toaster.INFO, Toast.LENGTH_LONG);
+            return false;
+        }
         startDiscovery();
         startAdvertising();
         return false;
