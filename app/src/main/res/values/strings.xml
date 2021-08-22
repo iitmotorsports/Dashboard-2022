@@ -53,4 +53,5 @@
     <string name="listed_file_fail">Failed to get info</string>
     <string name="delete_all">Delete All</string>
     <string name="update_all">Update All</string>
+    <string name="scroll_to_start">Scroll to start</string>
 </resources>

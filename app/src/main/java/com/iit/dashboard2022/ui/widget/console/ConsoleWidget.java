@@ -14,12 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.PrecomputedTextCompat;
 
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
+import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 import java.util.Locale;
@@ -43,7 +43,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private int limit = 0;
 
     private final ConsoleScroller consoleScroller;
-    private final ImageView scrollToEndImage;
+    private final ImageView scrollToEndImage, scrollToStartImage;
     private final String linesFormat, errorFormat, statusFormat, modeFormat;
     private final TextView text, consoleLines, consoleError, consoleStatus, consoleMode;
     private final TranslationAnim consoleAnim;
@@ -79,7 +79,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
             while ((msg = outQueue.poll()) != null) {
                 text.append(msg);
             }
-            consoleScroller.scroll();
+            consoleScroller.scrollDown();
             setLineCount();
         }
     };
@@ -177,6 +177,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         consoleAnim.startWhenReady();
 
         scrollToEndImage = findViewById(R.id.scrollToEndImage);
+        scrollToStartImage = findViewById(R.id.scrollToStartImage);
         consoleScroller = findViewById(R.id.consoleScroller);
         text = findViewById(R.id.consoleText);
         consoleLines = findViewById(R.id.consoleLines);
@@ -188,9 +189,14 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         consoleScroller.setScrollerStatusListener(enabled -> scrollToEndImage.setAlpha(enabled ? 1 : 0.5f));
         scrollToEndImage.setOnClickListener(v -> {
             consoleScroller.toggle();
-            if (consoleScroller.isEnabled())
-                consoleScroller.scroll();
+            consoleScroller.scrollDown();
         });
+        scrollToStartImage.setOnClickListener(v -> {
+            consoleScroller.scrollUp();
+            scrollToStartImage.setAlpha(1f);
+            postDelayed(() -> scrollToStartImage.setAlpha(0.5f), AnimSetting.ANIM_DURATION / 2);
+        });
+        scrollToStartImage.setAlpha(0.5f);
 
         linesFormat = context.getString(R.string.console_line_format);
         errorFormat = context.getString(R.string.console_error_format);

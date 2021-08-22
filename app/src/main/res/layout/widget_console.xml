@@ -81,10 +81,23 @@
             android:clickable="true"
             android:contentDescription="@string/scroll_to_end"
             android:focusable="true"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            app:srcCompat="@android:drawable/arrow_down_float"
-            tools:ignore="TouchTargetSizeCheck" />
+            android:rotation="90"
+            app:srcCompat="@drawable/round_double_arrow_24"
+            tools:ignore="TouchTargetSizeCheck"
+            app:tint="@color/foreground" />
+
+        <ImageView
+            android:id="@+id/scrollToStartImage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:contentDescription="@string/scroll_to_start"
+            android:focusable="true"
+            android:rotation="-90"
+            app:srcCompat="@drawable/round_double_arrow_24"
+            tools:ignore="TouchTargetSizeCheck"
+            app:tint="@color/foreground" />
 
         <TextView
             android:id="@+id/consoleError"

@@ -15,11 +15,17 @@ public class ConsoleScroller extends ScrollView {
         void run(boolean enabled);
     }
 
-    private final Runnable scroller = () -> fullScroll(ScrollView.FOCUS_DOWN);
+    private final Runnable scrollDownRunner = () -> fullScroll(ScrollView.FOCUS_DOWN);
+    private final Runnable scrollUpRunner = () -> fullScroll(ScrollView.FOCUS_UP);
 
-    public void scroll() { // TODO: Is there a better way to scroll?
+    public void scrollUp() {
+        enable(false);
+        post(scrollUpRunner);
+    }
+
+    public void scrollDown() { // TODO: Is there a better way to scroll?
         if (enabled)
-            post(scroller);
+            post(scrollDownRunner);
     }
 
     public void enable(boolean enabled) {
