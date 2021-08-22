@@ -7,7 +7,7 @@
     android:theme="@style/Theme.Dashboard2022">
 
     <com.iit.dashboard2022.ui.layout.OverlayFrameLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -21,7 +21,7 @@
 
         <ScrollView
             android:id="@+id/scrollView3"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:ignore="SpeakableTextPresentCheck">
 
@@ -33,29 +33,9 @@
                 android:paddingStart="8dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="8dp"
-                android:paddingBottom="4dp">
-
-                <com.iit.dashboard2022.ui.widget.LiveDataEntry
-                    android:id="@+id/liveDataEntry"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <com.iit.dashboard2022.ui.widget.LiveDataEntry
-                    android:id="@+id/liveDataEntry2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <com.iit.dashboard2022.ui.widget.LiveDataEntry
-                    android:id="@+id/liveDataEntry3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <com.iit.dashboard2022.ui.widget.LiveDataEntry
-                    android:id="@+id/liveDataEntry4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                android:paddingBottom="4dp" />
         </ScrollView>
+
     </com.iit.dashboard2022.ui.layout.OverlayFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,9 +3,8 @@ package com.iit.dashboard2022.ui.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -78,6 +77,9 @@ public class LiveDataEntry extends View {
     @UiThread
     public void setTitle(String title) {
         this.title = title;
+        Rect bounds = new Rect();
+        titlePaint.getTextBounds(title, 0, title.length(), bounds);
+        setMinimumWidth(bounds.width() * 2);
         invalidate();
     }
 
