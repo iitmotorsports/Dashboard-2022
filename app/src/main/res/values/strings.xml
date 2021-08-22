@@ -43,12 +43,7 @@
     <string name="battery_charge">Battery Charge</string>
     <string name="limit_format">Limit: %dW</string>
     <string name="log_scroller">Log scroller</string>
-    <string name="minus">-</string>
-    <string name="plus">+</string>
-    <string name="update">Update</string>
-    <string name="up">↑</string>
     <string name="show">Show</string>
-    <string name="down">↓</string>
     <string name="upload">Upload</string>
     <string name="listed_file_fail">Failed to get info</string>
     <string name="delete_all">Delete All</string>

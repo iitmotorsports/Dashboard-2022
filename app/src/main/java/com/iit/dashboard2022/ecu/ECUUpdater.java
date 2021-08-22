@@ -1,5 +1,7 @@
 package com.iit.dashboard2022.ecu;
 
+import androidx.annotation.NonNull;
+
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.SidePanel;
@@ -9,7 +11,7 @@ public class ECUUpdater {
 
     private long lastSpeed = 0;
 
-    public ECUUpdater(CarDashboard dashboardPage, LiveData liveDataPage, SidePanel sidePanel, ECU frontECU) {
+    public ECUUpdater(CarDashboard dashboardPage, LiveData liveDataPage, SidePanel sidePanel, @NonNull ECU frontECU) {
         /*
          *  DASHBOARD
          */
@@ -73,6 +75,7 @@ public class ECUUpdater {
         }
     }
 
+    @NonNull
     private String removeMsgTag(String stringMsg) {
         for (ECUColor.MsgType type : ECUColor.MsgType.values()) {
             String replace = stringMsg.replace(type.key + " ", "");

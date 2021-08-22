@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ecu.ECUMsg;
 import com.iit.dashboard2022.ecu.ECUMsgHandler;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;

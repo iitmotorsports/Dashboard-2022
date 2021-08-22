@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 public class ByteSplit {
 
+    @SuppressWarnings("SpellCheckingInspection")
     private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.UTF_8);
 
     /**

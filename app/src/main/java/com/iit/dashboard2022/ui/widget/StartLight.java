@@ -5,9 +5,10 @@ import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import androidx.annotation.AttrRes;
 
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
@@ -26,7 +27,7 @@ public class StartLight extends FrameLayout implements UITester.TestUI {
         this(context, attrs, 0);
     }
 
-    public StartLight(Context context, AttributeSet attrs, int defStyleAttr) {
+    public StartLight(Context context, AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.widget_start_light, this);
 

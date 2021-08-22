@@ -28,8 +28,9 @@ public class ECUColor {
         FATAL("[FATAL]", R.color.magenta),
         LOG("[ LOG ]", R.color.green);
 
-        String key;
+        final String key;
         @ColorRes
+        final
         int color;
 
         MsgType(String key, @ColorRes int color) {
@@ -39,8 +40,8 @@ public class ECUColor {
     }
 
     private static class MsgMemo {
-        MsgType type;
-        SpannableStringBuilder spannable;
+        final MsgType type;
+        final SpannableStringBuilder spannable;
 
         public MsgMemo(MsgType type, SpannableStringBuilder spannable) {
             this.type = type;
@@ -59,7 +60,7 @@ public class ECUColor {
     }
 
     @NonNull
-    private static SpannableStringBuilder colorSpannableType(Context context, @NonNull SpannableStringBuilder spannable, @NonNull MsgType type) {
+    private static SpannableStringBuilder colorSpannableType(@NonNull Context context, @NonNull SpannableStringBuilder spannable, @NonNull MsgType type) {
         spannable.setSpan(new ForegroundColorSpan(context.getColor(type.color)), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannable;
     }
@@ -86,6 +87,7 @@ public class ECUColor {
     private static SpannableStringBuilder spannable;
     private static int c = 0;
 
+    @NonNull
     @WorkerThread
     public static Spannable[] colorMsgString(@NonNull Context context, @NonNull String msg) {
         ArrayList<Spannable> msgBlocks = new ArrayList<>();
@@ -96,7 +98,7 @@ public class ECUColor {
             Spannable lineSpan = getMemoSpannable(context, line + "\n"); // TODO: remove the trailing number for memo, then re-add it
             spannable.append(lineSpan);
             c++;
-            if (c >= 64){
+            if (c >= 64) {
                 msgBlocks.add(spannable);
                 spannable = new SpannableStringBuilder();
                 c = 0;

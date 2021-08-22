@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.widget.FrameLayout;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -24,7 +25,7 @@ public class OverlayFrameLayout extends FrameLayout {
     private Drawable drawableMask;
     @Nullable
     private final Bitmap overlay, mask;
-    Canvas canvas;
+    private final Canvas canvas;
 
     public OverlayFrameLayout(Context context) {
         this(context, null);
@@ -34,7 +35,7 @@ public class OverlayFrameLayout extends FrameLayout {
         this(context, attrs, 0);
     }
 
-    public OverlayFrameLayout(Context context, AttributeSet attrs, int defStyle) {
+    public OverlayFrameLayout(Context context, AttributeSet attrs, @AttrRes int defStyle) {
         super(context, attrs, defStyle);
 
         int[] set = {

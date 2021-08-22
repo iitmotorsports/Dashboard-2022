@@ -38,7 +38,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private static final int UPDATE_TIME_MS = 20;
     private static long lastTime = 0;
 
-    private PrecomputedTextCompat.Params textParams;
+    private final PrecomputedTextCompat.Params textParams;
     private boolean run = false;
     private int limit = 0;
 
@@ -50,7 +50,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
 
-    public CharSequence trimCharSequence(CharSequence sequence) {
+    public CharSequence trimCharSequence(@NonNull CharSequence sequence) {
         int len = sequence.length();
         int st = 0;
 

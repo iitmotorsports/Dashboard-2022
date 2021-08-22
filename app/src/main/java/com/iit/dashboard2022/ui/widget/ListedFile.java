@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -76,7 +77,7 @@ public class ListedFile extends FrameLayout {
         this(context, attrs, 0);
     }
 
-    public ListedFile(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ListedFile(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.widget_listed_file, this);
 
@@ -220,12 +221,12 @@ public class ListedFile extends FrameLayout {
         Toaster.showToast("Hold to confirm", Toaster.INFO);
     }
 
+    @SuppressWarnings("SameReturnValue")
     private boolean onDeleteLongPressed(View v) {
-        if (file.isActiveFile()) {
+        if (file.isActiveFile())
             Toaster.showToast("Cannot delete active file", Toaster.WARNING);
-            return true;
-        }
-        notifyListener(ListedFileAction.DELETE);
+        else
+            notifyListener(ListedFileAction.DELETE);
         return true;
     }
 

@@ -10,9 +10,9 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
@@ -45,7 +45,7 @@ public class Indicators extends FrameLayout implements UITester.TestUI {
         this(context, attrs, 0);
     }
 
-    public Indicators(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public Indicators(Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.widget_indicators, this);
 

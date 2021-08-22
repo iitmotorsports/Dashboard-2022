@@ -65,8 +65,9 @@ public class ECUMsgHandler {
     private final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
     private final HashMap<Long, STATE> stateMap = new HashMap<>();
     private final ECUMsg[] messages = new ECUMsg[22];
+    private final ECUKeyMap keyMap;
+
     private StateListener stateListener;
-    private ECUKeyMap keyMap;
 
     public enum STATE { // Use actual name, brackets are added on when matching to actual state name
         Initializing("Teensy Initialize"),
