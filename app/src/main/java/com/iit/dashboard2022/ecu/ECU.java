@@ -297,7 +297,8 @@ public class ECU {
                 return output.toString();
             }
             return output.substring(0, output.length() - 1);
-        } else { // TODO: process data in ascii format
+        } else {
+            consumeData(epoch, raw_data); // attempt to process data
             return new String(raw_data);
         }
     }
