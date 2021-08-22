@@ -6,6 +6,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
+import com.iit.dashboard2022.util.NearbySerial;
 import com.iit.dashboard2022.util.SerialCom;
 import com.iit.dashboard2022.util.USBSerial;
 
@@ -14,13 +15,23 @@ import java.lang.annotation.RetentionPolicy;
 
 public class ECUCommunication extends SerialCom {
     private final USBSerial USBMethod;
+    private final NearbySerial nearbyMethod;
     private SerialCom currentMethod;
+    private int current = -1;
 
     ECUCommunication(@NonNull Activity activity, @NonNull DataListener dataListener) {
-        USBMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
-        USBMethod.setDataListener(dataListener);
 
-        setDataListener(dataListener);
+        USBMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
+        nearbyMethod = new NearbySerial(activity);
+
+        setDataListener(data -> {
+            dataListener.newSerialData(data);
+            if (current != NEARBY)
+                nearbyMethod.write(data);
+        });
+
+        USBMethod.setDataListener(this.dataListener);
+        nearbyMethod.setDataListener(this.dataListener);
 
         currentMethod = USBMethod;
         changeMethod(USB);
@@ -38,14 +49,16 @@ public class ECUCommunication extends SerialCom {
         switch (updateMethod) {
             case USB:
                 switchCurrentMethod(USBMethod);
+                current = updateMethod;
                 break;
             case NEARBY:
-                switchCurrentMethod(null);
+                switchCurrentMethod(nearbyMethod);
+                current = updateMethod;
                 break;
         }
     }
 
-    private void switchCurrentMethod(SerialCom newMethod) {
+    private void switchCurrentMethod(@NonNull SerialCom newMethod) {
         currentMethod.close();
         currentMethod = newMethod;
         currentMethod.setConnectionListener(connectionListener);
