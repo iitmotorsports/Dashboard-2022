@@ -50,12 +50,12 @@ public class LiveData extends Page implements UITester.TestUI {
         this.entries = entries;
         this.values = values;
 
-        resetValues();
+        reset();
 
         return values;
     }
 
-    public void resetValues() {
+    public void reset() {
         if (values != null) {
             Arrays.fill(values, "0");
             updateValues();
@@ -92,7 +92,7 @@ public class LiveData extends Page implements UITester.TestUI {
     public void testUI(float percent) {
         if (values != null)
             if (percent == 0)
-                resetValues();
+                reset();
             else
                 for (int i = 0; i < values.length; i++) {
                     if (UITester.Rnd.nextInt(100) < 50 * percent) {

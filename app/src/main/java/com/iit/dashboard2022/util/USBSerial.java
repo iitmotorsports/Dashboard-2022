@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
-public class USBSerial implements SerialInputOutputManager.Listener {
+public class USBSerial extends SerialCom implements SerialInputOutputManager.Listener {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({UsbSerialPort.STOPBITS_1, UsbSerialPort.STOPBITS_1_5, UsbSerialPort.STOPBITS_2})
@@ -36,36 +36,15 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     private final Context context;
     private final UsbManager usbManager;
     private final PendingIntent deviceIntent;
-    private final UsbDataListener usbDataListener;
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
     private boolean active, attached;
     private UsbSerialPort port;
-    private UsbActiveListener usbActiveListener;
-    private UsbAttachListener usbAttachListener;
-    private ErrorListener errorListener;
 
-    public interface UsbActiveListener {
-        void run(boolean active);
-    }
-
-    public interface UsbAttachListener {
-        void run(boolean attached);
-    }
-
-    public interface UsbDataListener {
-        void newUsbData(byte[] data);
-    }
-
-    public interface ErrorListener {
-        void newError(Exception exception);
-    }
-
-    public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity, @NonNull UsbDataListener usbDataListener) {
+    public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity) {
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         deviceIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbManager.EXTRA_PERMISSION_GRANTED), PendingIntent.FLAG_IMMUTABLE);
-        this.usbDataListener = usbDataListener;
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -73,13 +52,13 @@ public class USBSerial implements SerialInputOutputManager.Listener {
                 switch (intent.getAction()) {
                     case UsbManager.ACTION_USB_DEVICE_ATTACHED:
                         if (open()) {
-                            if (usbAttachListener != null)
-                                usbAttachListener.run(true);
+                            if (connectionListener != null)
+                                connectionListener.onSerialConnection(true);
                         }
                         break;
                     case UsbManager.ACTION_USB_DEVICE_DETACHED: // TODO: ensure the thing detached was the thing that last connected
-                        if (usbAttachListener != null) {
-                            usbAttachListener.run(false);
+                        if (connectionListener != null) {
+                            connectionListener.onSerialConnection(false);
                             attached = false;
                         }
                         break;
@@ -126,49 +105,43 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         return false;
     }
 
+    @Override
     public boolean open() {
         boolean opened = openNewConnection();
-        if (usbActiveListener != null)
-            usbActiveListener.run(opened);
+        if (connectionStateListener != null)
+            connectionStateListener.onSerialOpen(opened);
         active = opened;
-        if (opened && !attached){
+        if (opened && !attached) {
             attached = true;
-            if (usbAttachListener != null)
-                usbAttachListener.run(true);
+            if (connectionListener != null)
+                connectionListener.onSerialConnection(true);
         }
         return opened;
     }
 
+    @Override
     public void close() {
         if (port != null) {
             try {
                 port.close();
+                port = null;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void setUsbAttachListener(UsbAttachListener usbAttachListener) {
-        this.usbAttachListener = usbAttachListener;
-    }
-
-    public void setUsbActiveListener(UsbActiveListener usbActiveListener) {
-        this.usbActiveListener = usbActiveListener;
-    }
-
-    public void setErrorListener(ErrorListener errorListener) {
-        this.errorListener = errorListener;
-    }
-
-    public boolean isAttached() {
+    @Override
+    public boolean isConnected() {
         return attached;
     }
 
+    @Override
     public boolean isOpen() {
-        return port != null && active;
+        return active;
     }
 
+    @Override
     public void write(byte[] buffer) {
         try {
             port.write(buffer, 0);
@@ -183,10 +156,9 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         super.finalize();
     }
 
-
     @Override
     public void onNewData(byte[] data) {
-        usbDataListener.newUsbData(data);
+        dataListener.newSerialData(data);
     }
 
     @Override
@@ -195,8 +167,8 @@ public class USBSerial implements SerialInputOutputManager.Listener {
             errorListener.newError(e);
         if (isOpen()) {
             active = false;
-            if (usbActiveListener != null)
-                usbActiveListener.run(false);
+            if (connectionStateListener != null)
+                connectionStateListener.onSerialOpen(false);
         }
     }
 

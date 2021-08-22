@@ -5,10 +5,9 @@ import android.os.SystemClock;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.USBSerial;
+import com.iit.dashboard2022.util.SerialCom;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -20,7 +19,7 @@ public class ECU {
     public static final String LOG_TAG = "ECU";
     private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
 
-    private final USBSerial serial;
+    private final ECUCommunication com;
     private final ECUMsgHandler ecuMsgHandler;
     private final ECUKeyMap ecuKeyMap;
     private final ECULogger ecuLogger;
@@ -61,9 +60,9 @@ public class ECU {
             }
         });
 
-        serial = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE, data -> {
+        com = new ECUCommunication(activity, data -> {
             long epoch = SystemClock.elapsedRealtime();
-            if (interpreterMode != MODE.DISABLED) {
+            if (interpreterMode != ECU.MODE.DISABLED) {
                 String msg = processData(epoch, data);
                 if (interpretListener != null && msg.length() > 0) {
                     interpretListener.newMessage(msg);
@@ -79,19 +78,19 @@ public class ECU {
     }
 
     public boolean open() {
-        return serial.open();
+        return com.open();
     }
 
     public void close() {
-        serial.close();
+        com.close();
     }
 
     public boolean isOpen() {
-        return serial.isOpen();
+        return com.isOpen();
     }
 
     public boolean isAttached() {
-        return serial.isAttached();
+        return com.isConnected();
     }
 
     public void requestJSONFile() {
@@ -124,15 +123,15 @@ public class ECU {
 
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
-        serial.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped: " + exception.getMessage()));
+        com.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped: " + exception.getMessage()));
     }
 
-    public void setUsbAttachListener(USBSerial.UsbAttachListener UsbAttachListener) {
-        serial.setUsbAttachListener(UsbAttachListener);
+    public void setConnectionListener(SerialCom.ConnectionListener ConnectionListener) {
+        com.setConnectionListener(ConnectionListener);
     }
 
-    public void setUsbActiveListener(USBSerial.UsbActiveListener usbActiveListener) {
-        serial.setUsbActiveListener(usbActiveListener);
+    public void setConnectionStateListener(SerialCom.ConnectionStateListener connectionStateListener) {
+        com.setConnectionStateListener(connectionStateListener);
     }
 
     public ECUMsgHandler getEcuMsgHandler() {

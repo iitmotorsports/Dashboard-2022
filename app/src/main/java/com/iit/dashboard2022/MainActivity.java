@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
-        sidePanel.attach(this, console, cdPage, frontECU);
+        sidePanel.attach(this, console, cdPage, ldPage, frontECU);
 
         /* SETTINGS BUTTON */
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);

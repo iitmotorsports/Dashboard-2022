@@ -13,14 +13,16 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.page.CarDashboard;
+import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SideButton;
 import com.iit.dashboard2022.ui.widget.SideRadio;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
+import com.iit.dashboard2022.util.SerialCom;
 
-public class SidePanel extends ConstraintLayout {
+public class SidePanel extends ConstraintLayout{
     public final RadioGroup consoleRadioGroup;
     public final SideRadio asciiRadio, hexRadio, rawRadio;
     public final SideSwitch uiTestSwitch, reverseSwitch, consoleSwitch;
@@ -66,7 +68,7 @@ public class SidePanel extends ConstraintLayout {
         sidePanelDrawerAnim.startWhenReady();
     }
 
-    public void attach(Activity activity, ConsoleWidget console, CarDashboard dashboard, ECU frontECU) {
+    public void attach(Activity activity, ConsoleWidget console, CarDashboard dashboard, LiveData liveDataPage, ECU frontECU) {
         consoleAnim = console.getAnimator();
         consoleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -105,19 +107,23 @@ public class SidePanel extends ConstraintLayout {
             console.systemPost(tag, msg);
             console.newError();
         });
-        frontECU.setUsbAttachListener(attached -> {
-            console.systemPost(ECU.LOG_TAG, attached ? "Usb Attached" : "Usb Detached");
-            if (!attached) {
+
+        frontECU.setConnectionListener(connected -> {
+            console.systemPost(ECU.LOG_TAG, connected ? "Serial Connected" : "Serial Disconnected");
+            if (!connected) {
                 console.setStatus(ConsoleWidget.Status.Disconnected);
             }
         });
-        frontECU.setUsbActiveListener(active -> {
-            connToggle.post(() -> connToggle.setChecked(active));
-            console.setStatus(active ? ConsoleWidget.Status.Connected : (frontECU.isAttached() ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
-            if (!active) {
+
+        frontECU.setConnectionStateListener(open -> {
+            connToggle.post(() -> connToggle.setChecked(open));
+            console.setStatus(open ? ConsoleWidget.Status.Connected : (frontECU.isAttached() ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
+            if (!open) {
                 dashboard.reset();
+                liveDataPage.reset();
             }
         });
+
         connToggle.setOnClickListener(v -> {
             if (frontECU.isOpen()) {
                 frontECU.close();
@@ -133,5 +139,4 @@ public class SidePanel extends ConstraintLayout {
         consoleAnim.reloadAutoSize();
         sidePanelDrawerAnim.reloadAutoSize();
     }
-
 }
