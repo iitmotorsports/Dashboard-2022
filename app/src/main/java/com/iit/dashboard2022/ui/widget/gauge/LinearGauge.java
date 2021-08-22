@@ -74,7 +74,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         int colorMid = a.getColor(i++, 0);
         flipped = a.getBoolean(i++, false);
         unit = (String) a.getText(i++);
-        int textSize = a.getDimensionPixelSize(i++, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14, context.getResources().getDisplayMetrics()));
+        int textSize = a.getDimensionPixelSize(i++, 14);
         int textColor = a.getColor(i++, Color.WHITE);
 
         bottomText = (String) a.getText(i++);

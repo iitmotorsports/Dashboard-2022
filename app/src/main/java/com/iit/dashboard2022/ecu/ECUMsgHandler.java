@@ -113,10 +113,14 @@ public class ECUMsgHandler {
         messages[Beat] = new ECUMsg("[HeartBeat]", "[ LOG ] Beat", ECUMsg.UNSIGNED);
         messages[StartLight] = new ECUMsg("[Front Teensy]", "[ LOG ] Start Light", ECUMsg.UNSIGNED);
         messages[State] = new ECUMsg("[Front Teensy]", "[ LOG ] Current State", ECUMsg.UNSIGNED);
-        messages[State].setMessageListener(val -> {
+        messages[State].addMessageListener(val -> {
             if (stateListener != null)
                 stateListener.onStateChanged(stateMap.get(val));
         });
+    }
+
+    public ECUMsg[] getMessageArray() {
+        return messages;
     }
 
     public void setGlobalStateListener(StateListener globalStateListener) {

@@ -16,13 +16,13 @@ public class ECUUpdater {
         ECUMsgHandler ecuMsgHandler = frontECU.getEcuMsgHandler();
 
         /* GAUGES */
-        ecuMsgHandler.getMessage(ECUMsgHandler.Speedometer).setMessageListener(val -> {
+        ecuMsgHandler.getMessage(ECUMsgHandler.Speedometer).addMessageListener(val -> {
             dashboardPage.setSpeedValue(val);
             dashboardPage.setSpeedPercentage(Math.abs(val - lastSpeed) * 0.32f);
             lastSpeed = val;
         });
-        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).setMessageListener(val -> dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f));
-        ecuMsgHandler.getMessage(ECUMsgHandler.PowerGauge).setMessageListener(val -> { // NOTE: Actual MC power not being used
+        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f));
+        ecuMsgHandler.getMessage(ECUMsgHandler.PowerGauge).addMessageListener(val -> { // NOTE: Actual MC power not being used
             long avgMCVolt = (ecuMsgHandler.requestValue(ECUMsgHandler.MC0Voltage) + ecuMsgHandler.requestValue(ECUMsgHandler.MC1Voltage)) / 2;
             float limit = ecuMsgHandler.requestValue(ECUMsgHandler.BMSVolt) * ecuMsgHandler.requestValue(ECUMsgHandler.BMSAmp);
             int usage = (int) (avgMCVolt * ecuMsgHandler.requestValue(ECUMsgHandler.BMSDischargeLim));
@@ -36,13 +36,13 @@ public class ECUUpdater {
             dashboardPage.setPowerValue(usage);
         });
         /* INDICATORS */
-        ecuMsgHandler.getMessage(ECUMsgHandler.Beat).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Lag, false));
-        ecuMsgHandler.getMessage(ECUMsgHandler.Lag).setUpdateMethod(ECUMsg.ON_RECEIVE).setMessageListener(val -> {
+        ecuMsgHandler.getMessage(ECUMsgHandler.Beat).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Lag, false), ECUMsg.ON_RECEIVE);
+        ecuMsgHandler.getMessage(ECUMsgHandler.Lag).addMessageListener(val -> {
             dashboardPage.setIndicator(Indicators.Indicator.Lag, true);
             dashboardPage.setLagTime(val);
-        });
-        ecuMsgHandler.getMessage(ECUMsgHandler.Fault).setMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Fault, val > 0));
-        ecuMsgHandler.getMessage(ECUMsgHandler.StartLight).setMessageListener(val -> dashboardPage.setStartLight(val == 1));
+        }, ECUMsg.ON_RECEIVE);
+        ecuMsgHandler.getMessage(ECUMsgHandler.Fault).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Fault, val > 0));
+        ecuMsgHandler.getMessage(ECUMsgHandler.StartLight).addMessageListener(val -> dashboardPage.setStartLight(val == 1));
         /* State Listener */
         ecuMsgHandler.setGlobalStateListener(state -> {
             dashboardPage.setState(state.title);
@@ -50,6 +50,39 @@ public class ECUUpdater {
             dashboardPage.setIndicator(Indicators.Indicator.Charging, state == ECUMsgHandler.STATE.Charging);
             sidePanel.chargeToggle.setChecked(state == ECUMsgHandler.STATE.Charging);
         });
+
+        /*
+         *  LIVE DATA
+         */
+
+        ECUMsg[] messages = ecuMsgHandler.getMessageArray();
+        String[] titles = new String[messages.length];
+
+        for (int i = 0; i < messages.length; i++) {
+            titles[i] = removeMsgTag(messages[i].stringMsg);
+        }
+
+        String[] values = liveDataPage.setMessageTitles(titles);
+        for (int i = 0; i < messages.length; i++) {
+            int finalI = i;
+            messages[i].addMessageListener(val -> values[finalI] = Long.toString(val));
+        }
+    }
+
+    private String removeMsgTag(String stringMsg) {
+        for (ECUColor.MsgType type : ECUColor.MsgType.values()) {
+            String replace = stringMsg.replace(type.key + " ", "");
+            if (!stringMsg.equals(replace)) {
+                stringMsg = replace;
+                break;
+            }
+        }
+
+        stringMsg = stringMsg.trim();
+        if (stringMsg.endsWith(":"))
+            stringMsg = stringMsg.substring(0, stringMsg.length() - 1);
+
+        return stringMsg;
     }
 
 }

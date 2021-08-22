@@ -20,7 +20,7 @@ import java.util.Hashtable;
 public class ECUColor {
     private static final Hashtable<String, MsgMemo> msgMemo = new Hashtable<>();
 
-    private enum MsgType {
+    public enum MsgType {
         INFO("[INFO] ", R.color.foreground),
         DEBUG("[DEBUG]", R.color.midground),
         ERROR("[ERROR]", R.color.red),

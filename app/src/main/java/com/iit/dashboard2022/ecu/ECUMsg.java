@@ -44,9 +44,8 @@ public class ECUMsg {
     private final int dataType;
     public final String stringTag, stringMsg;
 
-    public MessageListener messageListener;
-    @UpdateMethod
-    private int updateMethod = ON_VALUE_CHANGE;
+    public MessageListener[] messageListeners = new MessageListener[0];
+    public int[] updateMethods = new int[0];
     public long value = 0;
 
     public interface MessageListener {
@@ -79,32 +78,43 @@ public class ECUMsg {
                 this.value = val;
         }
 
-        if (messageListener != null)
-            switch (updateMethod) {
+        for (int i = 0; i < messageListeners.length; i++) {
+            MessageListener ml = messageListeners[i];
+            switch (updateMethods[i]) {
                 case ON_VALUE_CHANGE:
                     if (prevValue != value)
-                        messageListener.run(val);
+                        ml.run(val);
                     break;
                 case ON_VALUE_DECREASE:
                     if (prevValue > value)
-                        messageListener.run(val);
+                        ml.run(val);
                     break;
                 case ON_VALUE_INCREASE:
                     if (prevValue < value)
-                        messageListener.run(val);
+                        ml.run(val);
                 case ON_RECEIVE:
-                    messageListener.run(val);
+                    ml.run(val);
                     break;
             }
+        }
     }
 
-    public ECUMsg setUpdateMethod(@UpdateMethod int updateMethod) {
-        this.updateMethod = updateMethod;
-        return this;
+    public void addMessageListener(MessageListener messageListener) {
+        addMessageListener(messageListener, ON_VALUE_CHANGE);
     }
 
-    public void setMessageListener(MessageListener messageListener) {
-        this.messageListener = messageListener;
+    public void addMessageListener(MessageListener messageListener, @UpdateMethod int updateMethod) {
+        MessageListener[] messageListeners = new MessageListener[this.messageListeners.length + 1];
+        int[] updateMethods = new int[this.updateMethods.length + 1];
+
+        System.arraycopy(this.messageListeners, 0, messageListeners, 0, this.messageListeners.length);
+        System.arraycopy(this.updateMethods, 0, updateMethods, 0, this.updateMethods.length);
+
+        messageListeners[messageListeners.length - 1] = messageListener;
+        updateMethods[updateMethods.length - 1] = updateMethod;
+
+        this.updateMethods = updateMethods;
+        this.messageListeners = messageListeners;
     }
 
     public void clear() {
