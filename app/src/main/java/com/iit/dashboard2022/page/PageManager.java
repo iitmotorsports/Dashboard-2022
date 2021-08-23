@@ -51,6 +51,11 @@ public class PageManager extends FragmentStateAdapter {
     }
 
     @NonNull
+    public Page[] getPages() {
+        return pages;
+    }
+
+    @NonNull
     public String getPageTitle(@PageIndex int page) {
         return pages[page].getTitle();
     }

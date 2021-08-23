@@ -14,6 +14,7 @@ import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 public class Pager {
+    private final Page[] pages;
     private final ViewPager2 viewPager;
     private final PageManager pageManager;
     private final ValueAnimator edgeAnim;
@@ -32,6 +33,24 @@ public class Pager {
         for (int i = 0; i < pageManager.getItemCount(); i++) {
             tabs.addTab(tabs.newTab());
         }
+
+        pages = pageManager.getPages();
+
+        for (Page page : pages) {
+            page.onPageChange(false);
+        }
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            int init = 0;
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                pages[position].onPageChange(true);
+                pages[init].onPageChange(false);
+                init = position;
+            }
+        });
 
         viewPager.setKeepScreenOn(true);
         viewPager.setAdapter(pageManager);

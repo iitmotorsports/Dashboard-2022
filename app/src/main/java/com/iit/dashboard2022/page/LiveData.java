@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
+import com.iit.dashboard2022.util.Toaster;
 
 import java.util.Arrays;
 
@@ -22,6 +23,7 @@ public class LiveData extends Page implements UITester.TestUI {
 
     private LiveDataEntry[] entries;
     private String[] values;
+    private boolean enabled = true;
 
     @Nullable
     @Override
@@ -63,12 +65,12 @@ public class LiveData extends Page implements UITester.TestUI {
     }
 
     public void updateValue(int index) {
-        if (values != null)
+        if (enabled && values != null)
             rootView.post(() -> entries[index].setValue(values[index]));
     }
 
     public void updateValues() {
-        if (values != null)
+        if (enabled && values != null)
             rootView.post(() -> {
                 for (int i = 0; i < values.length; i++) {
                     entries[i].setValue(values[i]);
@@ -83,6 +85,11 @@ public class LiveData extends Page implements UITester.TestUI {
     }
 
     @Override
+    public void onPageChange(boolean enter) {
+        enabled = enter;
+    }
+
+    @Override
     public void onDestroy() {
         UITester.removeTest(this);
         super.onDestroy();
@@ -90,7 +97,7 @@ public class LiveData extends Page implements UITester.TestUI {
 
     @Override
     public void testUI(float percent) {
-        if (values != null)
+        if (enabled && values != null)
             if (percent == 0)
                 reset();
             else
