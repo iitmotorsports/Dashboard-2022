@@ -52,6 +52,9 @@ public class LiveData extends Page implements UITester.TestUI {
         this.values = values;
 
         reset();
+        for (i = 0; i < values.length; i++) {
+            entries[i].setValue(values[i]);
+        }
 
         return values;
     }

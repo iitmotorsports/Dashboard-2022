@@ -166,7 +166,7 @@ public class Logs extends Page {
                 }
                 ListedFile.deselectActive();
                 worker.post(() -> {
-                    console.clear();
+                    console.post(() -> console.clear());
 
                     LogFileIO.LogFile file = listedFile.getFile();
                     if (file == null) {
