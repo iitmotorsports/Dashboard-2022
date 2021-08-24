@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.PrecomputedTextCompat;
 
@@ -27,6 +28,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
+
+    public enum Status {
+        Disconnected(R.color.red),
+        Connected(R.color.green),
+        Attached(R.color.blue),
+        Testing(R.color.midground);
+
+        @ColorRes
+        final
+        int color;
+
+        Status(@ColorRes int color) {
+            this.color = color;
+        }
+    }
 
     private static final ConcurrentLinkedQueue<CharSequence> rawQueue = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<CharSequence> outQueue = new ConcurrentLinkedQueue<>();
@@ -49,6 +65,57 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private final TranslationAnim consoleAnim;
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
+
+    public ConsoleWidget(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public ConsoleWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public ConsoleWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        View.inflate(context, R.layout.widget_console, this);
+
+        consoleAnim = new TranslationAnim(this, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
+        consoleAnim.startWhenReady();
+
+        scrollToEndImage = findViewById(R.id.scrollToEndImage);
+        scrollToStartImage = findViewById(R.id.scrollToStartImage);
+        consoleScroller = findViewById(R.id.consoleScroller);
+        text = findViewById(R.id.consoleText);
+        consoleLines = findViewById(R.id.consoleLines);
+        consoleError = findViewById(R.id.consoleError);
+        consoleStatus = findViewById(R.id.consoleStatus);
+        consoleMode = findViewById(R.id.consoleMode);
+
+        textParams = new PrecomputedTextCompat.Params.Builder(text.getPaint()).build();
+        consoleScroller.setScrollerStatusListener(enabled -> scrollToEndImage.setAlpha(enabled ? 1 : 0.5f));
+        scrollToEndImage.setOnClickListener(v -> {
+            consoleScroller.toggle();
+            consoleScroller.scrollDown();
+        });
+        scrollToStartImage.setOnClickListener(v -> {
+            consoleScroller.scrollUp();
+            scrollToStartImage.setAlpha(1f);
+            postDelayed(() -> scrollToStartImage.setAlpha(0.5f), AnimSetting.ANIM_DURATION / 2);
+        });
+        scrollToStartImage.setAlpha(0.5f);
+
+        linesFormat = context.getString(R.string.console_line_format);
+        errorFormat = context.getString(R.string.console_error_format);
+        statusFormat = context.getString(R.string.console_status_format);
+        modeFormat = context.getString(R.string.console_mode_format);
+
+        setLineCount();
+        setErrorCount();
+        updateStatus();
+        setMode("Nil");
+
+        initHandle();
+        UITester.addTest(this);
+    }
 
     public CharSequence trimCharSequence(@NonNull CharSequence sequence) {
         int len = sequence.length();
@@ -112,16 +179,25 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         }
     };
 
+    @UiThread
     private void clearText() {
         text.setText(null);
     }
 
+    @UiThread
     private void setErrorCount() {
         consoleError.setText(String.format(Locale.US, errorFormat, errorCounter));
     }
 
+    @UiThread
     private void setLineCount() {
         consoleLines.setText(String.format(Locale.US, linesFormat, text.getLineCount()));
+    }
+
+    @UiThread
+    private void updateStatus() {
+        consoleStatus.setText(String.format(Locale.US, statusFormat, currentStatus.toString()));
+        consoleStatus.setBackgroundColor(getResources().getColor(currentStatus.color, getContext().getTheme()));
     }
 
     private static void initHandle() {
@@ -131,85 +207,15 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         }
     }
 
-    public ConsoleWidget(@NonNull Context context) {
-        this(context, null);
-    }
-
-    public ConsoleWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public enum Status {
-        Disconnected(R.color.red),
-        Connected(R.color.green),
-        Attached(R.color.blue),
-        Testing(R.color.midground);
-
-        @ColorRes
-        final
-        int color;
-
-        Status(@ColorRes int color) {
-            this.color = color;
-        }
-    }
-
     public void newError() {
         errorCounter++;
-        uiHandle.post(this::setErrorCount);
-    }
-
-    private void updateStatus() {
-        consoleStatus.setText(String.format(Locale.US, statusFormat, currentStatus.toString()));
-        consoleStatus.setBackgroundColor(getResources().getColor(currentStatus.color, getContext().getTheme()));
+        if (run)
+            uiHandle.post(this::setErrorCount);
     }
 
     public void setStatus(Status status) {
         currentStatus = status;
         uiHandle.post(this::updateStatus);
-    }
-
-    public ConsoleWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        View.inflate(context, R.layout.widget_console, this);
-
-        consoleAnim = new TranslationAnim(this, TranslationAnim.X_AXIS, TranslationAnim.ANIM_FORWARD);
-        consoleAnim.startWhenReady();
-
-        scrollToEndImage = findViewById(R.id.scrollToEndImage);
-        scrollToStartImage = findViewById(R.id.scrollToStartImage);
-        consoleScroller = findViewById(R.id.consoleScroller);
-        text = findViewById(R.id.consoleText);
-        consoleLines = findViewById(R.id.consoleLines);
-        consoleError = findViewById(R.id.consoleError);
-        consoleStatus = findViewById(R.id.consoleStatus);
-        consoleMode = findViewById(R.id.consoleMode);
-
-        textParams = new PrecomputedTextCompat.Params.Builder(text.getPaint()).build();
-        consoleScroller.setScrollerStatusListener(enabled -> scrollToEndImage.setAlpha(enabled ? 1 : 0.5f));
-        scrollToEndImage.setOnClickListener(v -> {
-            consoleScroller.toggle();
-            consoleScroller.scrollDown();
-        });
-        scrollToStartImage.setOnClickListener(v -> {
-            consoleScroller.scrollUp();
-            scrollToStartImage.setAlpha(1f);
-            postDelayed(() -> scrollToStartImage.setAlpha(0.5f), AnimSetting.ANIM_DURATION / 2);
-        });
-        scrollToStartImage.setAlpha(0.5f);
-
-        linesFormat = context.getString(R.string.console_line_format);
-        errorFormat = context.getString(R.string.console_error_format);
-        statusFormat = context.getString(R.string.console_status_format);
-        modeFormat = context.getString(R.string.console_mode_format);
-
-        setLineCount();
-        setErrorCount();
-        updateStatus();
-        setMode("Nil");
-
-        initHandle();
-        UITester.addTest(this);
     }
 
     public TranslationAnim getAnimator() {
@@ -220,9 +226,10 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         consoleMode.setText(String.format(Locale.US, modeFormat, mode));
     }
 
+    @UiThread
     public void clear() {
-        uiHandle.post(this::clearText);
-        uiHandle.post(this::setLineCount);
+        clearText();
+        setLineCount();
         errorCounter = -1;
         newError();
     }
@@ -236,31 +243,6 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
             run = false;
             rawQueue.clear();
             outQueue.clear();
-        }
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        UITester.removeTest(this);
-        enable(false);
-        consoleThread.quitSafely();
-        super.finalize();
-    }
-
-    @Override
-    public void testUI(float percent) {
-        if (percent > 0.5)
-            post(UITester.rndStr((int) (percent * 50)));
-        else
-            systemPost(UITester.rndStr((int) (percent * 10)), UITester.rndStr((int) (percent * 50)));
-
-        if (percent == 0) {
-            uiHandle.postDelayed(this::clear, 100);
-            setStatus(currentStatus);
-        } else {
-            newError();
-            consoleStatus.setText(String.format(Locale.US, statusFormat, Status.Testing.toString()));
-            consoleStatus.setBackgroundColor(getResources().getColor(Status.Testing.color, getContext().getTheme()));
         }
     }
 
@@ -279,4 +261,36 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         textHandle.post(textLoad);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        UITester.removeTest(this);
+        enable(false);
+        consoleThread.quitSafely();
+        super.finalize();
+    }
+
+    private boolean testingState = false;
+
+    @Override
+    public void testUI(float percent) {
+        if (percent > 0.1)
+            post(UITester.rndStr((int) (percent * 50)));
+        else
+            systemPost(UITester.rndStr((int) (percent * 10)), UITester.rndStr((int) (percent * 50)));
+
+        if (percent == 0) {
+            uiHandle.postDelayed(this::clear, 100);
+            setStatus(currentStatus);
+            testingState = false;
+        } else {
+            newError();
+            if (!testingState) {
+                uiHandle.post(() -> {
+                    consoleStatus.setText(String.format(Locale.US, statusFormat, Status.Testing.toString()));
+                    consoleStatus.setBackgroundColor(getResources().getColor(Status.Testing.color, getContext().getTheme()));
+                });
+                testingState = true;
+            }
+        }
+    }
 }

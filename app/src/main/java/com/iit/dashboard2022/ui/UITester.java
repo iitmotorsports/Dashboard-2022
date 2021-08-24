@@ -1,7 +1,7 @@
 package com.iit.dashboard2022.ui;
 
 import android.os.Handler;
-import android.os.Looper;
+import android.os.HandlerThread;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -9,7 +9,8 @@ import java.util.Set;
 
 public class UITester {
     private static final Set<TestUI> UITests = new HashSet<>();
-    private static final Handler UIHandle = new Handler(Looper.getMainLooper());
+    private static final HandlerThread testThread = new HandlerThread("UITester");
+    private static Handler worker;
     public static final Random Rnd = new Random();
     private static final int UI_UPDATE_MS = 20;
     private static final float UI_UPDATE_VAL = 0.005f;
@@ -55,17 +56,21 @@ public class UITester {
             testVal += UI_UPDATE_VAL;
         }
 
-        UIHandle.postDelayed(UITester::uiTest, UI_UPDATE_MS);
+        worker.postDelayed(UITester::uiTest, UI_UPDATE_MS);
     }
 
     public static void enable(boolean enabled) {
+        if (worker == null) {
+            testThread.start();
+            worker = new Handler(testThread.getLooper());
+        }
         if (enabled) {
             rndTestC = rndTests;
             rndTest = false;
             testVal = 0;
-            UIHandle.post(UITester::uiTest);
+            worker.post(UITester::uiTest);
         } else {
-            UIHandle.removeCallbacksAndMessages(null);
+            worker.removeCallbacksAndMessages(null);
             runTest(0);
         }
     }

@@ -1,8 +1,6 @@
 package com.iit.dashboard2022.ui.widget;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +14,10 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.UITester;
 
 import java.util.Locale;
 
-public class Indicators extends FrameLayout implements UITester.TestUI {
-    private static final Handler uiHandle = new Handler(Looper.getMainLooper());
-
+public class Indicators extends FrameLayout {
     private final RadioButton lagRadio, faultRadio, waitRadio, chargeRadio;
     private final TextView lagTimer;
     private final LinearLayout indicatorLayout;
@@ -78,7 +73,6 @@ public class Indicators extends FrameLayout implements UITester.TestUI {
             }
         });
 
-        UITester.addTest(this);
     }
 
     public void setIndicator(Indicator indicator, boolean enabled) {
@@ -124,29 +118,6 @@ public class Indicators extends FrameLayout implements UITester.TestUI {
             else
                 currentLagTime = String.format(Locale.US, lagTimerMSFormat, ms);
         }
-        uiHandle.post(this::updateLagTime);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        UITester.removeTest(this);
-        super.finalize();
-    }
-
-    @Override
-    public void testUI(float percent) {
-        setLagTime((long) (percent * percent * 10000));
-        if (percent == 0) {
-            for (Indicator i : Indicator.values()) {
-                setIndicator(i, false);
-            }
-        } else {
-            for (Indicator i : Indicator.values()) {
-                if (i != Indicator.Lag && UITester.Rnd.nextFloat() > 0.9)
-                    setIndicator(i, percent > 0.5);
-            }
-            setIndicator(Indicator.Lag, true);
-            setLagTime((long) (percent * 5000));
-        }
+        post(this::updateLagTime);
     }
 }

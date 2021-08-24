@@ -191,7 +191,6 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         return 0;
     }
 
-
     protected void onDraw(Canvas canvas) {
         canvasBuffer.drawBitmap(bitmapBG, null, dst, null);
         canvasBuffer.drawRect(mask, maskPaint);

@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
-import com.iit.dashboard2022.util.Toaster;
 
 import java.util.Arrays;
 
@@ -66,16 +65,14 @@ public class LiveData extends Page implements UITester.TestUI {
 
     public void updateValue(int index) {
         if (enabled && values != null)
-            rootView.post(() -> entries[index].setValue(values[index]));
+            entries[index].setValue(values[index]);
     }
 
     public void updateValues() {
         if (enabled && values != null)
-            rootView.post(() -> {
-                for (int i = 0; i < values.length; i++) {
-                    entries[i].setValue(values[i]);
-                }
-            });
+            for (int i = 0; i < values.length; i++) {
+                entries[i].setValue(values[i]);
+            }
     }
 
     @NonNull

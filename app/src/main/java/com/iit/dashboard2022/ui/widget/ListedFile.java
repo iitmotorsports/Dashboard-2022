@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
@@ -187,9 +188,10 @@ public class ListedFile extends FrameLayout {
         updateInfo();
     }
 
+    @UiThread
     public void updateInfo() {
         try {
-            fileInfo.post(() -> fileInfo.setText(file.getTitle()));
+            fileInfo.setText(file.getTitle());
         } catch (Exception e) {
             e.printStackTrace();
             if (fileInfo != null) {

@@ -21,7 +21,6 @@ public class ECUCommunication extends SerialCom {
     private int current = -1;
 
     ECUCommunication(@NonNull Activity activity, @NonNull DataListener dataListener) {
-
         USBMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
         nearbyMethod = new NearbySerial(activity);
 

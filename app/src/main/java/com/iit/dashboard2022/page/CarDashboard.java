@@ -127,5 +127,20 @@ public class CarDashboard extends Page implements UITester.TestUI {
         setPowerValue((int) (percent * 1000));
         setPowerLimit((int) (percent * 1000));
         setSpeedValue((int) (300 * percent));
+        setStartLight(percent > 0.5f);
+        if (percent == 0) {
+            setState("Current State");
+            for (Indicators.Indicator i : Indicators.Indicator.values()) {
+                setIndicator(i, false);
+            }
+        }else {
+            setState(UITester.rndStr((int) (percent * 25)));
+            for (Indicators.Indicator i : Indicators.Indicator.values()) {
+                if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9)
+                    setIndicator(i, percent > 0.5);
+            }
+            setIndicator(Indicators.Indicator.Lag, true);
+            setLagTime((long) (percent * 5000));
+        }
     }
 }

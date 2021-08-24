@@ -11,13 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.AttrRes;
 
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.UITester;
 
-public class StartLight extends FrameLayout implements UITester.TestUI {
+public class StartLight extends FrameLayout {
     private final TextView currentState;
     private final RadioButton startLight;
     private final ColorStateList colorOn, colorOff;
-    private final CharSequence defaultText;
 
     public StartLight(Context context) {
         this(context, null);
@@ -31,15 +29,11 @@ public class StartLight extends FrameLayout implements UITester.TestUI {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.widget_start_light, this);
 
-        defaultText = context.getText(R.string.current_state);
-
         currentState = findViewById(R.id.currentState);
         startLight = findViewById(R.id.startLight);
 
         colorOn = context.getColorStateList(R.color.green);
         colorOff = context.getColorStateList(R.color.midground);
-
-        UITester.addTest(this);
     }
 
     public void setLight(boolean isOn) {
@@ -47,21 +41,7 @@ public class StartLight extends FrameLayout implements UITester.TestUI {
     }
 
     public void setState(CharSequence state) {
-        currentState.setText(state);
+        post(() -> currentState.setText(state));
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        UITester.removeTest(this);
-        super.finalize();
-    }
-
-    @Override
-    public void testUI(float percent) {
-        setLight(percent % 0.2 > 0.1f);
-        if (percent == 0)
-            setState(defaultText);
-        else
-            setState(UITester.rndStr((int) (percent * 25)));
-    }
 }
