@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.SystemClock;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -25,6 +25,8 @@ import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 
 public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
@@ -44,27 +46,21 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         }
     }
 
-    private static final ConcurrentLinkedQueue<CharSequence> rawQueue = new ConcurrentLinkedQueue<>();
+    private static final LinkedBlockingQueue<CharSequence> rawQueue = new LinkedBlockingQueue<>();
     private static final ConcurrentLinkedQueue<CharSequence> outQueue = new ConcurrentLinkedQueue<>();
     private static final HandlerThread consoleThread = new HandlerThread("Console Thread");
     private static final Handler uiHandle = new Handler(Looper.getMainLooper());
-    private static Handler textHandle;
 
-    private static final int SETTLE_TIME_MS = 80;
-    private static final int UPDATE_TIME_MS = 20;
-    private static long lastTime = 0;
-
-    private final PrecomputedTextCompat.Params textParams;
-    private boolean run = false;
-    private int limit = 0;
-
-    private final ConsoleScroller consoleScroller;
-    private final ImageView scrollToEndImage, scrollToStartImage;
-    private final String linesFormat, errorFormat, statusFormat, modeFormat;
     private final TextView text, consoleLines, consoleError, consoleStatus, consoleMode;
+    private final String linesFormat, errorFormat, statusFormat, modeFormat;
+    private final ImageView scrollToEndImage, scrollToStartImage;
+    private final ConsoleScroller consoleScroller;
     private final TranslationAnim consoleAnim;
+    private final TextLoader textLoader;
+
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
+    private boolean run = false;
 
     public ConsoleWidget(@NonNull Context context) {
         this(context, null);
@@ -90,7 +86,6 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         consoleStatus = findViewById(R.id.consoleStatus);
         consoleMode = findViewById(R.id.consoleMode);
 
-        textParams = new PrecomputedTextCompat.Params.Builder(text.getPaint()).build();
         consoleScroller.setScrollerStatusListener(enabled -> scrollToEndImage.setAlpha(enabled ? 1 : 0.5f));
         scrollToEndImage.setOnClickListener(v -> {
             consoleScroller.toggle();
@@ -113,11 +108,22 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         updateStatus();
         setMode("Nil");
 
-        initHandle();
+        Runnable textUpdate = () -> {
+            CharSequence msg;
+            while ((msg = outQueue.poll()) != null) {
+                text.append(msg);
+            }
+            consoleScroller.scrollDown();
+            setLineCount();
+        };
+
+        textLoader = new TextLoader(rawQueue, text.getPaint(), textUpdate, uiHandle, text);
+        textLoader.start();
+
         UITester.addTest(this);
     }
 
-    public CharSequence trimCharSequence(@NonNull CharSequence sequence) {
+    public static CharSequence trimCharSequence(@NonNull CharSequence sequence) {
         int len = sequence.length();
         int st = 0;
 
@@ -130,54 +136,68 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         return ((st > 0) || (len < sequence.length())) ? sequence.subSequence(st, len) : sequence;
     }
 
-    private final Runnable textUpdate = new Runnable() {
-        @Override
-        public void run() {
-            CharSequence msg;
+    private static class TextLoader extends Thread {
+        private final LinkedBlockingQueue<CharSequence> rawQueue;
+        private final PrecomputedTextCompat.Params textParams;
+        private final Runnable textUpdate;
+        private final Handler uiHandle;
+        private final TextView text;
+        private int accumulator = 0;
+        private int limit = 0;
 
-            if (limit == 0 && text.getLineCount() > 1000) {
-                CharSequence cq = text.getText();
-                int len = cq.length();
-                text.setText(cq.subSequence(len / 2, len));
-            } else if (limit > 0) {
-                limit--;
-            }
+        TextLoader(LinkedBlockingQueue<CharSequence> rawQueue, TextPaint paint, Runnable textUpdate, Handler uiHandle, TextView text) {
+            this.textUpdate = textUpdate;
+            this.rawQueue = rawQueue;
+            this.uiHandle = uiHandle;
+            this.text = text;
 
-            while ((msg = outQueue.poll()) != null) {
-                text.append(msg);
-            }
-            consoleScroller.scrollDown();
-            setLineCount();
+            textParams = new PrecomputedTextCompat.Params.Builder(paint).build();
         }
-    };
-
-    private final Runnable textLoad = new Runnable() {
-        long settleTime = 0;
 
         @Override
         public void run() {
-            long curr = SystemClock.uptimeMillis();
-            if (lastTime + UPDATE_TIME_MS > curr)
-                return;
-            lastTime = curr;
+            while (true) {
+                try {
+                    CharSequence nextMsg;
+                    if (accumulator != 0)
+                        nextMsg = rawQueue.poll(AnimSetting.ANIM_UPDATE_MILLIS * 1000, TimeUnit.NANOSECONDS);
+                    else
+                        nextMsg = rawQueue.take();
 
-            CharSequence nextMsg = rawQueue.poll();
-            if (nextMsg == null)
-                return;
-            else
-                settleTime = 0;
+                    if (nextMsg != null) {
+                        nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
+                        PrecomputedTextCompat.create(nextMsg, textParams);
+                        outQueue.add(nextMsg);
+                    }
 
-            nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
-            PrecomputedTextCompat.create(nextMsg, textParams);
-            outQueue.add(nextMsg);
+                    accumulator++;
+                    if (accumulator >= 4) {
+                        flush();
+                    } else {
+                        if (limit == 0 && text.getLineCount() > 5000) {
+                            CharSequence cq = text.getText();
+                            int len = cq.length();
+                            CharSequence newText = cq.subSequence(len / 2, len);
+                            uiHandle.post(() -> text.setText(newText));
+                        } else if (limit > 0) {
+                            limit--;
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
 
+        public void flush() {
+            accumulator = 0;
             uiHandle.post(textUpdate);
-
-            settleTime += UPDATE_TIME_MS;
-            if (settleTime < SETTLE_TIME_MS)
-                textHandle.postDelayed(this, UPDATE_TIME_MS);
         }
-    };
+
+        public void addLimit() {
+            limit++;
+        }
+    }
 
     @UiThread
     private void clearText() {
@@ -200,13 +220,6 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         consoleStatus.setBackgroundColor(getResources().getColor(currentStatus.color, getContext().getTheme()));
     }
 
-    private static void initHandle() {
-        if (textHandle == null) {
-            consoleThread.start();
-            textHandle = new Handler(consoleThread.getLooper());
-        }
-    }
-
     public void newError() {
         errorCounter++;
         if (run)
@@ -216,6 +229,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     public void setStatus(Status status) {
         currentStatus = status;
         uiHandle.post(this::updateStatus);
+        textLoader.flush();
     }
 
     public TranslationAnim getAnimator() {
@@ -249,16 +263,14 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     public void post(@NonNull CharSequence msg) {
         if (run) {
             rawQueue.add(msg);
-            textHandle.post(textLoad);
         }
     }
 
     private static final String systemPostFormat = "[SYSTEM] [%s] ";
 
     public void systemPost(@NonNull String tag, @NonNull CharSequence msg) {
-        limit++;
+        textLoader.addLimit();
         rawQueue.add(TextUtils.concat(String.format(Locale.US, systemPostFormat, tag), msg));
-        textHandle.post(textLoad);
     }
 
     @Override
