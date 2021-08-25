@@ -65,11 +65,11 @@ public class MainActivity extends AppCompatActivity {
         mainPager.setOnTouchCallback(settingsBtn::performClick);
         settingsBtn.setCallbacks(
                 () -> {
-                    mainPager.setMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.reverse());
+                    mainPager.pushMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.reverse());
                     GaugeUpdater.post();
                 },
                 () -> {
-                    mainPager.setMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.start());
+                    mainPager.pushMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.start());
                     sidePanel.consoleSwitch.setActionedCheck(false);
                     GaugeUpdater.post();
                 },
