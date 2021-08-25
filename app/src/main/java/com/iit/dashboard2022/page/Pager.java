@@ -17,11 +17,11 @@ public class Pager {
     private final Page[] pages;
     private final ViewPager2 viewPager;
     private final PageManager pageManager;
-    private final ValueAnimator edgeAnim;
+//    private final ValueAnimator edgeAnim;
     private final TranslationAnim tabLayoutAnim;
     private final ViewGroup.MarginLayoutParams params;
-    private int tl = 0, tt = 0, tr = 0, tb = 0;
-    private int l, t, r, b;
+//    private int tl = 0, tt = 0, tr = 0, tb = 0;
+//    private int l, t, r, b;
 
     public Pager(FragmentActivity activity) {
         this.viewPager = activity.findViewById(R.id.mainPager);
@@ -63,29 +63,29 @@ public class Pager {
         tabLayoutAnim = new TranslationAnim(tabs, TranslationAnim.Y_AXIS, TranslationAnim.ANIM_BACKWARD);
         tabLayoutAnim.setOnInitializedListener(() -> {
             params.bottomMargin = (int) tabLayoutAnim.getPositionDelta();
-            b = params.bottomMargin;
+//            b = params.bottomMargin;
             viewPager.setLayoutParams(params);
         });
 
-        edgeAnim = ValueAnimator.ofFloat(0, 1);
-        edgeAnim.setDuration(AnimSetting.ANIM_DURATION);
-        edgeAnim.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
-        // FIXME: Performance: Instead of resizing the actual View, take a screenshot and resize that instead
-        edgeAnim.addUpdateListener(animation -> {
-            float f = animation.getAnimatedFraction();
-            params.leftMargin += (int) ((l - params.leftMargin) * f);
-            params.topMargin += (int) ((t - params.topMargin) * f);
-            params.rightMargin += (int) ((r - params.rightMargin) * f);
-            params.bottomMargin += (int) ((b - params.bottomMargin) * f);
-            viewPager.setLayoutParams(params);
-            fakeTouch(); // TODO: Fix unwanted bouncy effect when changing side margins
-            if (f == 1) {
-                tl = 0;
-                tt = 0;
-                tr = 0;
-                tb = 0;
-            }
-        });
+//        edgeAnim = ValueAnimator.ofFloat(0, 1);
+//        edgeAnim.setDuration(AnimSetting.ANIM_DURATION);
+//        edgeAnim.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+//        // FIXME: Performance: Instead of resizing the actual View, take a screenshot and resize that instead
+//        edgeAnim.addUpdateListener(animation -> {
+//            float f = animation.getAnimatedFraction();
+//            params.leftMargin += (int) ((l - params.leftMargin) * f);
+//            params.topMargin += (int) ((t - params.topMargin) * f);
+//            params.rightMargin += (int) ((r - params.rightMargin) * f);
+//            params.bottomMargin += (int) ((b - params.bottomMargin) * f);
+//            viewPager.setLayoutParams(params);
+//            fakeTouch(); // TODO: Fix unwanted bouncy effect when changing side margins
+//            if (f == 1) {
+//                tl = 0;
+//                tt = 0;
+//                tr = 0;
+//                tb = 0;
+//            }
+//        });
 
     }
 
@@ -108,40 +108,60 @@ public class Pager {
         viewPager.endFakeDrag();
     }
 
-    private void startMarginAnim() {
-        l = params.leftMargin + tl;
-        t = params.topMargin + tt;
-        r = params.rightMargin + tr;
-        b = params.bottomMargin + tb;
-        edgeAnim.start();
-    }
+//    private void startMarginAnim() {
+//        l = params.leftMargin + tl;
+//        t = params.topMargin + tt;
+//        r = params.rightMargin + tr;
+//        b = params.bottomMargin + tb;
+//        edgeAnim.start();
+//    }
 
-    public void setMargin(int edge, int size) { // FIXME: Issue where if settings is tapped right after unlocking, bottom margin shifts up
-        switch (edge) {
+    public void pushMargin(int edge, int size) {
+                switch (edge) {
             case LEFT:
-                tl += size;
+                params.leftMargin += size;
                 break;
             case TOP:
-                tt += size;
+                params.topMargin += size;
                 break;
             case RIGHT:
-                tr += size;
+                params.rightMargin += size;
                 break;
             case BOTTOM:
-                tb += size;
+                params.bottomMargin += size;
                 break;
             default:
                 return;
         }
-        startMarginAnim();
+        viewPager.setLayoutParams(params);
     }
+
+//    public void pushMargin(int edge, int size) {
+//        switch (edge) {
+//            case LEFT:
+//                tl += size;
+//                break;
+//            case TOP:
+//                tt += size;
+//                break;
+//            case RIGHT:
+//                tr += size;
+//                break;
+//            case BOTTOM:
+//                tb += size;
+//                break;
+//            default:
+//                return;
+//        }
+//        startMarginAnim();
+//    }
 
     public void setUserInputEnabled(boolean enabled) {
         viewPager.setUserInputEnabled(enabled);
         if (enabled) {
-            setMargin(BOTTOM, (int) -tabLayoutAnim.reverse());
+            pushMargin(BOTTOM, (int) -tabLayoutAnim.reverse());
         } else {
-            setMargin(BOTTOM, (int) -tabLayoutAnim.start());
+            pushMargin(BOTTOM, (int) -tabLayoutAnim.start());
         }
     }
 
