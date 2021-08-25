@@ -4,11 +4,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,8 +19,8 @@ import com.iit.dashboard2022.page.PageManager;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
-import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
+import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
 
@@ -88,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
             if (!frontECU.loadJSONFromSystem()) {
                 Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
-            } else if (frontECU.open()) {
-                Toaster.showToast("ECU Connected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
+            } else {
+                frontECU.open();
             }
 
             logPage.attachConsole(console, () -> settingsBtn.post(() -> {

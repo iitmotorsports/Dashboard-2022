@@ -3,8 +3,10 @@ package com.iit.dashboard2022.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -22,6 +24,7 @@ import com.iit.dashboard2022.ui.widget.SideRadio;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
+import com.iit.dashboard2022.util.Toaster;
 
 public class SidePanel extends ConstraintLayout {
     public final RadioGroup consoleRadioGroup;
@@ -134,6 +137,7 @@ public class SidePanel extends ConstraintLayout {
                 dashboard.reset();
                 liveDataPage.reset();
             }
+            Toaster.showToast(open ? "ECU Connected" : "ECU Disconnected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         });
 
         connToggle.setOnClickListener(v -> {
