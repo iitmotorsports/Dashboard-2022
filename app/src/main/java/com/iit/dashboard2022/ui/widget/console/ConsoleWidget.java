@@ -175,10 +175,11 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
                         flush();
                     } else {
                         if (limit == 0 && text.getLineCount() > 5000) {
-                            CharSequence cq = text.getText();
-                            int len = cq.length();
-                            CharSequence newText = cq.subSequence(len / 2, len);
-                            uiHandle.post(() -> text.setText(newText));
+//                            CharSequence cq = text.getText();
+//                            int len = cq.length();
+//                            CharSequence newText = cq.subSequence(len / 2, len);
+//                            uiHandle.postDelayed(() -> text.setText(newText), 100);
+                            uiHandle.post(() -> text.setText(null));
                         } else if (limit > 0) {
                             limit--;
                         }
