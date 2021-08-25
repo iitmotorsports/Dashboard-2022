@@ -98,7 +98,6 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
 
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh) {
-        super.onSizeChanged(w, h, ow, oh);
         width = w;
         height = h;
         update = true;
