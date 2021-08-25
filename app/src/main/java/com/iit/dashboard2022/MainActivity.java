@@ -22,7 +22,7 @@ import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
-import com.iit.dashboard2022.ui.widget.gauge.GaugeUpdater;
+import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
 
@@ -66,17 +66,17 @@ public class MainActivity extends AppCompatActivity {
         settingsBtn.setCallbacks(
                 () -> {
                     mainPager.pushMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.reverse());
-                    GaugeUpdater.post();
+                    WidgetUpdater.post();
                 },
                 () -> {
                     mainPager.pushMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.start());
                     sidePanel.consoleSwitch.setActionedCheck(false);
-                    GaugeUpdater.post();
+                    WidgetUpdater.post();
                 },
                 locked -> {
                     mainPager.setUserInputEnabled(!locked);
                     sidePanel.consoleSwitch.setActionedCheck(false);
-                    GaugeUpdater.post();
+                    WidgetUpdater.post();
                 }
         );
 

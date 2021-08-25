@@ -17,8 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
 
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
-public class LinearGauge extends View implements GaugeUpdater.Gauge {
+public class LinearGauge extends View implements WidgetUpdater.Widget {
     private RectF dst;
     private final Paint paint, bgPaint, topTextPaint, bottomTextPaint, valueTextPaint;
     private final Rect mainBar;
@@ -47,7 +48,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     public LinearGauge(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        GaugeUpdater.start();
+        WidgetUpdater.start();
 
         mainBar = new Rect();
 
@@ -117,16 +118,17 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
         valueTextPaint = new Paint(topTextPaint);
         valueBounds = new Rect();
 
-        GaugeUpdater.add(this);
+        WidgetUpdater.add(this);
     }
 
     public void setValue(int value) {
         this.value = value;
+        WidgetUpdater.post();
     }
 
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
-        GaugeUpdater.post();
+        WidgetUpdater.post();
     }
 
     private void setSize(int x, int y) {
@@ -211,7 +213,7 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
 
     @Override
     protected void finalize() {
-        GaugeUpdater.remove(this);
+        WidgetUpdater.remove(this);
     }
 
     private void updateValueString() {
@@ -225,12 +227,12 @@ public class LinearGauge extends View implements GaugeUpdater.Gauge {
     }
 
     @Override
-    public void update() {
+    public void onWidgetUpdate() {
         boolean invalid = false;
         if (oldPercent != percent) {
-            float dv = GaugeUpdater.truncate((percent - oldPercent) * GaugeUpdater.DV(percent));
+            float dv = WidgetUpdater.truncate((percent - oldPercent) * WidgetUpdater.DV(percent));
             oldPercent += dv;
-            oldPercent = GaugeUpdater.truncate(oldPercent);
+            oldPercent = WidgetUpdater.truncate(oldPercent);
 
             if (flipped)
                 mainBar.set((int) (width * (1.0f - percent)), 0, width, height);

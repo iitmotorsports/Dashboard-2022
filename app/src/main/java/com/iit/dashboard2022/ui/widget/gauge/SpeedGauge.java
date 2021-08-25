@@ -18,11 +18,12 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
 
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpeedGauge extends View implements GaugeUpdater.Gauge {
+public class SpeedGauge extends View implements WidgetUpdater.Widget {
     private final Bitmap bitmapBG, bitmaskDraw, bitmaskBuffer;
     private final Canvas canvasBuffer, canvasBG, canvasDraw;
     private RectF dst;
@@ -51,7 +52,7 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
 
     public SpeedGauge(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        GaugeUpdater.start();
+        WidgetUpdater.start();
 
         mask = new Rect();
 
@@ -99,12 +100,12 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
         canvasDraw = new Canvas();
 
         a.recycle();
-        GaugeUpdater.add(this);
+        WidgetUpdater.add(this);
     }
 
     @Override
     protected void finalize() {
-        GaugeUpdater.remove(this);
+        WidgetUpdater.remove(this);
     }
 
     int getColor(float percent) {
@@ -209,14 +210,14 @@ public class SpeedGauge extends View implements GaugeUpdater.Gauge {
 
     public void setPercent(float percent) {
         this.percent = Math.max(Math.min(percent, 1f), 0f);
-        GaugeUpdater.post();
+        WidgetUpdater.post();
     }
 
-    public void update() {
+    public void onWidgetUpdate() {
         if (oldPercent != percent) {
-            float dv = GaugeUpdater.truncate((percent - oldPercent) * GaugeUpdater.DV(percent));
+            float dv = WidgetUpdater.truncate((percent - oldPercent) * WidgetUpdater.DV(percent));
             oldPercent += dv;
-            oldPercent = GaugeUpdater.truncate(oldPercent);
+            oldPercent = WidgetUpdater.truncate(oldPercent);
 
             mask.set(0, 0, getMaskWidth(oldPercent), height);
             postInvalidate();

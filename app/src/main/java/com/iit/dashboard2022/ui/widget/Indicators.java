@@ -12,12 +12,13 @@ import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 
 import com.iit.dashboard2022.R;
 
 import java.util.Locale;
 
-public class Indicators extends FrameLayout {
+public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
     private final RadioButton lagRadio, faultRadio, waitRadio, chargeRadio;
     private final TextView lagTimer;
     private final LinearLayout indicatorLayout;
@@ -29,7 +30,9 @@ public class Indicators extends FrameLayout {
         Lag,
         Fault,
         Waiting,
-        Charging,
+        Charging;
+
+        boolean on = false;
     }
 
     public Indicators(Context context) {
@@ -73,40 +76,55 @@ public class Indicators extends FrameLayout {
             }
         });
 
+        WidgetUpdater.add(this);
     }
 
-    public void setIndicator(Indicator indicator, boolean enabled) {
-        RadioButton rb;
-        int visibility = enabled ? View.VISIBLE : View.GONE;
-        switch (indicator) {
-            case Lag:
-                rb = lagRadio;
-                lagTimer.postDelayed(() -> lagTimer.setVisibility(visibility), 10);
-                break;
-            case Fault:
-                rb = faultRadio;
-                break;
-            case Waiting:
-                rb = waitRadio;
-                break;
-            case Charging:
-                rb = chargeRadio;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + indicator);
-        }
-        rb.postDelayed(() -> {
-            rb.setChecked(enabled);
-            rb.setVisibility(visibility);
-        }, 10);
+    @UiThread
+    private void updateIndicators() {
+        lagRadio.setChecked(Indicator.Lag.on);
+        int v = Indicator.Lag.on ? View.VISIBLE : View.GONE;
+        lagRadio.setVisibility(v);
+        lagTimer.setVisibility(v);
+        if (v == View.VISIBLE)
+            updateLagTime();
+
+        faultRadio.setChecked(Indicator.Fault.on);
+        faultRadio.setVisibility(Indicator.Fault.on ? View.VISIBLE : View.GONE);
+
+        waitRadio.setChecked(Indicator.Waiting.on);
+        waitRadio.setVisibility(Indicator.Waiting.on ? View.VISIBLE : View.GONE);
+
+        chargeRadio.setChecked(Indicator.Charging.on);
+        chargeRadio.setVisibility(Indicator.Charging.on ? View.VISIBLE : View.GONE);
     }
 
+    @UiThread
     private void updateLagTime() {
         if (currentLagTime.length() >= 5)
             lagTimer.setTextSize(LagTimerSmall);
         else
             lagTimer.setTextSize(lagTimerLarge);
         lagTimer.setText(currentLagTime);
+    }
+
+    public void setIndicator(Indicator indicator, boolean enabled) {
+        switch (indicator) {
+            case Lag:
+                Indicator.Lag.on = enabled;
+                break;
+            case Fault:
+                Indicator.Fault.on = enabled;
+                break;
+            case Waiting:
+                Indicator.Waiting.on = enabled;
+                break;
+            case Charging:
+                Indicator.Charging.on = enabled;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + indicator);
+        }
+        WidgetUpdater.post();
     }
 
     public void setLagTime(long ms) {
@@ -118,6 +136,17 @@ public class Indicators extends FrameLayout {
             else
                 currentLagTime = String.format(Locale.US, lagTimerMSFormat, ms);
         }
-        post(this::updateLagTime);
+        WidgetUpdater.post();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        WidgetUpdater.remove(this);
+        super.finalize();
+    }
+
+    @Override
+    public void onWidgetUpdate() {
+        post(this::updateIndicators);
     }
 }

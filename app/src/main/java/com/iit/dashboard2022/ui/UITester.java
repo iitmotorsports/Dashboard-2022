@@ -2,6 +2,7 @@ package com.iit.dashboard2022.ui;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -62,7 +63,8 @@ public class UITester {
     public static void enable(boolean enabled) {
         if (worker == null) {
             testThread.start();
-            worker = new Handler(testThread.getLooper());
+//            worker = new Handler(testThread.getLooper());
+            worker = new Handler(Looper.getMainLooper());
         }
         if (enabled) {
             rndTestC = rndTests;

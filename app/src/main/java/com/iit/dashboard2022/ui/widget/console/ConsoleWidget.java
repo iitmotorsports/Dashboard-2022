@@ -22,14 +22,14 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
+import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
 import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 
-public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
+public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Widget, UITester.TestUI {
 
     public enum Status {
         Disconnected(R.color.red),
@@ -108,19 +108,11 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
         updateStatus();
         setMode("Nil");
 
-        Runnable textUpdate = () -> {
-            CharSequence msg;
-            while ((msg = outQueue.poll()) != null) {
-                text.append(msg);
-            }
-            consoleScroller.scrollDown();
-            setLineCount();
-        };
-
-        textLoader = new TextLoader(rawQueue, text.getPaint(), textUpdate, uiHandle, text);
+        textLoader = new TextLoader(rawQueue, text.getPaint(), text);
         textLoader.start();
 
         UITester.addTest(this);
+        WidgetUpdater.add(this);
     }
 
     public static CharSequence trimCharSequence(@NonNull CharSequence sequence) {
@@ -139,16 +131,11 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
     private static class TextLoader extends Thread {
         private final LinkedBlockingQueue<CharSequence> rawQueue;
         private final PrecomputedTextCompat.Params textParams;
-        private final Runnable textUpdate;
-        private final Handler uiHandle;
         private final TextView text;
-        private int accumulator = 0;
         private int limit = 0;
 
-        TextLoader(LinkedBlockingQueue<CharSequence> rawQueue, TextPaint paint, Runnable textUpdate, Handler uiHandle, TextView text) {
-            this.textUpdate = textUpdate;
+        TextLoader(LinkedBlockingQueue<CharSequence> rawQueue, TextPaint paint, TextView text) {
             this.rawQueue = rawQueue;
-            this.uiHandle = uiHandle;
             this.text = text;
 
             textParams = new PrecomputedTextCompat.Params.Builder(paint).build();
@@ -159,10 +146,7 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
             while (true) {
                 try {
                     CharSequence nextMsg;
-                    if (accumulator != 0)
-                        nextMsg = rawQueue.poll(AnimSetting.ANIM_UPDATE_MILLIS * 1000, TimeUnit.NANOSECONDS);
-                    else
-                        nextMsg = rawQueue.take();
+                    nextMsg = rawQueue.take();
 
                     if (nextMsg != null) {
                         nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
@@ -170,29 +154,16 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
                         outQueue.add(nextMsg);
                     }
 
-                    accumulator++;
-                    if (accumulator >= 4) {
-                        flush();
-                    } else {
-                        if (limit == 0 && text.getLineCount() > 5000) {
-//                            CharSequence cq = text.getText();
-//                            int len = cq.length();
-//                            CharSequence newText = cq.subSequence(len / 2, len);
-//                            uiHandle.postDelayed(() -> text.setText(newText), 100);
-                            uiHandle.post(() -> text.setText(null));
-                        } else if (limit > 0) {
-                            limit--;
-                        }
+                    if (limit == 0 && text.getLineCount() > 5000) {
+                        uiHandle.post(() -> text.setText(null));
+                    } else if (limit > 0) {
+                        limit--;
                     }
+
                 } catch (InterruptedException e) {
                     return;
                 }
             }
-        }
-
-        public void flush() {
-            accumulator = 0;
-            uiHandle.post(textUpdate);
         }
 
         public void addLimit() {
@@ -223,14 +194,12 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
 
     public void newError() {
         errorCounter++;
-        if (run)
-            uiHandle.post(this::setErrorCount);
+        WidgetUpdater.post();
     }
 
     public void setStatus(Status status) {
         currentStatus = status;
-        uiHandle.post(this::updateStatus);
-        textLoader.flush();
+        WidgetUpdater.post();
     }
 
     public TranslationAnim getAnimator() {
@@ -276,10 +245,25 @@ public class ConsoleWidget extends ConstraintLayout implements UITester.TestUI {
 
     @Override
     protected void finalize() throws Throwable {
+        WidgetUpdater.remove(this);
         UITester.removeTest(this);
         enable(false);
         consoleThread.quitSafely();
         super.finalize();
+    }
+
+    @Override
+    public void onWidgetUpdate() {
+        uiHandle.post(() -> {
+            CharSequence msg;
+            while ((msg = outQueue.poll()) != null) {
+                text.append(msg);
+            }
+            consoleScroller.scrollDown();
+            setErrorCount();
+            updateStatus();
+            setLineCount();
+        });
     }
 
     private boolean testingState = false;

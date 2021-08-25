@@ -12,10 +12,12 @@ import androidx.annotation.AttrRes;
 
 import com.iit.dashboard2022.R;
 
-public class StartLight extends FrameLayout {
+public class StartLight extends FrameLayout implements WidgetUpdater.Widget {
     private final TextView currentState;
     private final RadioButton startLight;
     private final ColorStateList colorOn, colorOff;
+    private ColorStateList current;
+    private CharSequence state;
 
     public StartLight(Context context) {
         this(context, null);
@@ -34,14 +36,31 @@ public class StartLight extends FrameLayout {
 
         colorOn = context.getColorStateList(R.color.green);
         colorOff = context.getColorStateList(R.color.midground);
+        current = colorOff;
+        WidgetUpdater.add(this);
     }
 
     public void setLight(boolean isOn) {
-        startLight.setButtonTintList(isOn ? colorOn : colorOff);
+        current = isOn ? colorOn : colorOff;
+        WidgetUpdater.post();
     }
 
     public void setState(CharSequence state) {
-        post(() -> currentState.setText(state));
+        this.state = state;
+        WidgetUpdater.post();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        WidgetUpdater.remove(this);
+        super.finalize();
+    }
+
+    @Override
+    public void onWidgetUpdate() {
+        post(() -> {
+            startLight.setButtonTintList(current);
+            currentState.setText(state);
+        });
+    }
 }

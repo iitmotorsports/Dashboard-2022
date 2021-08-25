@@ -15,7 +15,7 @@ import androidx.annotation.UiThread;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 
-public class LiveDataEntry extends View {
+public class LiveDataEntry extends View implements WidgetUpdater.Widget {
 
     private static final Paint bgPaint = new Paint();
     private static final Paint titlePaint = new Paint();
@@ -25,6 +25,7 @@ public class LiveDataEntry extends View {
     private float width = 0, height = 0;
     private String title = "Nil Title";
     private String value = "Nil Value";
+    private boolean update = false;
 
     public LiveDataEntry(String title, Context context) {
         this(context);
@@ -60,18 +61,20 @@ public class LiveDataEntry extends View {
         border = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
         radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, context.getResources().getDisplayMetrics());
         setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, (border + textSize) * 2, context.getResources().getDisplayMetrics()));
+
+        WidgetUpdater.add(this);
     }
 
     @UiThread
     private void setActive(boolean active) {
         bgPaint.setAlpha(active ? 255 : 64);
-        invalidate();
+        update = true;
     }
 
     @UiThread
     private void unActivate() {
         setActive(false);
-        invalidate();
+        update = true;
     }
 
     @UiThread
@@ -80,7 +83,7 @@ public class LiveDataEntry extends View {
         Rect bounds = new Rect();
         titlePaint.getTextBounds(title, 0, title.length(), bounds);
         setMinimumWidth(bounds.width() * 2);
-        invalidate();
+        update = true;
     }
 
     @UiThread
@@ -89,6 +92,7 @@ public class LiveDataEntry extends View {
             this.value = value;
             setActive(true);
             postDelayed(this::unActivate, AnimSetting.ANIM_DURATION / 2);
+            update = true;
         }
     }
 
@@ -97,6 +101,7 @@ public class LiveDataEntry extends View {
         super.onSizeChanged(w, h, ow, oh);
         width = w;
         height = h;
+        update = true;
     }
 
     @Override
@@ -105,5 +110,19 @@ public class LiveDataEntry extends View {
         float yPos = (height / 2) - ((titlePaint.descent() + titlePaint.ascent()) / 2);
         canvas.drawText(title, height / 4f, yPos, titlePaint);
         canvas.drawText(value, width - height / 4f, yPos, valuePaint);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        WidgetUpdater.remove(this);
+        super.finalize();
+    }
+
+    @Override
+    public void onWidgetUpdate() {
+        if (update) {
+            postInvalidate();
+            update = false;
+        }
     }
 }
