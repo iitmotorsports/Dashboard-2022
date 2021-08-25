@@ -160,6 +160,7 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
                         limit--;
                     }
 
+                    WidgetUpdater.post();
                 } catch (InterruptedException e) {
                     return;
                 }
