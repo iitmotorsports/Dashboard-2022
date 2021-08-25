@@ -42,7 +42,7 @@ public class SpeedText extends View implements WidgetUpdater.Widget {
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         width = w;
         height = h;
-        paint.setTextSize(h + (h / 4f));
+        paint.setTextSize(h + (h / 5f));
     }
 
     @Override
