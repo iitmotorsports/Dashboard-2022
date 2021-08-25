@@ -21,25 +21,14 @@
 
     </com.iit.dashboard2022.ui.widget.StartLight>
 
-    <com.google.android.material.textview.MaterialTextView
+    <com.iit.dashboard2022.ui.widget.SpeedText
         android:id="@+id/speedometer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center"
-        android:includeFontPadding="false"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
-        android:text="@string/_0"
-        android:textAlignment="center"
-        app:autoSizeMaxTextSize="250sp"
-        app:autoSizeMinTextSize="50sp"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/indicators"
+        app:layout_constraintBottom_toTopOf="@+id/speedGauges"
         app:layout_constraintEnd_toEndOf="@+id/speedGauges"
         app:layout_constraintStart_toStartOf="@+id/speedGauges"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.iit.dashboard2022.ui.widget.Indicators
         android:id="@+id/indicators"

@@ -13,6 +13,7 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECUMsgHandler;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
+import com.iit.dashboard2022.ui.widget.SpeedText;
 import com.iit.dashboard2022.ui.widget.StartLight;
 import com.iit.dashboard2022.ui.widget.gauge.LinearGauge;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
@@ -23,7 +24,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     private StartLight dashStartLight;
     private SpeedGauge sgL, sgR;
     private LinearGauge batteryGauge, powerGauge;
-    private TextView speedometer;
+    private SpeedText speedometer;
     private Indicators indicators;
     private String limitFormat;
 
