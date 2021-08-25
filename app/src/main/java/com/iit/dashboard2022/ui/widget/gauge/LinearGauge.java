@@ -23,7 +23,6 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     private RectF dst;
     private final Paint paint, bgPaint, topTextPaint, bottomTextPaint, valueTextPaint;
     private final Rect mainBar;
-    private final Rect valueBounds;
 
     private final String topText;
     private String bottomText;
@@ -34,7 +33,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     private String output;
     private int value = 0;
 
-    private float percent = 0, oldPercent = 0;
+    private float altX, percent = 0, oldPercent = 0;
     private int width = 0, height = 0;
     private int textOffset = 0, topTextY = 0;
 
@@ -116,7 +115,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
         bottomTextPaint.setTextSize(topTextPaint.getTextSize() / 1.2f);
 
         valueTextPaint = new Paint(topTextPaint);
-        valueBounds = new Rect();
+        valueTextPaint.setTextAlign(Paint.Align.RIGHT);
 
         WidgetUpdater.add(this);
     }
@@ -140,20 +139,18 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
             float[] widths = new float[topText.length()];
             topTextPaint.getTextWidths(topText, widths);
         }
-        valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height, getResources().getDisplayMetrics()));
+        valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height/1.2f, getResources().getDisplayMetrics()));
         dst = new RectF(0, 0, x, y);
+        altX = textOffset / 8f;
         updateValueString();
-        oldValX = valX;
     }
 
-    float valX, altX;
-    float oldValX = 0;
-
-    private void updateDrawOffsets() { // TODO: fix 'jitter' when changing width, may have todo with kerning
-        valX = width - valueBounds.width() - textOffset / 4f;
-        float dv = (valX - oldValX);
-        oldValX += dv / 4;
-        altX = textOffset / 8f;
+    private void updateValueString() {
+        if (unit != null) {
+            output = value + unit;
+        } else {
+            output = Integer.toString(value);
+        }
     }
 
     protected void onDraw(Canvas canvas) {
@@ -165,7 +162,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
         if (bottomText != null) {
             canvas.drawText(bottomText, altX, textOffset, bottomTextPaint);
         }
-        canvas.drawText(output, oldValX, textOffset, valueTextPaint);
+        canvas.drawText(output, width - altX, textOffset, valueTextPaint);
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
@@ -204,7 +201,6 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
 
         // Get the color
         return Color.argb(alpha, red, green, blue);
-
     }
 
     public void setBottomText(String bottomText) {
@@ -214,16 +210,6 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     @Override
     protected void finalize() {
         WidgetUpdater.remove(this);
-    }
-
-    private void updateValueString() {
-        if (unit != null) {
-            output = value + unit;
-        } else {
-            output = Integer.toString(value);
-        }
-        valueTextPaint.getTextBounds(output, 0, output.length(), valueBounds);
-        updateDrawOffsets();
     }
 
     @Override
@@ -242,9 +228,6 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
             invalid = true;
         }
         updateValueString();
-        if (valX != oldValX) {
-            invalid = true;
-        }
         if (invalid)
             postInvalidate();
     }
