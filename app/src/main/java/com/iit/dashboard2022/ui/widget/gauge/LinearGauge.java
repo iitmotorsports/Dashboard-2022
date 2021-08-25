@@ -235,10 +235,10 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
             oldPercent = WidgetUpdater.truncate(oldPercent);
 
             if (flipped)
-                mainBar.set((int) (width * (1.0f - percent)), 0, width, height);
+                mainBar.set((int) (width * (1.0f - oldPercent)), 0, width, height);
             else
-                mainBar.set(0, 0, (int) (width * percent), height);
-            paint.setColor(getColor(percent));
+                mainBar.set(0, 0, (int) (width * oldPercent), height);
+            paint.setColor(getColor(oldPercent));
             invalid = true;
         }
         updateValueString();
