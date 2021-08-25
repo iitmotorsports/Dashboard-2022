@@ -73,6 +73,10 @@ public class ECU {
         });
     }
 
+    public void issueCommand(@ECUCommands.ECUCommand int Command) {
+        com.write(ECUCommands.COMMANDS[Command]);
+    }
+
     public void clear() {
         ecuKeyMap.clear();
     }
