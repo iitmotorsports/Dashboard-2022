@@ -216,7 +216,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     public void onWidgetUpdate() {
         boolean invalid = false;
         if (oldPercent != percent) {
-            float dv = WidgetUpdater.truncate((percent - oldPercent) * WidgetUpdater.DV(percent));
+            float dv = WidgetUpdater.truncate((percent - oldPercent) * WidgetUpdater.DV(percent)) - 0.001f;
             oldPercent += dv;
             oldPercent = WidgetUpdater.truncate(oldPercent);
 
