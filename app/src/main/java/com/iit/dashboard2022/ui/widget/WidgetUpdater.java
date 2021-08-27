@@ -79,8 +79,6 @@ public class WidgetUpdater {
     }
 
     public interface Widget {
-        int delay = 0;
-
         void onWidgetUpdate();
     }
 
