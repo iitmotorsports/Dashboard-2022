@@ -4,9 +4,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -96,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
                 settingsBtn.setActionedCheck(true);
                 sidePanel.consoleSwitch.setActionedCheck(true);
             }));
+            WidgetUpdater.start();
+            Toaster.showToast("Initialized", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         }, 500);
     }
 

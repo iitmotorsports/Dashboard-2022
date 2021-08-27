@@ -47,7 +47,6 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
 
     public LinearGauge(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        WidgetUpdater.start();
 
         mainBar = new Rect();
 

@@ -52,7 +52,6 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
 
     public SpeedGauge(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        WidgetUpdater.start();
 
         mask = new Rect();
 
