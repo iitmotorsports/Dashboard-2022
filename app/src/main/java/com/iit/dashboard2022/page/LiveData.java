@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class LiveData extends Page implements UITester.TestUI {
 
-    private LinearLayout liveDataEntries;
+    private LinearLayout liveDataEntries1, liveDataEntries2;
     private ViewGroup rootView;
 
     private LiveDataEntry[] entries;
@@ -28,7 +28,8 @@ public class LiveData extends Page implements UITester.TestUI {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.tab_live_data_layout, container, false);
-        liveDataEntries = rootView.findViewById(R.id.liveDataEntries);
+        liveDataEntries1 = rootView.findViewById(R.id.liveDataEntries1);
+        liveDataEntries2 = rootView.findViewById(R.id.liveDataEntries2);
 
         UITester.addTest(this);
         return rootView;
@@ -38,14 +39,20 @@ public class LiveData extends Page implements UITester.TestUI {
         this.values = null;
         this.entries = null;
 
-        liveDataEntries.removeAllViews();
+        liveDataEntries1.removeAllViews();
+        liveDataEntries2.removeAllViews();
         String[] values = new String[titles.length];
         LiveDataEntry[] entries = new LiveDataEntry[titles.length];
 
+        boolean alt = true;
         int i = 0;
         for (String title : titles) {
             entries[i] = new LiveDataEntry(title, rootView.getContext());
-            liveDataEntries.addView(entries[i++]);
+            if (alt)
+                liveDataEntries1.addView(entries[i++]);
+            else
+                liveDataEntries2.addView(entries[i++]);
+            alt = !alt;
         }
 
         this.entries = entries;
