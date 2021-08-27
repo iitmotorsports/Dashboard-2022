@@ -28,7 +28,7 @@ public class WidgetUpdater {
                             wait();
                         }
                         if (enoughMinTimePassed()) {
-                            for (Widget sg : WIDGETS) {
+                            for (Widget sg : WIDGETS) { // FIXME: Concurrent Modification Exception
                                 sg.onWidgetUpdate();
                                 wait(2);
                             }
