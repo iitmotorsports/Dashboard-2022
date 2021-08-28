@@ -77,18 +77,22 @@ public class ECUKeyMap {
         return null;
     }
 
+    @Nullable
     public Integer getTagID(String stringTag) {
         return getKeyByValue(tagLookUp, stringTag);
     }
 
+    @Nullable
     public Integer getStrID(String stringMsg) {
         return getKeyByValue(stringLookUp, stringMsg);
     }
 
+    @Nullable
     public String getTag(Integer tagID) {
         return tagLookUp.get(tagID);
     }
 
+    @Nullable
     public String getStr(Integer strID) {
         return stringLookUp.get(strID);
     }
