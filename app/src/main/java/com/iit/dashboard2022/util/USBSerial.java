@@ -144,6 +144,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     @Override
     public void write(byte[] buffer) {
         try {
+            if (port != null && isOpen())
             port.write(buffer, 0);
         } catch (IOException e) {
             e.printStackTrace();
