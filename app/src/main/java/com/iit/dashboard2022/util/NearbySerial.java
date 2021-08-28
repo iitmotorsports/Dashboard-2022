@@ -62,7 +62,8 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
     private final PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
         public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
-            dataListener.newSerialData(payload.asBytes());
+            if (dataListener != null)
+                dataListener.newSerialData(payload.asBytes());
         }
 
         @Override
