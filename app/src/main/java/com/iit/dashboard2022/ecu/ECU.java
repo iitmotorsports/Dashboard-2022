@@ -117,7 +117,7 @@ public class ECU {
         ecuKeyMap.addStatusListener(statusListener);
     }
 
-    public long requestMsgID(String stringTag, String stringMsg){
+    public long requestMsgID(String stringTag, String stringMsg) {
         if (ecuKeyMap != null)
             return ecuKeyMap.requestMsgID(stringTag, stringMsg);
         return -1;
@@ -201,7 +201,7 @@ public class ECU {
         iBuffer[iBuf_MsgID] = buf.getInt(0);
     }
 
-    public void debugUpdate(byte[] data_block){
+    public void debugUpdate(byte[] data_block) {
         updateData(data_block);
     }
 
@@ -221,6 +221,8 @@ public class ECU {
         return ecuMsgHandler.updateMessages(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
     }
 
+    private static final Date d = new Date();
+
     /**
      * Generate a formatted string to be passed to interpretListener
      *
@@ -233,7 +235,8 @@ public class ECU {
     static String formatMsg(long epoch, String tagString, String msgString, long number) {
         if (tagString == null || msgString == null)
             return "";
-        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(new Date(epoch)) + ' ' : "";
+        d.setTime(epoch);
+        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(d) + ' ' : "";
         return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
     }
 
