@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUUpdater;
 import com.iit.dashboard2022.page.CarDashboard;
+import com.iit.dashboard2022.page.Errors;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.PageManager;
@@ -53,11 +54,12 @@ public class MainActivity extends AppCompatActivity {
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
         LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
+        Errors errorsPage = (Errors) mainPager.getPage(PageManager.ERRORS);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
-        sidePanel.attach(this, console, cdPage, ldPage, frontECU);
+        sidePanel.attach(this, console, cdPage, ldPage, errorsPage, frontECU);
 
         /* SETTINGS BUTTON */
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
