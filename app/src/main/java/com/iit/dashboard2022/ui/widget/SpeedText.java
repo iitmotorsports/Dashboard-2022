@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
 
 public class SpeedText extends View implements WidgetUpdater.Widget {
-    private static Paint paint = new Paint();
+    private static final Paint paint = new Paint();
     private String text = "0";
     private int width = 0, height = 0;
 

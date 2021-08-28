@@ -27,7 +27,7 @@ public final class ECUCommands {
     public static final int CHARGE = 0;
     public static final int SEND_CAN_BUS_MESSAGE = 1;
     public static final int CLEAR_FAULT = 2;
-    public static final int TOGGLE_CAN_BUS_SNIFF = 3; // TODO: implement canbus sniffer button
+    public static final int TOGGLE_CAN_BUS_SNIFF = 3; // TODO: implement CAN bus sniffer button
     public static final int TOGGLE_MIRROR_MODE = 4;
     public static final int ENTER_MIRROR_SET = 5;
     public static final int SEND_ECHO = 6;

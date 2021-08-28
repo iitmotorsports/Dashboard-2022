@@ -116,26 +116,6 @@ public class Pager {
         edgeAnim.start();
     }
 
-//    public void pushMargin(int edge, int size) {
-//                switch (edge) {
-//            case LEFT:
-//                params.leftMargin += size;
-//                break;
-//            case TOP:
-//                params.topMargin += size;
-//                break;
-//            case RIGHT:
-//                params.rightMargin += size;
-//                break;
-//            case BOTTOM:
-//                params.bottomMargin += size;
-//                break;
-//            default:
-//                return;
-//        }
-//        viewPager.setLayoutParams(params);
-//    }
-
     public void pushMargin(int edge, int size) {
         switch (edge) {
             case LEFT:

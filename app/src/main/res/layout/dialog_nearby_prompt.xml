@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/xxxx"
+            android:text="@string/dialog_code_placeholder"
             android:textColor="@color/primary"
             android:textSize="60sp"
             android:textStyle="bold" />
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/xxxx"
+                android:text="@string/dialog_code_placeholder"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>

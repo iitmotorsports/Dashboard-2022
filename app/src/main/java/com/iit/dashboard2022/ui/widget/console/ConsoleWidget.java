@@ -108,7 +108,7 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
         updateStatus();
         setMode("Nil");
 
-        textLoader = new TextLoader(rawQueue, text.getPaint(), text);
+        textLoader = new TextLoader(text.getPaint(), text);
         textLoader.start();
 
         UITester.addTest(this);
@@ -134,8 +134,8 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
         private final TextView text;
         private int limit = 0;
 
-        TextLoader(LinkedBlockingQueue<CharSequence> rawQueue, TextPaint paint, TextView text) {
-            this.rawQueue = rawQueue;
+        TextLoader(TextPaint paint, TextView text) {
+            this.rawQueue = ConsoleWidget.rawQueue;
             this.text = text;
 
             textParams = new PrecomputedTextCompat.Params.Builder(paint).build();
