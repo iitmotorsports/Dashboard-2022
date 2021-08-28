@@ -26,6 +26,9 @@ import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.Toaster;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 public class SidePanel extends ConstraintLayout {
     public final RadioGroup consoleRadioGroup;
     public final SideRadio asciiRadio, hexRadio, rawRadio;
@@ -112,6 +115,12 @@ public class SidePanel extends ConstraintLayout {
         frontECU.setErrorListener((tag, msg) -> {
             console.systemPost(tag, msg);
             console.newError();
+        });
+
+        canMsgButton.setOnClickListener(v -> {
+            long id = frontECU.requestMsgID("[Fault Check]", "[ LOG ] MC0 Fault: DC Bus Voltage Low");
+            byte[] raw = ByteBuffer.allocate(Long.SIZE / Byte.SIZE).order(ByteOrder.LITTLE_ENDIAN).putLong(id).array();
+            frontECU.debugUpdate(raw);
         });
 
         ECUCommunication com = frontECU.getEcuCommunicator();
