@@ -2,14 +2,20 @@ package com.iit.dashboard2022.util;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -27,12 +33,12 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
-import com.iit.dashboard2022.MainActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.iit.dashboard2022.R;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class NearbySerial extends SerialCom {
+public class NearbySerial extends SerialCom { // TODO: ditch google API
     private static final String USERNAME = "Nearby Serial Stream";
     private static final String SERVICE_ID = "RAW_DATA_STREAM";
 
@@ -76,7 +82,7 @@ public class NearbySerial extends SerialCom {
     }
 
     private void createAcceptDialog() {
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(activity);
+        MaterialAlertDialogBuilder mBuilder = new MaterialAlertDialogBuilder(activity, R.style.Theme_Dashboard2022_Dialog);
         View mView = activity.getLayoutInflater().inflate(R.layout.dialog_nearby_prompt, null);
 
         Button acceptBtn = mView.findViewById(R.id.acceptBtn);
@@ -106,6 +112,21 @@ public class NearbySerial extends SerialCom {
             accepted.set(false);
         });
 
+        acceptDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+    }
+
+    private void showDialog() {
+        acceptDialog.show();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            acceptDialog.getWindow().getInsetsController().hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+        } else {
+            acceptDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
     }
 
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
@@ -116,8 +137,8 @@ public class NearbySerial extends SerialCom {
             String endName = info.getEndpointName();
             activity.runOnUiThread(() -> {
                 authText.setText(authTok);
-                connName.setText(endName);
-                acceptDialog.show();
+                connName.setText(String.format(" %s", endName));
+                showDialog();
             });
         }
 
@@ -127,8 +148,10 @@ public class NearbySerial extends SerialCom {
                 case ConnectionsStatusCodes.STATUS_OK:
                     Toaster.showToast("Nearby serial connected", Toaster.SUCCESS);
                     connected = true;
-                    connectionListener.onSerialConnection(true);
-                    connectionStateListener.onSerialOpen(true);
+                    if (connectionListener != null)
+                        connectionListener.onSerialConnection(true);
+                    if (connectionStateListener != null)
+                        connectionStateListener.onSerialOpen(true);
                     client.stopAdvertising();
                     client.stopDiscovery();
                     return;
@@ -143,8 +166,10 @@ public class NearbySerial extends SerialCom {
                     Toaster.showToast("Nearby serial stream unknown error", Toaster.ERROR);
             }
             connected = false;
-            connectionStateListener.onSerialOpen(false);
-            connectionListener.onSerialConnection(false);
+            if (connectionStateListener != null)
+                connectionStateListener.onSerialOpen(false);
+            if (connectionListener != null)
+                connectionListener.onSerialConnection(false);
         }
 
         @Override
@@ -158,7 +183,7 @@ public class NearbySerial extends SerialCom {
     private final EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
         public void onEndpointFound(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
-            Toaster.showToast("Found Endpoint", Toaster.INFO);
+            Toaster.showToast("Found Endpoint, wait for connection", Toaster.INFO);
             client.requestConnection(USERNAME, endpointId, connectionLifecycleCallback);
         }
 
@@ -186,22 +211,44 @@ public class NearbySerial extends SerialCom {
                 });
     }
 
-    @Override
-    public boolean open() {
+    public static Boolean isLocationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            return lm.isLocationEnabled();
+        } else {
+            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
+    }
+
+    public boolean getLocationPerms() {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            Toaster.showToast("Try reopening after giving access", Toaster.INFO, Toast.LENGTH_LONG);
             return false;
         }
-        startDiscovery();
-        startAdvertising();
+        if (!isLocationEnabled(activity)) {
+            Toaster.showToast("Location services must be on!", Toaster.ERROR);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean open() {
+        if (getLocationPerms()) {
+            startDiscovery();
+            startAdvertising();
+        }
         return false;
     }
 
     @Override
     public void close() {
-        connectionStateListener.onSerialOpen(false);
-        connectionListener.onSerialConnection(false);
+        if (connectionStateListener != null)
+            connectionStateListener.onSerialOpen(false);
+        if (connectionListener != null)
+            connectionListener.onSerialConnection(false);
         connected = false;
         client.stopAllEndpoints();
         client.stopAdvertising();

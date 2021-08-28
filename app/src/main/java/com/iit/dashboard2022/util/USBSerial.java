@@ -9,7 +9,6 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 
 import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
 
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -36,6 +35,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     private final Context context;
     private final UsbManager usbManager;
     private final PendingIntent deviceIntent;
+    private final IntentFilter broadcastFilter;
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
@@ -73,10 +73,20 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
         this.stopBits = stopBits;
         this.parity = parity;
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        context.registerReceiver(broadcastReceiver, filter);
+        broadcastFilter = new IntentFilter();
+        broadcastFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        broadcastFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+    }
+
+    private boolean registered = false;
+    public void autoConnect(boolean enabled) {
+        if (enabled) {
+            context.registerReceiver(broadcastReceiver, broadcastFilter);
+            registered = true;
+        } else if (registered) {
+            context.unregisterReceiver(broadcastReceiver);
+            registered = false;
+        }
     }
 
     private boolean openNewConnection() {
@@ -145,7 +155,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     public void write(byte[] buffer) {
         try {
             if (port != null && isOpen())
-            port.write(buffer, 0);
+                port.write(buffer, 0);
         } catch (IOException e) {
             e.printStackTrace();
         }

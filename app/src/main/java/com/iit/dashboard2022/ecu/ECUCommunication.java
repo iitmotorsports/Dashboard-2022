@@ -2,7 +2,6 @@ package com.iit.dashboard2022.ecu;
 
 import android.app.Activity;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -11,80 +10,96 @@ import com.iit.dashboard2022.util.SerialCom;
 import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.USBSerial;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 public class ECUCommunication extends SerialCom {
-    private final USBSerial USBMethod;
     private final NearbySerial nearbyMethod;
+    private final USBSerial USBMethod;
+
+    private DataListener savedListener;
     private SerialCom currentMethod;
-    private int current = -1;
+    private boolean nearbyRelayEnabled = false;
 
     ECUCommunication(@NonNull Activity activity, @NonNull DataListener dataListener) {
         USBMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
         nearbyMethod = new NearbySerial(activity);
 
-        setDataListener(data -> {
+        savedListener = data -> {
             dataListener.newSerialData(data);
-            if (current != NEARBY)
-                nearbyMethod.write(data);
-        });
+            nearbyMethod.write(data);
+        };
 
-        USBMethod.setDataListener(this.dataListener);
-        nearbyMethod.setDataListener(this.dataListener);
-
+        setDataListener(dataListener);
         currentMethod = USBMethod;
-        changeMethod(USB);
+        switchCurrentMethod(USBMethod);
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({USB, NEARBY})
-    @interface SerialUpdateMethod {
+    private void enableNearbyRelay(boolean enabled) {
+        if (enabled == nearbyRelayEnabled)
+            return;
+        DataListener temp = this.dataListener;
+        setDataListener(savedListener);
+        currentMethod.setDataListener(savedListener);
+        savedListener = temp;
+        nearbyRelayEnabled = !nearbyRelayEnabled;
+        if (!enabled)
+            nearbyMethod.close();
     }
 
-    public static final int USB = 0;
-    public static final int NEARBY = 1;
-
-    public void changeMethod(@SerialUpdateMethod int updateMethod) {
-        switch (updateMethod) {
-            case USB:
-                Toaster.showToast("Using USB Serial", Toaster.WARNING);
-                switchCurrentMethod(USBMethod);
-                current = updateMethod;
-                break;
-            case NEARBY:
-                Toaster.showToast("Using Nearby Serial, do not connect an ECU", Toaster.WARNING);
-                switchCurrentMethod(nearbyMethod);
-                current = updateMethod;
-                break;
+    public void enableNearbyAPI(boolean enabled) {
+        if (currentMethod.equals(USBMethod) && currentMethod.isOpen()) {
+            if (enabled) {
+                Toaster.showToast("Sending Nearby Serial", Toaster.INFO);
+                enableNearbyRelay(true);
+                nearbyMethod.open();
+            } else {
+                enableNearbyRelay(false);
+            }
+            return;
         }
-    }
-
-    public void openNearby() {
-        nearbyMethod.open();
+        enableNearbyRelay(false);
+        if (enabled) {
+            Toaster.showToast("Receiving Nearby Serial", Toaster.WARNING);
+            USBMethod.autoConnect(false);
+            switchCurrentMethod(nearbyMethod);
+            nearbyMethod.open();
+        } else {
+            Toaster.showToast("Using USB Serial", Toaster.WARNING);
+            switchCurrentMethod(USBMethod);
+            USBMethod.autoConnect(true);
+            USBMethod.open();
+        }
     }
 
     private void switchCurrentMethod(@NonNull SerialCom newMethod) {
         currentMethod.close();
+        currentMethod.setDataListener(null);
+        currentMethod.setConnectionListener(null);
+        currentMethod.setConnectionStateListener(null);
+        currentMethod.setErrorListener(null);
+
         currentMethod = newMethod;
+
+        currentMethod.setDataListener(this.dataListener);
+        currentMethod.setConnectionListener(this.connectionListener);
+        currentMethod.setConnectionStateListener(this.connectionStateListener);
+        currentMethod.setErrorListener(this.errorListener);
     }
 
     @Override
     public void setConnectionListener(SerialCom.ConnectionListener connectionListener) {
-        USBMethod.setConnectionListener(connectionListener);
-        nearbyMethod.setConnectionListener(connectionListener);
+        super.setConnectionListener(connectionListener);
+        currentMethod.setConnectionListener(connectionListener);
     }
 
     @Override
     public void setConnectionStateListener(SerialCom.ConnectionStateListener connectionStateListener) {
-        USBMethod.setConnectionStateListener(connectionStateListener);
-        nearbyMethod.setConnectionStateListener(connectionStateListener);
+        super.setConnectionStateListener(connectionStateListener);
+        currentMethod.setConnectionStateListener(connectionStateListener);
     }
 
     @Override
     public void setErrorListener(SerialCom.ErrorListener errorListener) {
-        USBMethod.setErrorListener(errorListener);
-        nearbyMethod.setErrorListener(errorListener);
+        super.setErrorListener(errorListener);
+        currentMethod.setErrorListener(errorListener);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.iit.dashboard2022.util;
 
+import androidx.annotation.Nullable;
+
 public abstract class SerialCom {
 
     public interface ConnectionListener {
@@ -23,19 +25,19 @@ public abstract class SerialCom {
     protected DataListener dataListener;
     protected ErrorListener errorListener;
 
-    public void setDataListener(DataListener dataListener) {
+    public void setDataListener(@Nullable DataListener dataListener) {
         this.dataListener = dataListener;
     }
 
-    public void setConnectionListener(SerialCom.ConnectionListener connectionListener) {
+    public void setConnectionListener(@Nullable SerialCom.ConnectionListener connectionListener) {
         this.connectionListener = connectionListener;
     }
 
-    public void setConnectionStateListener(SerialCom.ConnectionStateListener connectionStateListener) {
+    public void setConnectionStateListener(@Nullable SerialCom.ConnectionStateListener connectionStateListener) {
         this.connectionStateListener = connectionStateListener;
     }
 
-    public void setErrorListener(SerialCom.ErrorListener errorListener) {
+    public void setErrorListener(@Nullable SerialCom.ErrorListener errorListener) {
         this.errorListener = errorListener;
     }
 

@@ -35,7 +35,7 @@ public class SidePanel extends ConstraintLayout {
     public final SideRadio asciiRadio, hexRadio, rawRadio;
     public final SideSwitch uiTestSwitch, nearbyAPISwitch, reverseSwitch, consoleSwitch;
     public final SideToggle chargeToggle, JSONToggle, connToggle;
-    public final SideButton clearConsoleButton, canMsgButton, canEchoButton, enableNearby;
+    public final SideButton clearConsoleButton, canMsgButton, canEchoButton;
 
     public TranslationAnim consoleAnim;
     public final TranslationAnim sidePanelDrawerAnim;
@@ -70,7 +70,6 @@ public class SidePanel extends ConstraintLayout {
         clearConsoleButton = findViewById(R.id.clearConsoleButton);
         canMsgButton = findViewById(R.id.canMsgButton);
         canEchoButton = findViewById(R.id.canEchoButton);
-        enableNearby = findViewById(R.id.enableNearby);
 
         uiTestSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> UITester.enable(isChecked));
 
@@ -127,18 +126,14 @@ public class SidePanel extends ConstraintLayout {
 
         ECUCommunication com = frontECU.getEcuCommunicator();
 
-        enableNearby.setOnClickListener(v -> com.openNearby());
-        nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            com.changeMethod(isChecked ? ECUCommunication.NEARBY : ECUCommunication.USB);
-            if (isChecked)
-                com.openNearby();
-        });
+        nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> com.enableNearbyAPI(isChecked));
 
         frontECU.setConnectionListener(connected -> {
             console.systemPost(ECU.LOG_TAG, connected ? "Serial Connected" : "Serial Disconnected");
             if (!connected) {
                 console.setStatus(ConsoleWidget.Status.Disconnected);
             }
+            Toaster.showToast(connected ? "ECU Connected" : "ECU Disconnected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         });
 
         frontECU.setConnectionStateListener(open -> {
@@ -148,7 +143,7 @@ public class SidePanel extends ConstraintLayout {
                 dashboard.reset();
                 liveDataPage.reset();
             }
-            Toaster.showToast(open ? "ECU Connected" : "ECU Disconnected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
+            Toaster.showToast(open ? "ECU Opened" : "ECU Closed", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         });
 
         connToggle.setOnClickListener(v -> {
