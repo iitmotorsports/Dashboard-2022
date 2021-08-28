@@ -117,6 +117,12 @@ public class ECU {
         ecuKeyMap.addStatusListener(statusListener);
     }
 
+    public long requestMsgID(String stringTag, String stringMsg){
+        if (ecuKeyMap != null)
+            return ecuKeyMap.requestMsgID(stringTag, stringMsg);
+        return -1;
+    }
+
     public void setInterpreterMode(MODE mode) {
         this.interpreterMode = mode;
     }
@@ -175,32 +181,44 @@ public class ECU {
         }
     }
 
-    /**
-     * Gets the ids for a ECU message
-     *
-     * @param data raw byte data
-     * @return the array of id numbers and number
-     */
-    public static long[] interpretMsg(byte[] data) { // TODO: check that the `get`s are done correctly
-        ByteBuffer buf = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
-        int callerID = buf.getShort() & 0xffff;
-        int stringID = buf.getShort() & 0xffff;
-        long number = buf.getInt() & 0xffffffffL;
-        long msgID = buf.getInt(0);
+    private final long[] iBuffer = new long[4];
+    private static final int iBuf_CallerID = 0;
+    private static final int iBuf_StringID = 1;
+    private static final int iBuf_Value = 2;
+    private static final int iBuf_MsgID = 3;
 
-        return new long[]{callerID, stringID, number, msgID};
+    /**
+     * Interprets an ECUMsg and puts it's respective IDs into the given array
+     *
+     * @param iBuffer    the length 4 long array for the msg IDs
+     * @param data_block the 8 byte data block
+     */
+    public static void interpretMsg(long[] iBuffer, byte[] data_block) { // TODO: check that the `get`s are done correctly
+        ByteBuffer buf = ByteBuffer.wrap(data_block).order(ByteOrder.LITTLE_ENDIAN);
+        iBuffer[iBuf_CallerID] = buf.getShort() & 0xffff;
+        iBuffer[iBuf_StringID] = buf.getShort() & 0xffff;
+        iBuffer[iBuf_Value] = buf.getInt() & 0xffffffffL;
+        iBuffer[iBuf_MsgID] = buf.getInt(0);
     }
 
+    public void debugUpdate(byte[] data_block){
+        updateData(data_block);
+    }
 
     /**
      * Only update needed values and run callback
      *
      * @param data_block 8 byte data block
+     * @return ECUMsg that was updated, null in none
      */
-    private void updateData(byte[] data_block) {
-        long[] IDs = interpretMsg(data_block);
-        long msgID = IDs[3];
-        ecuMsgHandler.updateMessages(msgID, IDs[2]);
+    private ECUMsg updateData(byte[] data_block) {
+        interpretMsg(iBuffer, data_block);
+        String fault = ecuMsgHandler.checkFaults(iBuffer[iBuf_StringID]);
+        if (fault != null && errorListener != null) {
+            errorListener.newError("CAN Fault", fault);
+            return null;
+        }
+        return ecuMsgHandler.updateMessages(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
     }
 
     /**
@@ -227,11 +245,9 @@ public class ECU {
      * @return the formatted message that was received
      */
     private String updateFormattedData(long epoch, byte[] data_block) {
-        long[] IDs = interpretMsg(data_block);
-        long msgID = IDs[3];
-        ECUMsg msg = ecuMsgHandler.updateMessages(msgID, IDs[2]);
+        ECUMsg msg = updateData(data_block);
         if (msg == null) {
-            return formatMsg(epoch, ecuKeyMap.getTag((int) IDs[0]), ecuKeyMap.getStr((int) IDs[1]), IDs[2]);
+            return formatMsg(epoch, ecuKeyMap.getTag((int) iBuffer[iBuf_CallerID]), ecuKeyMap.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
         } else {
             return formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value);
         }

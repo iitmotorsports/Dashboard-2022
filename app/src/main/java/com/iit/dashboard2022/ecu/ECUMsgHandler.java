@@ -62,6 +62,7 @@ public class ECUMsgHandler {
     public static final int StartLight = 20;
     public static final int State = 21; // State is special, exclude from available MsgID
 
+    private final HashMap<Long, String> faultMap = new HashMap<>(ECUFaults.FAULTS.length);
     private final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
     private final HashMap<Long, STATE> stateMap = new HashMap<>();
     private final ECUMsg[] messages = new ECUMsg[22];
@@ -120,6 +121,15 @@ public class ECUMsgHandler {
         });
     }
 
+    private void getFaultStrIDs() {
+        faultMap.clear();
+        for (String fMsg : ECUFaults.FAULTS) {
+            Integer i = keyMap.getStrID(fMsg);
+            if (i != null)
+                faultMap.put(i.longValue(), fMsg);
+        }
+    }
+
     public ECUMsg[] getMessageArray() {
         return messages;
     }
@@ -142,6 +152,12 @@ public class ECUMsgHandler {
                 stateMap.put(Long.valueOf(tagID), state);
             }
         }
+        getFaultStrIDs();
+    }
+
+    @Nullable
+    public String checkFaults(long strKey) {
+        return faultMap.get(strKey);
     }
 
     @Nullable

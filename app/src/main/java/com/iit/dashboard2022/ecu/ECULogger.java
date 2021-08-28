@@ -37,6 +37,8 @@ public class ECULogger {
         StringBuilder stringFnl = new StringBuilder();
         stringFnl.append(jsonStr);
 
+        long[] IDs = new long[4];
+
         for (int i = logStart; i < file.length(); i += 16) {
             byte[] epochB = new byte[8];
             byte[] msg = new byte[8];
@@ -49,7 +51,7 @@ public class ECULogger {
                 break;
             }
             long epoch = ByteBuffer.wrap(epochB).order(ByteOrder.LITTLE_ENDIAN).getLong();
-            long[] IDs = ECU.interpretMsg(msg);
+            ECU.interpretMsg(IDs, msg);
             stringFnl.append(epoch).append(" ").append(IDs[0]).append(" ").append(IDs[1]).append(" ").append(IDs[2]).append("\n");
         }
 
@@ -71,6 +73,7 @@ public class ECULogger {
         StringBuilder output = new StringBuilder(raw_data.length);
 
         if (localEcuKeyMap.loaded()) {
+            long[] IDs = new long[4];
             for (int i = dataStart; i < raw_data.length; i += 8) {
                 byte[] data_block = new byte[8];
                 try {
@@ -78,8 +81,7 @@ public class ECULogger {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     continue;
                 }
-
-                long[] IDs = ECU.interpretMsg(data_block);
+                ECU.interpretMsg(IDs, data_block);
                 output.append(ECU.formatMsg(0, localEcuKeyMap.getTag((int) IDs[0]), localEcuKeyMap.getStr((int) IDs[1]), IDs[2]));
             }
         }
