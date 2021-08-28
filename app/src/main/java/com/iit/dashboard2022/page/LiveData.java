@@ -21,7 +21,7 @@ public class LiveData extends Page implements UITester.TestUI {
     private ViewGroup rootView;
 
     private LiveDataEntry[] entries;
-    private String[] values;
+    private long[] values;
     private boolean enabled = true;
 
     @Nullable
@@ -35,13 +35,13 @@ public class LiveData extends Page implements UITester.TestUI {
         return rootView;
     }
 
-    public String[] setMessageTitles(@NonNull String[] titles) {
+    public long[] setMessageTitles(@NonNull String[] titles) {
         this.values = null;
         this.entries = null;
 
         liveDataEntries1.removeAllViews();
         liveDataEntries2.removeAllViews();
-        String[] values = new String[titles.length];
+        long[] values = new long[titles.length];
         LiveDataEntry[] entries = new LiveDataEntry[titles.length];
 
         boolean alt = true;
@@ -67,10 +67,12 @@ public class LiveData extends Page implements UITester.TestUI {
     }
 
     public void reset() {
-        if (values != null) {
-            Arrays.fill(values, "0");
-            updateValues();
-        }
+        if (values != null)
+            Arrays.fill(values, 0);
+        if (entries != null)
+            for (LiveDataEntry lde : entries) {
+                lde.clear();
+            }
     }
 
     public void updateValue(int index) {
@@ -105,13 +107,14 @@ public class LiveData extends Page implements UITester.TestUI {
     @Override
     public void testUI(float percent) {
         if (enabled && values != null)
-            if (percent == 0)
+            if (percent == 0) {
                 reset();
-            else
+            } else {
                 for (int i = 0; i < values.length; i++) {
                     if (UITester.Rnd.nextInt(100) < 50 * percent) {
-                        entries[i].setValue(Float.toString(((int) (percent * 100)) / 100f));
+                        entries[i].setValue((long) (percent * 100));
                     }
                 }
+            }
     }
 }

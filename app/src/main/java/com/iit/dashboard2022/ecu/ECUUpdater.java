@@ -64,12 +64,12 @@ public class ECUUpdater {
             titles[i] = removeMsgTag(messages[i].stringMsg);
         }
 
-        String[] values = liveDataPage.setMessageTitles(titles);
+        long[] values = liveDataPage.setMessageTitles(titles);
 
         for (int i = 0; i < messages.length; i++) {
             int finalI = i;
             messages[i].addMessageListener(val -> {
-                values[finalI] = Long.toString(val);
+                values[finalI] = val;
                 liveDataPage.updateValue(finalI);
             });
         }

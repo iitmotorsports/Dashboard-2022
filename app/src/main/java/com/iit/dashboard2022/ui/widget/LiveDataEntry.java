@@ -24,7 +24,7 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     private final float border, radius;
     private float width = 0, height = 0;
     private String title = "Nil Title";
-    private String value = "Nil Value";
+    private String value = "0    H:0 L:0 A:0";
     private boolean update = false;
 
     public LiveDataEntry(String title, Context context) {
@@ -74,7 +74,6 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     @UiThread
     private void unActivate() {
         setActive(false);
-        update = true;
     }
 
     @UiThread
@@ -86,14 +85,38 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         update = true;
     }
 
-    @UiThread
-    public void setValue(String value) {
-        if (!this.value.equals(value)) {
-            this.value = value;
-            setActive(true);
-            postDelayed(this::unActivate, AnimSetting.ANIM_DURATION / 2);
-            update = true;
-        }
+    long currentAvg = 0;
+    long currentValue = 0;
+    long currentLow = Long.MAX_VALUE;
+    long currentHigh = Long.MIN_VALUE;
+
+    private void updateValue() {
+        this.value = currentValue + "    H:" + currentHigh + " L:" + currentLow + " A:" + currentAvg;
+    }
+
+    public void setValue(long value) {
+        currentAvg = (currentValue + value) / 2;
+        currentValue = value;
+        if (value < currentLow)
+            currentLow = value;
+        if (value > currentHigh)
+            currentHigh = value;
+
+        updateValue();
+        setActive(true);
+        postDelayed(this::unActivate, AnimSetting.ANIM_DURATION);
+    }
+
+    public void clear() {
+        currentAvg = 0;
+        currentValue = 0;
+        currentLow = 0;
+        currentHigh = 0;
+        updateValue();
+        currentLow = Long.MAX_VALUE;
+        currentHigh = Long.MIN_VALUE;
+        setActive(false);
+        onWidgetUpdate();
     }
 
     @Override
