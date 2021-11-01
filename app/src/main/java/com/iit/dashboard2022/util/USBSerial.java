@@ -90,7 +90,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     }
 
     private boolean openNewConnection() {
-        if (isOpen())
+        if (active)
             return true;
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager);
         if (availableDrivers.isEmpty()) {
@@ -154,7 +154,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     @Override
     public void write(byte[] buffer) {
         try {
-            if (port != null && isOpen())
+            if (port != null && active)
                 port.write(buffer, 0);
         } catch (IOException e) {
             e.printStackTrace();
@@ -176,7 +176,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     public void onRunError(Exception e) {
         if (errorListener != null)
             errorListener.newError(e);
-        if (isOpen()) {
+        if (active) {
             active = false;
             if (connectionStateListener != null)
                 connectionStateListener.onSerialOpen(false);

@@ -26,6 +26,7 @@ import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.util.USBSerial;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

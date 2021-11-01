@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.view.View;
@@ -47,6 +48,9 @@ public class JSONDialog {
             dialog.dismiss();
         });
         delBtn.setOnClickListener(v -> frontECU.clear());
+
+        scanBtn.setOnClickListener(v -> frontECU.requestJSONFromUSBSerial());
+        scanBtn.setText("USB");
 
         // TODO: Figure out this whole dialog sizing thing
         dialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);

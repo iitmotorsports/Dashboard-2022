@@ -84,6 +84,10 @@ public class ECUCommunication extends SerialCom {
         currentMethod.setErrorListener(this.errorListener);
     }
 
+    public SerialCom getCurrentMethod(){
+        return currentMethod;
+    }
+
     @Override
     public void setConnectionListener(SerialCom.ConnectionListener connectionListener) {
         super.setConnectionListener(connectionListener);

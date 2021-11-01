@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.SerialCom;
+import com.iit.dashboard2022.util.USBSerial;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -28,6 +29,7 @@ public class ECU {
     private InterpretListener interpretListener;
     private ErrorListener errorListener;
     private MODE interpreterMode = MODE.DISABLED;
+    private final ECUJUSB JUSB;
     boolean fileLogging = true;
 
     public enum MODE {
@@ -46,6 +48,7 @@ public class ECU {
     }
 
     public ECU(AppCompatActivity activity) {
+        JUSB = new ECUJUSB(this);
         ecuLogger = new ECULogger(activity);
         ecuKeyMap = new ECUKeyMap(activity);
         ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
@@ -61,7 +64,11 @@ public class ECU {
         });
 
         com = new ECUCommunication(activity, data -> {
+            if (JUSB.JUSB_requesting != 0 && JUSB.receive(data))
+                return;
+
             long epoch = SystemClock.elapsedRealtime();
+
             if (interpreterMode != ECU.MODE.DISABLED) {
                 String msg = processData(epoch, data);
                 if (interpretListener != null && msg.length() > 0) {
@@ -71,6 +78,11 @@ public class ECU {
                 consumeData(epoch, data);
             }
         });
+    }
+
+    public void requestJSONFromUSBSerial() {// Request ZLib compressed JSON map if we are connected directly
+        if (com.getCurrentMethod() instanceof USBSerial)
+            JUSB.request();
     }
 
     public void issueCommand(@ECUCommands.ECUCommand int Command) {

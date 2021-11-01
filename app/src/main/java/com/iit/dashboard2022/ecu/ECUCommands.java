@@ -9,7 +9,7 @@ public final class ECUCommands {
     /**
      * Commands that can be sent through the `write` function
      */
-    public static final byte[][] COMMANDS = {{123}, {111}, {45}, {127}, {90}, {-1}, {84}, {25}};
+    public static final byte[][] COMMANDS = {{123}, {111}, {45}, {127}, {90}, {-1}, {84}, {25}, {101}};
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({CHARGE,
@@ -20,6 +20,7 @@ public final class ECUCommands {
             ENTER_MIRROR_SET,
             SEND_ECHO,
             TOGGLE_REVERSE,
+            PRINT_LOOKUP,
     })
     @interface ECUCommand {
     }
@@ -32,4 +33,5 @@ public final class ECUCommands {
     public static final int ENTER_MIRROR_SET = 5;
     public static final int SEND_ECHO = 6;
     public static final int TOGGLE_REVERSE = 7;
+    public static final int PRINT_LOOKUP = 8;
 }
