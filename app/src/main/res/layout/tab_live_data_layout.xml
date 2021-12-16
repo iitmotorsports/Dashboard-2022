@@ -40,9 +40,9 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:paddingStart="8dp"
-                    android:paddingTop="4dp"
+                    android:paddingTop="6dp"
                     android:paddingEnd="4dp"
-                    android:paddingBottom="4dp">
+                    android:paddingBottom="6dp">
 
                 </LinearLayout>
 
@@ -55,9 +55,9 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:paddingStart="4dp"
-                    android:paddingTop="4dp"
+                    android:paddingTop="6dp"
                     android:paddingEnd="8dp"
-                    android:paddingBottom="4dp" />
+                    android:paddingBottom="6dp" />
             </LinearLayout>
         </ScrollView>
 

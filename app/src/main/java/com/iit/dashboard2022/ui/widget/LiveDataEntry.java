@@ -3,7 +3,6 @@ package com.iit.dashboard2022.ui.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -43,24 +42,25 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     public LiveDataEntry(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        float textSize = 16;
+        float textSize = 10;
 
         bgPaint.setColor(context.getColor(R.color.midground));
         setActive(false);
 
-        titlePaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, context.getResources().getDisplayMetrics()));
-        titlePaint.setColor(context.getColor(R.color.foreground));
+        titlePaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, textSize, context.getResources().getDisplayMetrics()));
+        titlePaint.setColor(context.getColor(R.color.foregroundSecondary));
         titlePaint.setTextAlign(Paint.Align.LEFT);
         titlePaint.setAntiAlias(true);
 
         valuePaint.set(titlePaint);
+        valuePaint.setColor(context.getColor(R.color.foreground));
         valuePaint.setTextAlign(Paint.Align.RIGHT);
 
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
-        border = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
+        border = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, context.getResources().getDisplayMetrics());
         radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, context.getResources().getDisplayMetrics());
-        setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, (border + textSize) * 2, context.getResources().getDisplayMetrics()));
+        setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (border + textSize) * 2, context.getResources().getDisplayMetrics()));
 
         WidgetUpdater.add(this);
     }
@@ -79,10 +79,13 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     @UiThread
     public void setTitle(String title) {
         this.title = title;
-        Rect bounds = new Rect();
-        titlePaint.getTextBounds(title, 0, title.length(), bounds);
-        setMinimumWidth(bounds.width() * 2);
+        updateTextSize();
         update = true;
+    }
+
+    @UiThread
+    public void updateTextSize() {
+
     }
 
     long currentAvg = 0;
@@ -123,6 +126,7 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         width = w;
         height = h;
+        updateTextSize();
         update = true;
     }
 
