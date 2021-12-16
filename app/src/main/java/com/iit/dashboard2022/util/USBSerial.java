@@ -39,7 +39,6 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
 
-    private boolean active, attached;
     private UsbSerialPort port;
 
     public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity) {
@@ -51,16 +50,13 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
                     case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                        if (open()) {
-                            if (connectionListener != null)
-                                connectionListener.onSerialConnection(true);
-                        }
+                        if (open())
+                            setConnStatus(Attached | Opened);
+                        else
+                            setConnStatus(Attached | Closed);
                         break;
                     case UsbManager.ACTION_USB_DEVICE_DETACHED: // TODO: ensure the thing detached was the thing that last connected
-                        if (connectionListener != null) {
-                            connectionListener.onSerialConnection(false);
-                            attached = false;
-                        }
+                        setConnStatus(Detached | Closed);
                         break;
                 }
             }
@@ -79,6 +75,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     }
 
     private boolean registered = false;
+
     public void autoConnect(boolean enabled) {
         if (enabled) {
             context.registerReceiver(broadcastReceiver, broadcastFilter);
@@ -90,7 +87,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     }
 
     private boolean openNewConnection() {
-        if (active)
+        if (isOpen())
             return true;
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager);
         if (availableDrivers.isEmpty()) {
@@ -117,24 +114,23 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
 
     @Override
     public boolean open() {
+        if (isOpen())
+            return true;
         boolean opened = openNewConnection();
-        if (connectionStateListener != null)
-            connectionStateListener.onSerialOpen(opened);
-        active = opened;
-        if (opened && !attached) {
-            attached = true;
-            if (connectionListener != null)
-                connectionListener.onSerialConnection(true);
-        }
+        if (opened)
+            setConnStatus(SerialCom.Attached | SerialCom.Opened);
         return opened;
     }
 
     @Override
     public void close() {
+        if (!isOpen())
+            return;
         if (port != null) {
             try {
                 port.close();
                 port = null;
+                setConnStatus((checkStatus(SerialCom.Attached) ? SerialCom.Attached : SerialCom.Detached) | SerialCom.Closed);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -142,19 +138,9 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     }
 
     @Override
-    public boolean isConnected() {
-        return attached;
-    }
-
-    @Override
-    public boolean isOpen() {
-        return active;
-    }
-
-    @Override
     public void write(byte[] buffer) {
         try {
-            if (port != null && active)
+            if (port != null && isOpen())
                 port.write(buffer, 0);
         } catch (IOException e) {
             e.printStackTrace();
@@ -169,18 +155,13 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
 
     @Override
     public void onNewData(byte[] data) {
-        dataListener.newSerialData(data);
+        newConnData(data);
     }
 
     @Override
     public void onRunError(Exception e) {
-        if (errorListener != null)
-            errorListener.newError(e);
-        if (active) {
-            active = false;
-            if (connectionStateListener != null)
-                connectionStateListener.onSerialOpen(false);
-        }
+        newConnError(e);
+        close();
     }
 
 }

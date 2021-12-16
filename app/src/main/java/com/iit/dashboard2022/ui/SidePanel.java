@@ -15,7 +15,6 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUCommands;
-import com.iit.dashboard2022.ecu.ECUCommunication;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Errors;
 import com.iit.dashboard2022.page.LiveData;
@@ -25,8 +24,8 @@ import com.iit.dashboard2022.ui.widget.SideRadio;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
+import com.iit.dashboard2022.util.SerialCom;
 import com.iit.dashboard2022.util.Toaster;
-import com.iit.dashboard2022.util.USBSerial;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -125,26 +124,39 @@ public class SidePanel extends ConstraintLayout {
             frontECU.debugUpdate(raw);
         });
 
-        ECUCommunication com = frontECU.getEcuCommunicator();
+        nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> frontECU.enableNearbyAPI(isChecked));
 
-        nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> com.enableNearbyAPI(isChecked));
+        frontECU.setConnectionListener(status -> {
+            boolean opened = (status & SerialCom.Opened) == SerialCom.Opened;
+            boolean attached = (status & SerialCom.Attached) == SerialCom.Attached;
 
-        frontECU.setConnectionListener(connected -> {
-            console.systemPost(ECU.LOG_TAG, connected ? "Serial Connected" : "Serial Disconnected");
-            if (!connected) {
+            console.systemPost(ECU.LOG_TAG, opened ? "Serial Connected" : "Serial Disconnected");
+            if (!opened) {
                 console.setStatus(ConsoleWidget.Status.Disconnected);
             }
-            Toaster.showToast(connected ? "ECU Connected" : "ECU Disconnected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
-        });
 
-        frontECU.setConnectionStateListener(open -> {
-            connToggle.post(() -> connToggle.setChecked(open));
-            console.setStatus(open ? ConsoleWidget.Status.Connected : (frontECU.isAttached() ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
-            if (!open) {
+            StringBuilder msg = new StringBuilder("ECU ");
+
+            if (attached) {
+                msg.append("attached and ");
+            } else {
+                msg.append("detached and ");
+            }
+
+            if (opened) {
+                msg.append("opened");
+            } else {
+                msg.append("closed");
+            }
+
+            Toaster.showToast(msg.toString(), Toaster.INFO, Toast.LENGTH_SHORT, Gravity.END);
+
+            connToggle.post(() -> connToggle.setChecked(opened));
+            console.setStatus(opened ? ConsoleWidget.Status.Connected : (attached ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
+            if (!opened) {
                 dashboard.reset();
                 liveDataPage.reset();
             }
-            Toaster.showToast(open ? "ECU Opened" : "ECU Closed", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         });
 
         connToggle.setOnClickListener(v -> {

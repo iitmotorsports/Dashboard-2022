@@ -188,10 +188,9 @@ public class ListedFile extends FrameLayout {
         updateInfo();
     }
 
-    @UiThread
     public void updateInfo() {
         try {
-            fileInfo.setText(file.getTitle());
+            fileInfo.post(() -> fileInfo.setText(file.getTitle()));
         } catch (Exception e) {
             e.printStackTrace();
             if (fileInfo != null) {

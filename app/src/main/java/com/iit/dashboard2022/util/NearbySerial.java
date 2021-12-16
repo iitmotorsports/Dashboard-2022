@@ -47,7 +47,6 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
     private final AdvertisingOptions advertisingOptions = new AdvertisingOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build();
     private final DiscoveryOptions discoveryOptions = new DiscoveryOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build();
 
-    private boolean connected = false;
     private AlertDialog acceptDialog;
     private TextView authText, connName;
     private String currentEndpointId, pendingEndpointId = "";
@@ -62,8 +61,7 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
     private final PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
         public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
-            if (dataListener != null)
-                dataListener.newSerialData(payload.asBytes());
+            newConnData(payload.asBytes());
         }
 
         @Override
@@ -148,11 +146,7 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
             switch (result.getStatus().getStatusCode()) {
                 case ConnectionsStatusCodes.STATUS_OK:
                     Toaster.showToast("Nearby serial connected", Toaster.SUCCESS);
-                    connected = true;
-                    if (connectionListener != null)
-                        connectionListener.onSerialConnection(true);
-                    if (connectionStateListener != null)
-                        connectionStateListener.onSerialOpen(true);
+                    setConnStatus(Attached | Opened);
                     client.stopAdvertising();
                     client.stopDiscovery();
                     return;
@@ -166,16 +160,12 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
                 default:
                     Toaster.showToast("Nearby serial stream unknown error", Toaster.ERROR);
             }
-            connected = false;
-            if (connectionStateListener != null)
-                connectionStateListener.onSerialOpen(false);
-            if (connectionListener != null)
-                connectionListener.onSerialConnection(false);
+            setConnStatus(Detached | Closed);
         }
 
         @Override
         public void onDisconnected(@NonNull String s) {
-            connected = false;
+            setConnStatus(Detached | Closed);
             Toaster.showToast("Nearby serial disconnected", Toaster.WARNING);
         }
 
@@ -237,6 +227,8 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
 
     @Override
     public boolean open() {
+        if (isOpen())
+            return true;
         if (getLocationPerms()) {
             startDiscovery();
             startAdvertising();
@@ -246,29 +238,17 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
 
     @Override
     public void close() {
-        if (connectionStateListener != null)
-            connectionStateListener.onSerialOpen(false);
-        if (connectionListener != null)
-            connectionListener.onSerialConnection(false);
-        connected = false;
+        if (!isOpen())
+            return;
+        setConnStatus(Detached | Closed);
         client.stopAllEndpoints();
         client.stopAdvertising();
         client.stopDiscovery();
     }
 
     @Override
-    public boolean isConnected() {
-        return connected;
-    }
-
-    @Override
-    public boolean isOpen() {
-        return connected;
-    }
-
-    @Override
     public void write(byte[] buffer) {
-        if (connected)
+        if (isOpen())
             client.sendPayload(currentEndpointId, Payload.fromBytes(buffer));
     }
 }

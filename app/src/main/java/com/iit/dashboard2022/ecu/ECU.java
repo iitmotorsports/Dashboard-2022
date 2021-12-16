@@ -1,14 +1,15 @@
 package com.iit.dashboard2022.ecu;
 
 import android.os.SystemClock;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.SerialCom;
-import com.iit.dashboard2022.util.USBSerial;
+import com.iit.dashboard2022.util.Toaster;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,20 +17,19 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class ECU {
+public class ECU extends ECUCommunication {
     public static final String LOG_TAG = "ECU";
     private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
 
-    private final ECUCommunication com;
     private final ECUMsgHandler ecuMsgHandler;
     private final ECUKeyMap ecuKeyMap;
     private final ECULogger ecuLogger;
+    private ErrorListener errorListener;
 
     private Runnable jsonLoadListener;
     private InterpretListener interpretListener;
-    private ErrorListener errorListener;
     private MODE interpreterMode = MODE.DISABLED;
-    private final ECUJUSB JUSB;
+    private final ECUJUSB J_USB;
     boolean fileLogging = true;
 
     public enum MODE {
@@ -47,8 +47,33 @@ public class ECU {
         void newError(String tag, String msg);
     }
 
+    private int errorCount = 0;
+
+    private void receiveData(byte[] data) {
+        if (J_USB.JUSB_requesting != 0 && J_USB.receive(data))
+            return;
+
+        long epoch = SystemClock.elapsedRealtime();
+
+        if (!ecuKeyMap.loaded()) {
+            if (errorCount == 0)
+                Toaster.showToast("No JSON map Loaded", Toaster.WARNING, Toast.LENGTH_SHORT, Gravity.START);
+            errorCount = ++errorCount % 8;
+            return;
+        }
+
+        if (interpreterMode != ECU.MODE.DISABLED) {
+            String msg = processData(epoch, data);
+            if (interpretListener != null && msg.length() > 0) {
+                interpretListener.newMessage(msg);
+            }
+        } else {
+            consumeData(epoch, data);
+        }
+    }
+
     public ECU(AppCompatActivity activity) {
-        JUSB = new ECUJUSB(this);
+        J_USB = new ECUJUSB(this);
         ecuLogger = new ECULogger(activity);
         ecuKeyMap = new ECUKeyMap(activity);
         ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
@@ -63,50 +88,21 @@ public class ECU {
             }
         });
 
-        com = new ECUCommunication(activity, data -> {
-            if (JUSB.JUSB_requesting != 0 && JUSB.receive(data))
-                return;
-
-            long epoch = SystemClock.elapsedRealtime();
-
-            if (interpreterMode != ECU.MODE.DISABLED) {
-                String msg = processData(epoch, data);
-                if (interpretListener != null && msg.length() > 0) {
-                    interpretListener.newMessage(msg);
-                }
-            } else {
-                consumeData(epoch, data);
-            }
-        });
+        startSerial(activity, this::receiveData);
+        open();
     }
 
     public void requestJSONFromUSBSerial() {// Request ZLib compressed JSON map if we are connected directly
-        if (com.getCurrentMethod() instanceof USBSerial)
-            JUSB.request();
+        if (isOpen())
+            J_USB.request();
     }
 
     public void issueCommand(@ECUCommands.ECUCommand int Command) {
-        com.write(ECUCommands.COMMANDS[Command]);
+        write(ECUCommands.COMMANDS[Command]);
     }
 
     public void clear() {
         ecuKeyMap.clear();
-    }
-
-    public boolean open() {
-        return com.open();
-    }
-
-    public void close() {
-        com.close();
-    }
-
-    public boolean isOpen() {
-        return com.isOpen();
-    }
-
-    public boolean isAttached() {
-        return com.isConnected();
     }
 
     public void requestJSONFile() {
@@ -123,6 +119,11 @@ public class ECU {
 
     public void setJSONLoadListener(Runnable listener) {
         this.jsonLoadListener = listener;
+    }
+
+    public void setErrorListener(ErrorListener errorListener) {
+        this.errorListener = errorListener;
+        super.setErrorListener(exception -> errorListener.newError("Serial", "Thread Error: " + exception.getMessage()));
     }
 
     public void addStatusListener(@NonNull ECUKeyMap.StatusListener statusListener) {
@@ -143,25 +144,8 @@ public class ECU {
         this.interpretListener = interpretListener;
     }
 
-    public void setErrorListener(ErrorListener errorListener) {
-        this.errorListener = errorListener;
-        com.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped: " + exception.getMessage()));
-    }
-
-    public void setConnectionListener(SerialCom.ConnectionListener ConnectionListener) {
-        com.setConnectionListener(ConnectionListener);
-    }
-
-    public void setConnectionStateListener(SerialCom.ConnectionStateListener connectionStateListener) {
-        com.setConnectionStateListener(connectionStateListener);
-    }
-
     public ECUMsgHandler getEcuMsgHandler() {
         return ecuMsgHandler;
-    }
-
-    public ECUCommunication getEcuCommunicator() {
-        return com;
     }
 
     public List<LogFileIO.LogFile> getLocalLogs() {
