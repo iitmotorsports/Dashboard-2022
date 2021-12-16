@@ -4,6 +4,7 @@
     <color name="secondary">#8e1b22</color>
 
     <color name="foreground">#cfd5e4</color>
+    <color name="foregroundSecondary">#999eac</color>
     <color name="midground">#363c47</color>
     <color name="background">#070e1a</color>
     <color name="backgroundSecondary">#121822</color>
