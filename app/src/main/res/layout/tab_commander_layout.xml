@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/ValueSlider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/OnOffSwitch"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/OnOffSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/foreground"
+        app:layout_constraintBottom_toBottomOf="@+id/ValueSlider"
+        app:layout_constraintEnd_toStartOf="@+id/submitBtn"
+        app:layout_constraintTop_toTopOf="@+id/ValueSlider" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/submitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/submit"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/OnOffSwitch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/OnOffSwitch" />
+
+    <EditText
+        android:id="@+id/ValueEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ems="7"
+        android:hint="@string/enter_value"
+        android:importantForAutofill="no"
+        android:inputType="numberSigned|numberDecimal"
+        android:text="@string/_0"
+        android:textAlignment="center"
+        android:textColor="@color/foreground"
+        android:textColorHint="@color/midground"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/valueActiveText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="DuplicateSpeakableTextCheck"
+        tools:text="0" />
+
+    <TextView
+        android:id="@+id/maxValueText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/_0"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:autoSizeMaxTextSize="34dp"
+        app:autoSizeMinTextSize="8dp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/ValueEdit"
+        app:layout_constraintEnd_toEndOf="@+id/ValueEdit"
+        app:layout_constraintStart_toStartOf="@+id/ValueEdit"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/minValueText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/_0"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:autoSizeMaxTextSize="34dp"
+        app:autoSizeMinTextSize="8dp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/valueActiveText"
+        app:layout_constraintEnd_toEndOf="@+id/ValueEdit"
+        app:layout_constraintStart_toStartOf="@+id/ValueEdit"
+        app:layout_constraintTop_toBottomOf="@+id/ValueEdit" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/max"
+        app:layout_constraintBottom_toTopOf="@+id/maxValueText"
+        app:layout_constraintEnd_toEndOf="@+id/maxValueText"
+        app:layout_constraintStart_toStartOf="@+id/maxValueText" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/min"
+        app:layout_constraintBottom_toTopOf="@+id/minValueText"
+        app:layout_constraintEnd_toEndOf="@+id/minValueText"
+        app:layout_constraintStart_toStartOf="@+id/minValueText" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current"
+        app:layout_constraintBottom_toTopOf="@+id/ValueEdit"
+        app:layout_constraintEnd_toEndOf="@+id/ValueEdit"
+        app:layout_constraintStart_toStartOf="@+id/ValueEdit" />
+
+    <TextView
+        android:id="@+id/valueActiveText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/active_value_name_here"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/ValueSlider"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.iit.dashboard2022.ui.layout.OverlayFrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/valueActiveText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ValueEdit"
+        app:layout_constraintTop_toTopOf="parent"
+        app:mask="@drawable/log_overlay_mask">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            tools:ignore="SpeakableTextPresentCheck">
+
+            <LinearLayout
+                android:id="@+id/valueListLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="9dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="9dp"
+                android:paddingBottom="6dp" />
+        </ScrollView>
+    </com.iit.dashboard2022.ui.layout.OverlayFrameLayout>
+
+    <TextView
+        android:id="@+id/IDTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_0"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView9"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toTopOf="@+id/textView9"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/id"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/valueActiveText"
+        app:layout_constraintStart_toEndOf="@+id/valueActiveText"
+        app:layout_constraintTop_toTopOf="@+id/valueActiveText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

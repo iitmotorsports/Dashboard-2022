@@ -50,7 +50,7 @@ public class ECUUpdater {
             dashboardPage.setState(state.title);
             dashboardPage.setIndicator(Indicators.Indicator.Waiting, state == ECUMsgHandler.STATE.Idle);
             dashboardPage.setIndicator(Indicators.Indicator.Charging, state == ECUMsgHandler.STATE.Charging);
-            sidePanel.chargeToggle.setChecked(state == ECUMsgHandler.STATE.Charging);
+            sidePanel.chargeToggle.post(() -> sidePanel.chargeToggle.setChecked(state == ECUMsgHandler.STATE.Charging));
         });
 
         /*

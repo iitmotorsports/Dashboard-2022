@@ -16,15 +16,17 @@ import com.iit.dashboard2022.ui.anim.AnimSetting;
 
 public class LiveDataEntry extends View implements WidgetUpdater.Widget {
 
-    private static final Paint bgPaint = new Paint();
-    private static final Paint titlePaint = new Paint();
-    private static final Paint valuePaint = new Paint();
+    private final Paint bgPaint = new Paint();
+    private final Paint titlePaint = new Paint();
+    private final Paint valuePaint = new Paint();
 
     private final float border, radius;
     private float width = 0, height = 0;
     private String title = "Nil Title";
     private String value = "0    H:0 L:0 A:0";
+    private boolean active = true;
     private boolean update = false;
+    private boolean enableValue = true;
 
     public LiveDataEntry(String title, Context context) {
         this(context);
@@ -59,45 +61,65 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         border = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, context.getResources().getDisplayMetrics());
-        radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, context.getResources().getDisplayMetrics());
+        radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, context.getResources().getDisplayMetrics());
         setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (border + textSize) * 2, context.getResources().getDisplayMetrics()));
 
         WidgetUpdater.add(this);
     }
 
     @UiThread
-    private void setActive(boolean active) {
+    public void setActive(boolean active) {
+        if (this.active == active)
+            return;
+        this.active = active;
         bgPaint.setAlpha(active ? 255 : 64);
         update = true;
     }
 
     @UiThread
-    private void unActivate() {
+    public void unActivate() {
         setActive(false);
     }
 
     @UiThread
     public void setTitle(String title) {
         this.title = title;
-        updateTextSize();
         update = true;
     }
 
-    @UiThread
-    public void updateTextSize() {
-
+    public String getTitle() {
+        return this.title;
     }
 
-    long currentAvg = 0;
-    long currentValue = 0;
-    long currentLow = Long.MAX_VALUE;
-    long currentHigh = Long.MIN_VALUE;
+    public void setEnableValue(boolean enable) {
+        enableValue = enable;
+        update = true;
+    }
 
-    private void updateValue() {
+    private double currentAvg = 0;
+    private double currentValue = 0;
+    private double currentLow = Long.MAX_VALUE;
+    private double currentHigh = Long.MIN_VALUE;
+
+    public void updateValue() {
         this.value = currentValue + "    H:" + currentHigh + " L:" + currentLow + " A:" + currentAvg;
     }
 
-    public void setValue(long value) {
+    public void setRawValue(double value) {
+        currentValue = value;
+    }
+
+    public void setRawStats(double avg, double low, double high) {
+        currentAvg = avg;
+        currentLow = low;
+        currentHigh = high;
+    }
+
+    public double[] getValues() {
+        return new double[]{currentValue, currentAvg, currentLow, currentHigh};
+    }
+
+    public void setValue(double value) {
         currentAvg = (currentValue + value) / 2;
         currentValue = value;
         if (value < currentLow)
@@ -108,6 +130,7 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         updateValue();
         setActive(true);
         postDelayed(this::unActivate, AnimSetting.ANIM_DURATION);
+        update = true;
     }
 
     public void clear() {
@@ -126,7 +149,6 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         width = w;
         height = h;
-        updateTextSize();
         update = true;
     }
 
@@ -135,7 +157,8 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         canvas.drawRoundRect(border, border, width - border, height - border, radius, radius, bgPaint);
         float yPos = (height / 2) - ((titlePaint.descent() + titlePaint.ascent()) / 2);
         canvas.drawText(title, height / 4f, yPos, titlePaint);
-        canvas.drawText(value, width - height / 4f, yPos, valuePaint);
+        if (enableValue)
+            canvas.drawText(value, width - height / 4f, yPos, valuePaint);
     }
 
     @Override

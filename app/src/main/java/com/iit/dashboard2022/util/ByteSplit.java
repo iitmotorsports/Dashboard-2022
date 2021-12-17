@@ -42,7 +42,7 @@ public class ByteSplit {
         return b;
     }
 
-    static byte[] joinArray(byte[]... arrays) {
+    public static byte[] joinArray(byte[]... arrays) {
         int length = 0;
         for (byte[] array : arrays) {
             length += array.length;

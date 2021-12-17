@@ -18,6 +18,7 @@ public class PageManager extends FragmentStateAdapter {
             LIVEDATA,
             LOGS,
             ERRORS,
+            COMMANDER,
     })
     @interface PageIndex {
     }
@@ -26,8 +27,9 @@ public class PageManager extends FragmentStateAdapter {
     public static final int LIVEDATA = 1;
     public static final int LOGS = 2;
     public static final int ERRORS = 3;
+    public static final int COMMANDER = 4;
 
-    private final Page[] pages = new Page[4];
+    private final Page[] pages = new Page[5];
 
     public PageManager(@NonNull FragmentManager fragmentManager) {
         super(fragmentManager, new Lifecycle() {
@@ -51,6 +53,7 @@ public class PageManager extends FragmentStateAdapter {
         pages[LIVEDATA] = new LiveData();
         pages[LOGS] = new Logs();
         pages[ERRORS] = new Errors();
+        pages[COMMANDER] = new Commander();
     }
 
     @NonNull

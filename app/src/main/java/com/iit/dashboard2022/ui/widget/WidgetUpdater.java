@@ -62,8 +62,10 @@ public class WidgetUpdater {
     }
 
     public static void start() {
-        if (!widgetUpdateManager.isAlive())
+        if (!widgetUpdateManager.isAlive()) {
             widgetUpdateManager.start();
+            post();
+        }
     }
 
     public static void add(Widget widget) {
