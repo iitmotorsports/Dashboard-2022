@@ -62,4 +62,12 @@
     <string name="current">Current</string>
     <string name="active_value_name_here">Active value name here</string>
     <string name="id">ID:</string>
+    <string name="about_text">
+        <b>SAE Dashboard App 2022</b>
+        \n\n
+        This app is used for the Society of Automotive Engineers club at Illinois Tech ( FSAE @ IIT ).
+        \n
+        It is mainly used to interface with a microcontroller over USB serial.
+    </string>
+    <string name="dashboard_icon">Dashboard Icon</string>
 </resources>
