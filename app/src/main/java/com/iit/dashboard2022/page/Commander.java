@@ -19,6 +19,8 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUCommands;
+import com.iit.dashboard2022.ecu.ECUMsg;
+import com.iit.dashboard2022.ecu.ECUMsgHandler;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
 import com.iit.dashboard2022.ui.widget.LiveDataSelector;
 import com.iit.dashboard2022.util.ByteSplit;
@@ -41,8 +43,8 @@ public class Commander extends Page {
 
     private byte ID = -1;
     private float currentValue = 0f;
-    private float setMax = 1.7014E38f;
-    private float setMin = -1.7014E38f;
+    private float setMax = 1;
+    private float setMin = 0;
     private ECU frontECU;
 
     @Nullable
@@ -130,6 +132,7 @@ public class Commander extends Page {
 
     public void setECU(ECU frontECU) {
         this.frontECU = frontECU;
+        frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.SerialVarResponse).addMessageListener(val -> Toaster.showToast("Value received (truncated): " + val, Toaster.SUCCESS), ECUMsg.ON_RECEIVE);
     }
 
     @UiThread

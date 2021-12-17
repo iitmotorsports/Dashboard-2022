@@ -74,7 +74,7 @@ public class ECUUpdater {
             messages[i].addMessageListener(val -> {
                 values[finalI] = val;
                 liveDataPage.updateValue(finalI);
-            });
+            }, ECUMsg.ON_RECEIVE);
         }
     }
 

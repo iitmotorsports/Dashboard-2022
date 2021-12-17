@@ -35,7 +35,8 @@ public class ECUMsgHandler {
             Lag,
             Beat,
             StartLight,
-            State
+            State,
+            SerialVarResponse
     })
     @interface MsgID {
     }
@@ -62,11 +63,12 @@ public class ECUMsgHandler {
     public static final int Beat = 19;
     public static final int StartLight = 20;
     public static final int State = 21; // State is special :)
+    public static final int SerialVarResponse = 22;
 
     private final HashMap<Long, String> faultMap = new HashMap<>(ECUFaults.FAULTS.length);
     private final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
     private final HashMap<Long, STATE> stateMap = new HashMap<>();
-    private final ECUMsg[] messages = new ECUMsg[22];
+    private final ECUMsg[] messages = new ECUMsg[23];
     private final ECUKeyMap keyMap;
 
     private StateListener stateListener;
@@ -120,6 +122,7 @@ public class ECUMsgHandler {
             if (stateListener != null)
                 stateListener.onStateChanged(stateMap.get(val));
         });
+        messages[SerialVarResponse] = new ECUMsg("[SerialVar]", "[INFO]  Approximate Float value:", ECUMsg.UNSIGNED);
     }
 
     private void getFaultStrIDs() {
