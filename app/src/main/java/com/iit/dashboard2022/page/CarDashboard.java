@@ -115,7 +115,8 @@ public class CarDashboard extends Page implements UITester.TestUI {
                     setIndicator(indicator, false);
                 }
                 setStartLight(false);
-                frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.State).update(-1);
+                if (frontECU != null)
+                    frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.State).update(-1);
                 setState(ECUMsgHandler.STATE.Initializing.toString());
             }, 20);
     }
@@ -140,7 +141,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
             for (Indicators.Indicator i : Indicators.Indicator.values()) {
                 setIndicator(i, false);
             }
-        }else {
+        } else {
             setState(UITester.rndStr((int) (percent * 25)));
             for (Indicators.Indicator i : Indicators.Indicator.values()) {
                 if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9)

@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         new Handler(Looper.myLooper()).postDelayed(() -> {
             /* FINAL CALLS */
             ecuUpdater = new ECUUpdater(cdPage, ldPage, sidePanel, frontECU);
-
             frontECU.setJSONLoadListener(() -> logPage.displayFiles(frontECU.getLocalLogs().toArray(new LogFileIO.LogFile[0])));
 
             if (!frontECU.loadJSONFromSystem()) {
@@ -97,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 frontECU.open();
             }
+
+            cdPage.reset();
 
             logPage.attachConsole(console, () -> settingsBtn.post(() -> {
                 if (settingsBtn.isLocked())
