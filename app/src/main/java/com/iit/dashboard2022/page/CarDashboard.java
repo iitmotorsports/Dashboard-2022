@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMsgHandler;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
@@ -26,6 +27,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     private SpeedText speedometer;
     private Indicators indicators;
     private String limitFormat;
+    private ECU frontECU;
 
     @Nullable
     @Override
@@ -94,6 +96,10 @@ public class CarDashboard extends Page implements UITester.TestUI {
         dashStartLight.setState(state);
     }
 
+    public void setECU(ECU frontECU) {
+        this.frontECU = frontECU;
+    }
+
     public void reset() {
         if (dashStartLight != null)
             dashStartLight.postDelayed(() -> {
@@ -109,6 +115,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
                     setIndicator(indicator, false);
                 }
                 setStartLight(false);
+                frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.State).update(-1);
                 setState(ECUMsgHandler.STATE.Initializing.toString());
             }, 20);
     }

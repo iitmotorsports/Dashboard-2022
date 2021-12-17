@@ -34,7 +34,8 @@ public class ECUMsgHandler {
             Fault,
             Lag,
             Beat,
-            StartLight
+            StartLight,
+            State
     })
     @interface MsgID {
     }
@@ -60,7 +61,7 @@ public class ECUMsgHandler {
     public static final int Lag = 18;
     public static final int Beat = 19;
     public static final int StartLight = 20;
-    public static final int State = 21; // State is special, exclude from available MsgID
+    public static final int State = 21; // State is special :)
 
     private final HashMap<Long, String> faultMap = new HashMap<>(ECUFaults.FAULTS.length);
     private final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
@@ -161,7 +162,7 @@ public class ECUMsgHandler {
     }
 
     @Nullable
-    public ECUMsg updateMessages(long msgKey, long value) {
+    public ECUMsg updateMessage(long msgKey, long value) {
         ECUMsg msg = messageMap.get(msgKey);
         if (msg != null)
             msg.update(value);

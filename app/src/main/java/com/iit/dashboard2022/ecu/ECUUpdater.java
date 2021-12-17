@@ -45,8 +45,11 @@ public class ECUUpdater {
         }, ECUMsg.ON_RECEIVE);
         ecuMsgHandler.getMessage(ECUMsgHandler.Fault).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Fault, val > 0));
         ecuMsgHandler.getMessage(ECUMsgHandler.StartLight).addMessageListener(val -> dashboardPage.setStartLight(val == 1));
+
         /* State Listener */
         ecuMsgHandler.setGlobalStateListener(state -> {
+            if (state == null)
+                return;
             dashboardPage.setState(state.title);
             dashboardPage.setIndicator(Indicators.Indicator.Waiting, state == ECUMsgHandler.STATE.Idle);
             dashboardPage.setIndicator(Indicators.Indicator.Charging, state == ECUMsgHandler.STATE.Charging);

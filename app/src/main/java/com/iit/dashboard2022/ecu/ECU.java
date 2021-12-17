@@ -214,7 +214,7 @@ public class ECU extends ECUCommunication {
             errorListener.newError("CAN Fault", fault);
             return null;
         }
-        return ecuMsgHandler.updateMessages(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
+        return ecuMsgHandler.updateMessage(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
     }
 
     private static final Date d = new Date();

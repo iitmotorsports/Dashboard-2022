@@ -62,7 +62,7 @@ public class ECUMsg {
         messageMap.put(keyMap.requestMsgID(stringTag, stringMsg), this);
     }
 
-    void update(long val) {
+    public void update(long val) {
         long prevValue = this.value;
         switch (this.dataType) {
             case SIGNED_BYTE:

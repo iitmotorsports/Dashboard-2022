@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         Errors errorsPage = (Errors) mainPager.getPage(PageManager.ERRORS);
         Commander commandPage = (Commander) mainPager.getPage(PageManager.COMMANDER);
         commandPage.setECU(frontECU);
+        cdPage.setECU(frontECU);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
         /* SIDE PANEL */
