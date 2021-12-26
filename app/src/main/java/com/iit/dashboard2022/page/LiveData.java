@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
-import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
 import java.util.Arrays;
 

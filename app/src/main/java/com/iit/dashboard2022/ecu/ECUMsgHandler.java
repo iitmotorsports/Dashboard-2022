@@ -12,35 +12,6 @@ import java.util.HashMap;
 
 public class ECUMsgHandler {
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({
-            MC0Voltage,
-            MC1Voltage,
-            MC1Current,
-            MC0Current,
-            MC1BoardTemp,
-            MC0BoardTemp,
-            MC1MotorTemp,
-            MC0MotorTemp,
-            Speedometer,
-            PowerGauge,
-            BatteryLife,
-            BMSVolt,
-            BMSAmp,
-            BMSHighTemp,
-            BMSLowTemp,
-            BMSDischargeLim,
-            BMSChargeLim,
-            Fault,
-            Lag,
-            Beat,
-            StartLight,
-            State,
-            SerialVarResponse
-    })
-    @interface MsgID {
-    }
-
     public static final int MC0Voltage = 0;
     public static final int MC1Voltage = 1;
     public static final int MC1Current = 2;
@@ -64,35 +35,12 @@ public class ECUMsgHandler {
     public static final int StartLight = 20;
     public static final int State = 21; // State is special :)
     public static final int SerialVarResponse = 22;
-
     private final HashMap<Long, String> faultMap = new HashMap<>(ECUFaults.FAULTS.length);
     private final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
     private final HashMap<Long, STATE> stateMap = new HashMap<>();
     private final ECUMsg[] messages = new ECUMsg[23];
     private final ECUKeyMap keyMap;
-
     private StateListener stateListener;
-
-    public enum STATE { // Use actual name, brackets are added on when matching to actual state name
-        Initializing("Teensy Initialize"),
-        PreCharge("PreCharge State"),
-        Idle("Idle State"),
-        Charging("Charging State"),
-        Button("Button State"),
-        Driving("Driving Mode State"),
-        Fault("Fault State");
-
-        final String title;
-
-        STATE(String title) {
-            this.title = title;
-        }
-
-    }
-
-    public interface StateListener {
-        void onStateChanged(STATE state);
-    }
 
     public ECUMsgHandler(@NonNull ECUKeyMap ecuKeyMap) {
         keyMap = ecuKeyMap;
@@ -183,5 +131,55 @@ public class ECUMsgHandler {
 
     public ECUMsg getMessage(@MsgID int msgID) {
         return messages[msgID];
+    }
+
+    public enum STATE { // Use actual name, brackets are added on when matching to actual state name
+        Initializing("Teensy Initialize"),
+        PreCharge("PreCharge State"),
+        Idle("Idle State"),
+        Charging("Charging State"),
+        Button("Button State"),
+        Driving("Driving Mode State"),
+        Fault("Fault State");
+
+        final String title;
+
+        STATE(String title) {
+            this.title = title;
+        }
+
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({
+            MC0Voltage,
+            MC1Voltage,
+            MC1Current,
+            MC0Current,
+            MC1BoardTemp,
+            MC0BoardTemp,
+            MC1MotorTemp,
+            MC0MotorTemp,
+            Speedometer,
+            PowerGauge,
+            BatteryLife,
+            BMSVolt,
+            BMSAmp,
+            BMSHighTemp,
+            BMSLowTemp,
+            BMSDischargeLim,
+            BMSChargeLim,
+            Fault,
+            Lag,
+            Beat,
+            StartLight,
+            State,
+            SerialVarResponse
+    })
+    @interface MsgID {
+    }
+
+    public interface StateListener {
+        void onStateChanged(STATE state);
     }
 }

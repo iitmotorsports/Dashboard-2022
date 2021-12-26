@@ -10,47 +10,20 @@ import java.util.HashMap;
 
 public class ECUMsg {
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({
-            ON_RECEIVE,
-            ON_VALUE_CHANGE,
-            ON_VALUE_DECREASE,
-            ON_VALUE_INCREASE
-    })
-    @interface UpdateMethod {
-    }
-
     public static final int ON_RECEIVE = 0;
     public static final int ON_VALUE_CHANGE = 1;
     public static final int ON_VALUE_DECREASE = 2;
     public static final int ON_VALUE_INCREASE = 3;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({
-            SIGNED_BYTE,
-            SIGNED_SHORT,
-            SIGNED_INT,
-            UNSIGNED
-    })
-    @interface DataType {
-    }
-
     public static final int SIGNED_BYTE = 0;
     public static final int SIGNED_SHORT = 1;
     public static final int SIGNED_INT = 2;
     public static final int UNSIGNED = 3;
-
+    public final String stringTag, stringMsg;
     @DataType
     private final int dataType;
-    public final String stringTag, stringMsg;
-
     public MessageListener[] messageListeners = new MessageListener[0];
     public int[] updateMethods = new int[0];
     public long value = 0;
-
-    public interface MessageListener {
-        void run(long val);
-    }
 
     public ECUMsg(String stringTag, String stringMsg, @DataType int dataType) {
         this.stringTag = stringTag;
@@ -119,6 +92,30 @@ public class ECUMsg {
 
     public void clear() {
         this.value = 0;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({
+            ON_RECEIVE,
+            ON_VALUE_CHANGE,
+            ON_VALUE_DECREASE,
+            ON_VALUE_INCREASE
+    })
+    @interface UpdateMethod {
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({
+            SIGNED_BYTE,
+            SIGNED_SHORT,
+            SIGNED_INT,
+            UNSIGNED
+    })
+    @interface DataType {
+    }
+
+    public interface MessageListener {
+        void run(long val);
     }
 
 }

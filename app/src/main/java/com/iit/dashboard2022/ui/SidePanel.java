@@ -36,9 +36,8 @@ public class SidePanel extends ConstraintLayout {
     public final SideSwitch uiTestSwitch, nearbyAPISwitch, reverseSwitch, consoleSwitch;
     public final SideToggle chargeToggle, JSONToggle, connToggle;
     public final SideButton clearConsoleButton, canMsgButton, canEchoButton;
-
-    public TranslationAnim consoleAnim;
     public final TranslationAnim sidePanelDrawerAnim;
+    public TranslationAnim consoleAnim;
     public ECU.MODE lastChecked = ECU.MODE.ASCII;
 
     public SidePanel(Context context) {

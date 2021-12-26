@@ -17,6 +17,7 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
     private final float mTextOnSize, mTextOffSize;
 
     private final ColorAnim colorAnim;
+    private boolean toggleMediator = false;
 
     public SideToggle(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, R.attr.sideToggleButtonStyle);
@@ -83,8 +84,6 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
             colorAnim.reverse();
         }
     }
-
-    private boolean toggleMediator = false;
 
     public void setHasToggleMediator(boolean toggleMediator) {
         this.toggleMediator = toggleMediator;

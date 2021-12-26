@@ -154,7 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/test_ui"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" >
+                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck">
 
                 </com.iit.dashboard2022.ui.widget.SideSwitch>
 

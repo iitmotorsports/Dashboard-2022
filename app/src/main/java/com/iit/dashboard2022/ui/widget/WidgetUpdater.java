@@ -10,6 +10,37 @@ import java.util.Set;
 public class WidgetUpdater {
     private static final WidgetUpdateManager widgetUpdateManager = new WidgetUpdateManager();
 
+    public static void start() {
+        if (!widgetUpdateManager.isAlive()) {
+            widgetUpdateManager.start();
+            post();
+        }
+    }
+
+    public static void add(Widget widget) {
+        WidgetUpdateManager.WIDGETS.add(widget);
+    }
+
+    public static void remove(Widget widget) {
+        WidgetUpdateManager.WIDGETS.remove(widget);
+    }
+
+    public static void post() {
+        widgetUpdateManager.post();
+    }
+
+    public static float DV(float x) {
+        return (float) Math.max((0.5 - (Math.pow(x, 2)) / 8), 0.01f);
+    }
+
+    public static float truncate(float val) {
+        return ((int) Math.ceil(val * 1000)) / 1000.0f;
+    }
+
+    public interface Widget {
+        void onWidgetUpdate();
+    }
+
     private static class WidgetUpdateManager extends Thread {
         protected static final Set<Widget> WIDGETS = new HashSet<>();
         private static final long UPDATE_TIME_MS = AnimSetting.ANIM_UPDATE_MILLIS;
@@ -59,36 +90,5 @@ public class WidgetUpdater {
                 }
             }
         }
-    }
-
-    public static void start() {
-        if (!widgetUpdateManager.isAlive()) {
-            widgetUpdateManager.start();
-            post();
-        }
-    }
-
-    public static void add(Widget widget) {
-        WidgetUpdateManager.WIDGETS.add(widget);
-    }
-
-    public static void remove(Widget widget) {
-        WidgetUpdateManager.WIDGETS.remove(widget);
-    }
-
-    public static void post() {
-        widgetUpdateManager.post();
-    }
-
-    public interface Widget {
-        void onWidgetUpdate();
-    }
-
-    public static float DV(float x) {
-        return (float) Math.max((0.5 - (Math.pow(x, 2)) / 8), 0.01f);
-    }
-
-    public static float truncate(float val) {
-        return ((int) Math.ceil(val * 1000)) / 1000.0f;
     }
 }

@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.iit.dashboard2022.R;
 
-public class SideRadio extends MaterialRadioButton implements ActionableCheck{
+public class SideRadio extends MaterialRadioButton implements ActionableCheck {
     private static ColorStateList radioOnColorList, radioOffColorList;
 
     public SideRadio(@NonNull Context context) {

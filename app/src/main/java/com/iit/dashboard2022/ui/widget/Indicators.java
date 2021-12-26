@@ -26,15 +26,6 @@ public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
     private final float lagTimerLarge, LagTimerSmall;
     private String currentLagTime = "";
 
-    public enum Indicator {
-        Lag,
-        Fault,
-        Waiting,
-        Charging;
-
-        boolean on = false;
-    }
-
     public Indicators(Context context) {
         this(context, null);
     }
@@ -148,5 +139,14 @@ public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
     @Override
     public void onWidgetUpdate() {
         post(this::updateIndicators);
+    }
+
+    public enum Indicator {
+        Lag,
+        Fault,
+        Waiting,
+        Charging;
+
+        boolean on = false;
     }
 }

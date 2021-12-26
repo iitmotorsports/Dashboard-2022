@@ -22,24 +22,14 @@ import java.util.List;
 
 public class USBSerial extends SerialCom implements SerialInputOutputManager.Listener {
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({UsbSerialPort.STOPBITS_1, UsbSerialPort.STOPBITS_1_5, UsbSerialPort.STOPBITS_2})
-    @interface StopBits {
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({UsbSerialPort.DATABITS_5, UsbSerialPort.DATABITS_6, UsbSerialPort.DATABITS_7, UsbSerialPort.DATABITS_8})
-    @interface DataBits {
-    }
-
     private final Context context;
     private final UsbManager usbManager;
     private final PendingIntent deviceIntent;
     private final IntentFilter broadcastFilter;
     private final BroadcastReceiver broadcastReceiver;
     private final int baudRate, dataBits, stopBits, parity;
-
     private UsbSerialPort port;
+    private boolean registered = false;
 
     public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity) {
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -73,8 +63,6 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
         broadcastFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         broadcastFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
     }
-
-    private boolean registered = false;
 
     public void autoConnect(boolean enabled) {
         if (enabled) {
@@ -162,6 +150,16 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     public void onRunError(Exception e) {
         newConnError(e);
         close();
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({UsbSerialPort.STOPBITS_1, UsbSerialPort.STOPBITS_1_5, UsbSerialPort.STOPBITS_2})
+    @interface StopBits {
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({UsbSerialPort.DATABITS_5, UsbSerialPort.DATABITS_6, UsbSerialPort.DATABITS_7, UsbSerialPort.DATABITS_8})
+    @interface DataBits {
     }
 
 }

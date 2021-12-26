@@ -14,6 +14,10 @@ import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 public class Pager {
+    public static final int LEFT = 0;
+    public static final int TOP = 1;
+    public static final int RIGHT = 2;
+    public static final int BOTTOM = 3;
     private final Page[] pages;
     private final ViewPager2 viewPager;
     private final PageManager pageManager;
@@ -96,11 +100,6 @@ public class Pager {
             return v.performClick();
         });
     }
-
-    public static final int LEFT = 0;
-    public static final int TOP = 1;
-    public static final int RIGHT = 2;
-    public static final int BOTTOM = 3;
 
     private void fakeTouch() {
         viewPager.beginFakeDrag();

@@ -19,35 +19,8 @@ import java.util.Hashtable;
 
 public class ECUColor {
     private static final Hashtable<String, MsgMemo> msgMemo = new Hashtable<>();
-
-    public enum MsgType {
-        INFO("[INFO] ", R.color.foreground),
-        DEBUG("[DEBUG]", R.color.midground),
-        ERROR("[ERROR]", R.color.red),
-        WARN("[WARN] ", R.color.yellow),
-        FATAL("[FATAL]", R.color.magenta),
-        LOG("[ LOG ]", R.color.green);
-
-        final String key;
-        @ColorRes
-        final
-        int color;
-
-        MsgType(String key, @ColorRes int color) {
-            this.key = key;
-            this.color = color;
-        }
-    }
-
-    private static class MsgMemo {
-        final MsgType type;
-        final SpannableStringBuilder spannable;
-
-        public MsgMemo(MsgType type, SpannableStringBuilder spannable) {
-            this.type = type;
-            this.spannable = spannable;
-        }
-    }
+    private static SpannableStringBuilder spannable;
+    private static int c = 0;
 
     @NonNull
     private static MsgType getMsgType(@NonNull String msg) {
@@ -84,9 +57,6 @@ public class ECUColor {
         return TextUtils.concat(memo, number, "\n");
     }
 
-    private static SpannableStringBuilder spannable;
-    private static int c = 0;
-
     @NonNull
     @WorkerThread
     public static Spannable[] colorMsgString(@NonNull Context context, @NonNull String msg) {
@@ -110,6 +80,35 @@ public class ECUColor {
 
         msgMemo.clear();
         return msgBlocks.toArray(new Spannable[0]);
+    }
+
+    public enum MsgType {
+        INFO("[INFO] ", R.color.foreground),
+        DEBUG("[DEBUG]", R.color.midground),
+        ERROR("[ERROR]", R.color.red),
+        WARN("[WARN] ", R.color.yellow),
+        FATAL("[FATAL]", R.color.magenta),
+        LOG("[ LOG ]", R.color.green);
+
+        final String key;
+        @ColorRes
+        final
+        int color;
+
+        MsgType(String key, @ColorRes int color) {
+            this.key = key;
+            this.color = color;
+        }
+    }
+
+    private static class MsgMemo {
+        final MsgType type;
+        final SpannableStringBuilder spannable;
+
+        public MsgMemo(MsgType type, SpannableStringBuilder spannable) {
+            this.type = type;
+            this.spannable = spannable;
+        }
     }
 
 }

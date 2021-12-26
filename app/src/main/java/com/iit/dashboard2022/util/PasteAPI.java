@@ -28,16 +28,6 @@ public class PasteAPI {
                     "\"}]}"
             };
 
-    public interface responseCallback {
-        void run(String response);
-    }
-
-    private static class NoPastesUploadedException extends Exception {
-        NoPastesUploadedException() {
-            super();
-        }
-    }
-
     @SuppressWarnings("SpellCheckingInspection")
     private static String getJSON_APIKey() {
         return new String(android.util.Base64.decode("dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=", android.util.Base64.DEFAULT));
@@ -167,7 +157,7 @@ public class PasteAPI {
             } catch (IOException | JSONException e) {
                 Toaster.showToast("Failed to communicate with API", Toaster.ERROR);
                 e.printStackTrace();
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 if (listConn != null)
@@ -176,6 +166,16 @@ public class PasteAPI {
                     getConn.disconnect();
             }
         });
+    }
+
+    public interface responseCallback {
+        void run(String response);
+    }
+
+    private static class NoPastesUploadedException extends Exception {
+        NoPastesUploadedException() {
+            super();
+        }
     }
 
 }

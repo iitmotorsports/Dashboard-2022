@@ -20,16 +20,14 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
 public class LinearGauge extends View implements WidgetUpdater.Widget {
-    private RectF dst;
     private final Paint paint, bgPaint, topTextPaint, bottomTextPaint, valueTextPaint;
     private final Rect mainBar;
-
     private final String topText;
-    private String bottomText;
-    private String unit;
     private final boolean flipped;
     private final int[] colors;
-
+    private RectF dst;
+    private String bottomText;
+    private String unit;
     private String output;
     private int value = 0;
 
@@ -138,7 +136,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
             float[] widths = new float[topText.length()];
             topTextPaint.getTextWidths(topText, widths);
         }
-        valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height/1.2f, getResources().getDisplayMetrics()));
+        valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height / 1.2f, getResources().getDisplayMetrics()));
         dst = new RectF(0, 0, x, y);
         altX = textOffset / 8f;
         updateValueString();

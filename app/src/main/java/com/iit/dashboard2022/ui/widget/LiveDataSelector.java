@@ -10,10 +10,6 @@ public class LiveDataSelector {
     private LiveDataEntry lastSelected;
     private SelectionChangedListener selectionChangedListener;
 
-    public interface SelectionChangedListener {
-        void onSelectionChanged(LiveDataEntry newSelection);
-    }
-
     private void onClick(View view) {
         LiveDataEntry current = (LiveDataEntry) view;
         for (LiveDataEntry entry : entries) {
@@ -40,5 +36,9 @@ public class LiveDataSelector {
     @Nullable
     public LiveDataEntry getLastSelected() {
         return lastSelected;
+    }
+
+    public interface SelectionChangedListener {
+        void onSelectionChanged(LiveDataEntry newSelection);
     }
 }

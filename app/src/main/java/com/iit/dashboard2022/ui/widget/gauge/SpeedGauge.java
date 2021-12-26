@@ -26,19 +26,17 @@ import java.util.List;
 public class SpeedGauge extends View implements WidgetUpdater.Widget {
     private final Bitmap bitmapBG, bitmaskDraw, bitmaskBuffer;
     private final Canvas canvasBuffer, canvasBG, canvasDraw;
-    private RectF dst;
     private final Paint paint, maskPaint, dstOver;
     private final Rect mask;
-
-    private int width = 0, height = 0;
-    private int bars = 0;
-    private float percent = 0, oldPercent = 0;
-
     /* User Managed */
     private final float taper;
     private final float minWidth;
     private final int BGColor;
     private final int[] colorWheel = new int[3];
+    private RectF dst;
+    private int width = 0, height = 0;
+    private int bars = 0;
+    private float percent = 0, oldPercent = 0;
     private int[] maskWidths;
 
 

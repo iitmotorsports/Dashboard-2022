@@ -15,12 +15,8 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 
 public class JSONFile {
-    private final AppCompatActivity activity;
     final ActivityResultLauncher<String> mGetContent;
-
-    public interface JSONListener {
-        void newJSON(String jsonString);
-    }
+    private final AppCompatActivity activity;
 
     public JSONFile(AppCompatActivity activity, @NonNull JSONListener jsonListener) {
         this.activity = activity;
@@ -58,5 +54,9 @@ public class JSONFile {
             e.printStackTrace();
             Toaster.showToast("Failed to request for file", Toaster.ERROR, Toast.LENGTH_LONG);
         }
+    }
+
+    public interface JSONListener {
+        void newJSON(String jsonString);
     }
 }

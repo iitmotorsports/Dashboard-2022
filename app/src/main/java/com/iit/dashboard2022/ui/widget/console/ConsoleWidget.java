@@ -31,26 +31,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Widget, UITester.TestUI {
 
-    public enum Status {
-        Disconnected(R.color.red),
-        Connected(R.color.green),
-        Attached(R.color.blue),
-        Testing(R.color.midground);
-
-        @ColorRes
-        final
-        int color;
-
-        Status(@ColorRes int color) {
-            this.color = color;
-        }
-    }
-
     private static final LinkedBlockingQueue<CharSequence> rawQueue = new LinkedBlockingQueue<>();
     private static final ConcurrentLinkedQueue<CharSequence> outQueue = new ConcurrentLinkedQueue<>();
     private static final HandlerThread consoleThread = new HandlerThread("Console Thread");
     private static final Handler uiHandle = new Handler(Looper.getMainLooper());
-
+    private static final String systemPostFormat = "[SYSTEM] [%s] ";
     private final TextView text, consoleLines, consoleError, consoleStatus, consoleMode;
     private final String linesFormat, errorFormat, statusFormat, modeFormat;
     private final ImageView scrollToEndImage, scrollToStartImage;
@@ -61,6 +46,7 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
     private Status currentStatus = Status.Disconnected;
     private int errorCounter = 0;
     private boolean run = false;
+    private boolean testingState = false;
 
     public ConsoleWidget(@NonNull Context context) {
         this(context, null);
@@ -128,50 +114,6 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
         return ((st > 0) || (len < sequence.length())) ? sequence.subSequence(st, len) : sequence;
     }
 
-    private static class TextLoader extends Thread {
-        private final LinkedBlockingQueue<CharSequence> rawQueue;
-        private final PrecomputedTextCompat.Params textParams;
-        private final TextView text;
-        private int limit = 0;
-
-        TextLoader(TextPaint paint, TextView text) {
-            this.rawQueue = ConsoleWidget.rawQueue;
-            this.text = text;
-
-            textParams = new PrecomputedTextCompat.Params.Builder(paint).build();
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    CharSequence nextMsg;
-                    nextMsg = rawQueue.take();
-
-                    if (nextMsg != null) {
-                        nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
-                        PrecomputedTextCompat.create(nextMsg, textParams);
-                        outQueue.add(nextMsg);
-                    }
-
-                    if (limit == 0 && text.getLineCount() > 5000) {
-                        uiHandle.post(() -> text.setText(null));
-                    } else if (limit > 0) {
-                        limit--;
-                    }
-
-                    WidgetUpdater.post();
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-        }
-
-        public void addLimit() {
-            limit++;
-        }
-    }
-
     @UiThread
     private void clearText() {
         text.setText(null);
@@ -237,8 +179,6 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
         }
     }
 
-    private static final String systemPostFormat = "[SYSTEM] [%s] ";
-
     public void systemPost(@NonNull String tag, @NonNull CharSequence msg) {
         textLoader.addLimit();
         rawQueue.add(TextUtils.concat(String.format(Locale.US, systemPostFormat, tag), msg));
@@ -267,8 +207,6 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
         });
     }
 
-    private boolean testingState = false;
-
     @Override
     public void testUI(float percent) {
         if (percent > 0.1)
@@ -289,6 +227,65 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
                 });
                 testingState = true;
             }
+        }
+    }
+
+    public enum Status {
+        Disconnected(R.color.red),
+        Connected(R.color.green),
+        Attached(R.color.blue),
+        Testing(R.color.midground);
+
+        @ColorRes
+        final
+        int color;
+
+        Status(@ColorRes int color) {
+            this.color = color;
+        }
+    }
+
+    private static class TextLoader extends Thread {
+        private final LinkedBlockingQueue<CharSequence> rawQueue;
+        private final PrecomputedTextCompat.Params textParams;
+        private final TextView text;
+        private int limit = 0;
+
+        TextLoader(TextPaint paint, TextView text) {
+            this.rawQueue = ConsoleWidget.rawQueue;
+            this.text = text;
+
+            textParams = new PrecomputedTextCompat.Params.Builder(paint).build();
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    CharSequence nextMsg;
+                    nextMsg = rawQueue.take();
+
+                    if (nextMsg != null) {
+                        nextMsg = TextUtils.concat(trimCharSequence(nextMsg), "\n");
+                        PrecomputedTextCompat.create(nextMsg, textParams);
+                        outQueue.add(nextMsg);
+                    }
+
+                    if (limit == 0 && text.getLineCount() > 5000) {
+                        uiHandle.post(() -> text.setText(null));
+                    } else if (limit > 0) {
+                        limit--;
+                    }
+
+                    WidgetUpdater.post();
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+
+        public void addLimit() {
+            limit++;
         }
     }
 }

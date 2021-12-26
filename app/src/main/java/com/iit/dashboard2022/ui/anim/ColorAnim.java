@@ -13,10 +13,6 @@ public class ColorAnim {
     private final float[] anim_hsv = new float[3];
     private final ValueAnimator anim;
 
-    public interface colorUpdater {
-        void update(@ColorInt int color);
-    }
-
     public ColorAnim(@NonNull Context context, @ColorRes int from, @ColorRes int to, @NonNull colorUpdater updater) {
         Color.colorToHSV(context.getColor(from), anim_from);
         Color.colorToHSV(context.getColor(to), anim_to);
@@ -43,6 +39,10 @@ public class ColorAnim {
 
     public void cancel() {
         anim.cancel();
+    }
+
+    public interface colorUpdater {
+        void update(@ColorInt int color);
     }
 
 }

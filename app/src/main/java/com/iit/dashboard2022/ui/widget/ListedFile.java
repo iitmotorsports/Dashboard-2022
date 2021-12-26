@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
@@ -31,40 +30,6 @@ public class ListedFile extends FrameLayout {
 
     private static ValueAnimator animatorShow, animatorHide;
     private static ListedFile lastSelected, animViewShow, animViewHide;
-
-    public enum ListedFileAction {
-        SHOW,
-        UPLOAD,
-        DELETE,
-    }
-
-    public interface GlobalFileListListener {
-        void onListedFileAction(@NonNull ListedFile listedFile, @NonNull ListedFileAction action);
-    }
-
-    public static void setGlobalFileListListener(GlobalFileListListener globalFileListListener) {
-        ListedFile.globalFileListListener = globalFileListListener;
-    }
-
-    public static ListedFile getInstance(@NonNull Context context, @NonNull LogFileIO.LogFile file) {
-        if (inactiveEntries.size() == 0)
-            new ListedFile(context);
-
-        ListedFile entry = inactiveEntries.get(0);
-        entry.setFile(file);
-
-        if (entry.getParent() != null) {
-            ((ViewGroup) entry.getParent()).removeView(entry);
-        }
-
-        return entry;
-    }
-
-    public static void deselectActive() {
-        if (lastSelected != null)
-            lastSelected.deselect();
-    }
-
     private final MaterialButton showButton, uploadButton, deleteButton;
     private final ConstraintLayout listedFileMain;
     private final MaterialTextView fileInfo;
@@ -140,6 +105,29 @@ public class ListedFile extends FrameLayout {
         }
     }
 
+    public static void setGlobalFileListListener(GlobalFileListListener globalFileListListener) {
+        ListedFile.globalFileListListener = globalFileListListener;
+    }
+
+    public static ListedFile getInstance(@NonNull Context context, @NonNull LogFileIO.LogFile file) {
+        if (inactiveEntries.size() == 0)
+            new ListedFile(context);
+
+        ListedFile entry = inactiveEntries.get(0);
+        entry.setFile(file);
+
+        if (entry.getParent() != null) {
+            ((ViewGroup) entry.getParent()).removeView(entry);
+        }
+
+        return entry;
+    }
+
+    public static void deselectActive() {
+        if (lastSelected != null)
+            lastSelected.deselect();
+    }
+
     public void destroy() {
         recycle();
         inactiveEntries.remove(this);
@@ -179,15 +167,6 @@ public class ListedFile extends FrameLayout {
         animateVisibility(true);
     }
 
-    public void setFile(LogFileIO.LogFile file) {
-        if (!inactiveEntries.contains(this))
-            return;
-        inactiveEntries.remove(this);
-        setVisibility(VISIBLE);
-        this.file = file;
-        updateInfo();
-    }
-
     public void updateInfo() {
         try {
             fileInfo.post(() -> fileInfo.setText(file.getTitle()));
@@ -204,6 +183,14 @@ public class ListedFile extends FrameLayout {
         return file;
     }
 
+    public void setFile(LogFileIO.LogFile file) {
+        if (!inactiveEntries.contains(this))
+            return;
+        inactiveEntries.remove(this);
+        setVisibility(VISIBLE);
+        this.file = file;
+        updateInfo();
+    }
 
     private void notifyListener(ListedFileAction listedFileAction) {
         if (file != null && globalFileListListener != null)
@@ -253,5 +240,15 @@ public class ListedFile extends FrameLayout {
     protected void finalize() throws Throwable {
         destroy();
         super.finalize();
+    }
+
+    public enum ListedFileAction {
+        SHOW,
+        UPLOAD,
+        DELETE,
+    }
+
+    public interface GlobalFileListListener {
+        void onListedFileAction(@NonNull ListedFile listedFile, @NonNull ListedFileAction action);
     }
 }

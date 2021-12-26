@@ -8,15 +8,22 @@ import android.widget.ScrollView;
 
 public class ConsoleScroller extends ScrollView {
 
+    private final Runnable scrollDownRunner = () -> fullScroll(ScrollView.FOCUS_DOWN);
+    private final Runnable scrollUpRunner = () -> fullScroll(ScrollView.FOCUS_UP);
     private boolean enabled = true;
     private ScrollerStatusListener scrollerStatusListener;
 
-    public interface ScrollerStatusListener {
-        void run(boolean enabled);
+    public ConsoleScroller(Context context) {
+        this(context, null);
     }
 
-    private final Runnable scrollDownRunner = () -> fullScroll(ScrollView.FOCUS_DOWN);
-    private final Runnable scrollUpRunner = () -> fullScroll(ScrollView.FOCUS_UP);
+    public ConsoleScroller(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public ConsoleScroller(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
 
     public void scrollUp() {
         enable(false);
@@ -48,23 +55,15 @@ public class ConsoleScroller extends ScrollView {
         scrollerStatusListener = listener;
     }
 
-    public ConsoleScroller(Context context) {
-        this(context, null);
-    }
-
-    public ConsoleScroller(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public ConsoleScroller(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN)
             enable(false);
         return super.onTouchEvent(ev);
+    }
+
+    public interface ScrollerStatusListener {
+        void run(boolean enabled);
     }
 }

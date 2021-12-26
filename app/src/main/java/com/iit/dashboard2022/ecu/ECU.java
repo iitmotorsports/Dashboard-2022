@@ -21,34 +21,73 @@ public class ECU extends ECUCommunication {
     public static final String LOG_TAG = "ECU";
 
     private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
-
+    private static final int iBuf_CallerID = 0;
+    private static final int iBuf_StringID = 1;
+    private static final int iBuf_Value = 2;
+    private static final int iBuf_MsgID = 3;
+    private static final Date d = new Date();
     private final ECUMsgHandler ecuMsgHandler;
     private final ECUKeyMap ecuKeyMap;
     private final ECULogger ecuLogger;
+    private final ECUJUSB J_USB;
+    private final long[] iBuffer = new long[4];
+    boolean fileLogging = true;
     private ErrorListener errorListener;
-
     private Runnable jsonLoadListener;
     private InterpretListener interpretListener;
     private MODE interpreterMode = MODE.DISABLED;
-    private final ECUJUSB J_USB;
-    boolean fileLogging = true;
-
-    public enum MODE {
-        DISABLED,
-        ASCII,
-        HEX,
-        RAW
-    }
-
-    public interface InterpretListener {
-        void newMessage(String msg);
-    }
-
-    public interface ErrorListener {
-        void newError(String tag, String msg);
-    }
-
     private int errorCount = 0;
+
+    public ECU(AppCompatActivity activity) {
+        J_USB = new ECUJUSB(this);
+        ecuLogger = new ECULogger(activity);
+        ecuKeyMap = new ECUKeyMap(activity);
+        ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
+
+        ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
+            if (jsonLoaded) {
+                ecuMsgHandler.loadMessageKeys();
+                if (rawJson != null)
+                    ecuLogger.newLog(rawJson);
+                if (jsonLoadListener != null)
+                    jsonLoadListener.run();
+            }
+        });
+
+        startSerial(activity, this::receiveData);
+        open();
+    }
+
+    /**
+     * Interprets an ECUMsg and puts it's respective IDs into the given array
+     *
+     * @param iBuffer    the length 4 long array for the msg IDs
+     * @param data_block the 8 byte data block
+     */
+    public static void interpretMsg(long[] iBuffer, byte[] data_block) { // TODO: check that the `get`s are done correctly
+        ByteBuffer buf = ByteBuffer.wrap(data_block).order(ByteOrder.LITTLE_ENDIAN);
+        iBuffer[iBuf_CallerID] = buf.getShort() & 0xffff;
+        iBuffer[iBuf_StringID] = buf.getShort() & 0xffff;
+        iBuffer[iBuf_Value] = buf.getInt() & 0xffffffffL;
+        iBuffer[iBuf_MsgID] = buf.getInt(0);
+    }
+
+    /**
+     * Generate a formatted string to be passed to interpretListener
+     *
+     * @param epoch     Epoch when message was sent
+     * @param tagString The message's tag
+     * @param msgString The message's string
+     * @param number    The message's value
+     * @return Formatted message string
+     */
+    static String formatMsg(long epoch, String tagString, String msgString, long number) {
+        if (tagString == null || msgString == null)
+            return "";
+        d.setTime(epoch);
+        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(d) + ' ' : "";
+        return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
+    }
 
     private void receiveData(byte[] data) {
         if (J_USB.JUSB_requesting != 0 && J_USB.receive(data))
@@ -71,26 +110,6 @@ public class ECU extends ECUCommunication {
         } else {
             consumeData(epoch, data);
         }
-    }
-
-    public ECU(AppCompatActivity activity) {
-        J_USB = new ECUJUSB(this);
-        ecuLogger = new ECULogger(activity);
-        ecuKeyMap = new ECUKeyMap(activity);
-        ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
-
-        ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
-            if (jsonLoaded) {
-                ecuMsgHandler.loadMessageKeys();
-                if (rawJson != null)
-                    ecuLogger.newLog(rawJson);
-                if (jsonLoadListener != null)
-                    jsonLoadListener.run();
-            }
-        });
-
-        startSerial(activity, this::receiveData);
-        open();
     }
 
     public void requestJSONFromUSBSerial() {// Request ZLib compressed JSON map if we are connected directly
@@ -178,26 +197,6 @@ public class ECU extends ECUCommunication {
         }
     }
 
-    private final long[] iBuffer = new long[4];
-    private static final int iBuf_CallerID = 0;
-    private static final int iBuf_StringID = 1;
-    private static final int iBuf_Value = 2;
-    private static final int iBuf_MsgID = 3;
-
-    /**
-     * Interprets an ECUMsg and puts it's respective IDs into the given array
-     *
-     * @param iBuffer    the length 4 long array for the msg IDs
-     * @param data_block the 8 byte data block
-     */
-    public static void interpretMsg(long[] iBuffer, byte[] data_block) { // TODO: check that the `get`s are done correctly
-        ByteBuffer buf = ByteBuffer.wrap(data_block).order(ByteOrder.LITTLE_ENDIAN);
-        iBuffer[iBuf_CallerID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_StringID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_Value] = buf.getInt() & 0xffffffffL;
-        iBuffer[iBuf_MsgID] = buf.getInt(0);
-    }
-
     public void debugUpdate(byte[] data_block) {
         updateData(data_block);
     }
@@ -216,25 +215,6 @@ public class ECU extends ECUCommunication {
             return null;
         }
         return ecuMsgHandler.updateMessage(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
-    }
-
-    private static final Date d = new Date();
-
-    /**
-     * Generate a formatted string to be passed to interpretListener
-     *
-     * @param epoch     Epoch when message was sent
-     * @param tagString The message's tag
-     * @param msgString The message's string
-     * @param number    The message's value
-     * @return Formatted message string
-     */
-    static String formatMsg(long epoch, String tagString, String msgString, long number) {
-        if (tagString == null || msgString == null)
-            return "";
-        d.setTime(epoch);
-        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(d) + ' ' : "";
-        return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
     }
 
     /**
@@ -325,6 +305,21 @@ public class ECU extends ECUCommunication {
             consumeData(epoch, raw_data); // attempt to process data
             return new String(raw_data);
         }
+    }
+
+    public enum MODE {
+        DISABLED,
+        ASCII,
+        HEX,
+        RAW
+    }
+
+    public interface InterpretListener {
+        void newMessage(String msg);
+    }
+
+    public interface ErrorListener {
+        void newError(String tag, String msg);
     }
 
 }

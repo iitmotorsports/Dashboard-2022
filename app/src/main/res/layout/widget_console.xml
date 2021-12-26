@@ -83,8 +83,8 @@
             android:focusable="true"
             android:rotation="90"
             app:srcCompat="@drawable/round_double_arrow_24"
-            tools:ignore="TouchTargetSizeCheck"
-            app:tint="@color/foreground" />
+            app:tint="@color/foreground"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <ImageView
             android:id="@+id/scrollToStartImage"
@@ -96,8 +96,8 @@
             android:focusable="true"
             android:rotation="-90"
             app:srcCompat="@drawable/round_double_arrow_24"
-            tools:ignore="TouchTargetSizeCheck"
-            app:tint="@color/foreground" />
+            app:tint="@color/foreground"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/consoleError"

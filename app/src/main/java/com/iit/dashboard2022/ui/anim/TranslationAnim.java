@@ -12,6 +12,12 @@ public class TranslationAnim {
     public static final boolean ANIM_FORWARD = true;
 
     private final boolean autoSize, direction;
+    View view;
+    boolean axis;
+    float from, to;
+    Interpolator interpolator;
+    boolean state;
+    ViewTreeObserver.OnGlobalLayoutListener autoSizeListener;
     private float posDX = 0;
     private boolean startWhenRdy = false, reloadingAutoSize = false;
     private Runnable onInitializedListener;
@@ -40,13 +46,6 @@ public class TranslationAnim {
         this.direction = ANIM_BACKWARD;
         setup(view, axis, from, to, interpolator);
     }
-
-    View view;
-    boolean axis;
-    float from, to;
-    Interpolator interpolator;
-    boolean state;
-    ViewTreeObserver.OnGlobalLayoutListener autoSizeListener;
 
     private void setup(View view, boolean axis, float from, float to, Interpolator interpolator) {
         this.view = view;

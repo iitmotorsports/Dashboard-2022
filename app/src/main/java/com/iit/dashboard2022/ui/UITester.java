@@ -13,23 +13,18 @@ import java.util.Random;
 import java.util.Set;
 
 public class UITester {
+    public static final Random Rnd = new Random();
     private static final Set<TestUI> UITests = new HashSet<>();
     private static final HandlerThread testThread = new HandlerThread("UITester");
-    private static Handler worker;
-    public static final Random Rnd = new Random();
     private static final int UI_UPDATE_MS = 20;
     private static final float UI_UPDATE_VAL = 0.005f;
     private static final int rndTests = (int) (1.0f / UI_UPDATE_VAL);
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n\t";
+    private static Handler worker;
     private static int rndTestC = rndTests;
     private static boolean rndTest = false;
     private static float testVal = 0;
-
-    public interface TestUI {
-        void testUI(float percent);
-    }
-
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n\t";
 
     public static String rndStr(int count) {
         char[] text = new char[count];
@@ -89,6 +84,10 @@ public class UITester {
 
     public static void removeTest(TestUI test) {
         UITests.remove(test);
+    }
+
+    public interface TestUI {
+        void testUI(float percent);
     }
 
 }

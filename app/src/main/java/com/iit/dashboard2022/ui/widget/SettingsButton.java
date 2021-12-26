@@ -18,13 +18,13 @@ import com.iit.dashboard2022.ui.anim.ColorAnim;
 
 public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton implements ActionableCheck {
     private static final int ANIM_DEGREES = 60;
-
+    boolean moving = false;
+    ValueAnimator translator;
     private RotateAnimation close, open, lockSpin, jiggle;
     private ColorAnim spinColorAnim, lockedColorAnim;
     private LockCallback lockCallback;
     private Runnable callbackOpen, callbackClose;
     private boolean callbackSet = false;
-
     private boolean isOpen = false;
     private boolean locked = false;
     private boolean running = false;
@@ -40,10 +40,6 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
     public SettingsButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-    }
-
-    public interface LockCallback {
-        void run(boolean locked);
     }
 
     public void setCallbacks(@NonNull Runnable callbackOpen, @NonNull Runnable callbackClose, @NonNull LockCallback lockCallback) {
@@ -128,9 +124,6 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         });
     }
 
-    boolean moving = false;
-    ValueAnimator translator;
-
     public void lock(boolean locked) {
         if (this.locked != locked) {
             if (locked) {
@@ -189,5 +182,9 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
     public void setActionedCheck(boolean checked) {
         if (isOpen != checked)
             performClick();
+    }
+
+    public interface LockCallback {
+        void run(boolean locked);
     }
 }

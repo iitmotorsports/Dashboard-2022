@@ -27,6 +27,10 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     private boolean active = true;
     private boolean update = false;
     private boolean enableValue = true;
+    private double currentAvg = 0;
+    private double currentValue = 0;
+    private double currentLow = Long.MAX_VALUE;
+    private double currentHigh = Long.MIN_VALUE;
 
     public LiveDataEntry(String title, Context context) {
         this(context);
@@ -81,25 +85,20 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         setActive(false);
     }
 
+    public String getTitle() {
+        return this.title;
+    }
+
     @UiThread
     public void setTitle(String title) {
         this.title = title;
         update = true;
     }
 
-    public String getTitle() {
-        return this.title;
-    }
-
     public void setEnableValue(boolean enable) {
         enableValue = enable;
         update = true;
     }
-
-    private double currentAvg = 0;
-    private double currentValue = 0;
-    private double currentLow = Long.MAX_VALUE;
-    private double currentHigh = Long.MIN_VALUE;
 
     public void updateValue() {
         this.value = currentValue + "    H:" + currentHigh + " L:" + currentLow + " A:" + currentAvg;

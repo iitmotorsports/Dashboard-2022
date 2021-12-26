@@ -25,17 +25,125 @@ import java.util.List;
 import java.util.Locale;
 
 public class LogFileIO {
-    private File activeFile;
-    private FileOutputStream activeFileStream;
-    private final Activity activity;
-    private boolean opened = false;
-    private static LogFileSanitizer logFileSanitizer;
     private static final String PREFIX = "ECU_LOG-";
     private static final String SUFFIX = ".log";
     private static final String simpleDataFormatString = "yyyy-MM-dd-HH-mm-ss";
+    private static LogFileSanitizer logFileSanitizer;
+    private final Activity activity;
+    private File activeFile;
+    private FileOutputStream activeFileStream;
+    private boolean opened = false;
+
+    public LogFileIO(Activity activity) {
+        this.activity = activity;
+    }
 
     public static void setGlobalLogFileSanitizer(LogFileSanitizer logFileSanitizer) {
         LogFileIO.logFileSanitizer = logFileSanitizer;
+    }
+
+    public static String getString(File file) {
+        StringBuilder sb = new StringBuilder();
+        String line;
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    public static String getString(File file, String lineStop) {
+        StringBuilder sb = new StringBuilder();
+        String line;
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+                if (line.trim().equals(lineStop.trim()))
+                    break;
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    public static byte[] getBytes(File file) {
+        byte[] bytes = new byte[(int) file.length()];
+        BufferedInputStream bis;
+        try {
+            bis = new BufferedInputStream(new FileInputStream(file));
+            DataInputStream dis = new DataInputStream(bis);
+            dis.readFully(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toaster.showToast("Failed to read file bytes", Toaster.ERROR);
+        }
+        return bytes;
+    }
+
+    public void newLog() {
+        try {
+            File path = activity.getFilesDir();
+            String FILENAME_LOG = PREFIX + "%s" + SUFFIX;
+            Calendar calendar = Calendar.getInstance();
+            String date = new SimpleDateFormat(simpleDataFormatString, Locale.US).format(calendar.getTime());
+            activeFile = new File(path, String.format(FILENAME_LOG, date));
+            activeFileStream = new FileOutputStream(activeFile);
+            opened = true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            activeFile = null;
+            activeFileStream = null;
+            Toaster.showToast("Failed to open new file for logging", Toaster.ERROR, Toast.LENGTH_LONG);
+        }
+    }
+
+    public boolean isOpen() {
+        return opened;
+    }
+
+    public File getActiveFile() {
+        return activeFile;
+    }
+
+    public List<LogFile> listFiles() {
+        String path = activity.getFilesDir().toString();
+        LogFile directory = new LogFile(path);
+        LogFile[] files = directory.listFiles();
+        List<LogFile> fileList = new ArrayList<>();
+        if (files != null) {
+            for (LogFile file : files) {
+                if (file.getName().endsWith(".log"))
+                    if (logFileSanitizer != null && !file.isActiveFile() && logFileSanitizer.shouldSanitize(file)) {
+                        if (!file.delete()) {
+                            Toaster.showToast("Failed to delete empty log: " + file.getFormattedName(), Toaster.WARNING);
+                        }
+                    } else {
+                        fileList.add(file);
+                    }
+            }
+        }
+        fileList.sort(Comparator.naturalOrder());
+
+        return fileList;
+    }
+
+    public void write(byte[] bytes) {
+        if (opened)
+            try {
+                activeFileStream.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     public interface LogFileSanitizer {
@@ -104,113 +212,5 @@ public class LogFileIO {
             return new LogFile[0];
         }
 
-    }
-
-    public LogFileIO(Activity activity) {
-        this.activity = activity;
-    }
-
-    public void newLog() {
-        try {
-            File path = activity.getFilesDir();
-            String FILENAME_LOG = PREFIX + "%s" + SUFFIX;
-            Calendar calendar = Calendar.getInstance();
-            String date = new SimpleDateFormat(simpleDataFormatString, Locale.US).format(calendar.getTime());
-            activeFile = new File(path, String.format(FILENAME_LOG, date));
-            activeFileStream = new FileOutputStream(activeFile);
-            opened = true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            activeFile = null;
-            activeFileStream = null;
-            Toaster.showToast("Failed to open new file for logging", Toaster.ERROR, Toast.LENGTH_LONG);
-        }
-    }
-
-    public boolean isOpen() {
-        return opened;
-    }
-
-    public File getActiveFile() {
-        return activeFile;
-    }
-
-    public List<LogFile> listFiles() {
-        String path = activity.getFilesDir().toString();
-        LogFile directory = new LogFile(path);
-        LogFile[] files = directory.listFiles();
-        List<LogFile> fileList = new ArrayList<>();
-        if (files != null) {
-            for (LogFile file : files) {
-                if (file.getName().endsWith(".log"))
-                    if (logFileSanitizer != null && !file.isActiveFile() && logFileSanitizer.shouldSanitize(file)) {
-                        if (!file.delete()) {
-                            Toaster.showToast("Failed to delete empty log: " + file.getFormattedName(), Toaster.WARNING);
-                        }
-                    } else {
-                        fileList.add(file);
-                    }
-            }
-        }
-        fileList.sort(Comparator.naturalOrder());
-
-        return fileList;
-    }
-
-    public static String getString(File file) {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
-    }
-
-    public static String getString(File file, String lineStop) {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-                if (line.trim().equals(lineStop.trim()))
-                    break;
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
-    }
-
-    public static byte[] getBytes(File file) {
-        byte[] bytes = new byte[(int) file.length()];
-        BufferedInputStream bis;
-        try {
-            bis = new BufferedInputStream(new FileInputStream(file));
-            DataInputStream dis = new DataInputStream(bis);
-            dis.readFully(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toaster.showToast("Failed to read file bytes", Toaster.ERROR);
-        }
-        return bytes;
-    }
-
-    public void write(byte[] bytes) {
-        if (opened)
-            try {
-                activeFileStream.write(bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
     }
 }

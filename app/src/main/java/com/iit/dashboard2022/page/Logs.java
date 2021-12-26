@@ -70,8 +70,8 @@ public class Logs extends Page {
         if (files.length == 0)
             return;
         worker.post(new Runnable() {
-            int c = 0;
             final HashMap<LogFileIO.LogFile, ListedFile> currentFiles = getCurrentFiles();
+            int c = 0;
 
             @Override
             public void run() {

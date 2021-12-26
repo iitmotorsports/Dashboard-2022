@@ -13,12 +13,12 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 public class ECUJUSB {
+    private final ByteArrayOutputStream JUSB_data = new ByteArrayOutputStream();
+    private final ECU mainECU;
     long JUSB_requesting = 0;
     private boolean JUSB_flagReceived = false;
     private int JUSB_size = -1;
     private int JUSB_uncompressed_size = -1;
-    private final ByteArrayOutputStream JUSB_data = new ByteArrayOutputStream();
-    private final ECU mainECU;
 
     public ECUJUSB(ECU mainECU) {
         this.mainECU = mainECU;

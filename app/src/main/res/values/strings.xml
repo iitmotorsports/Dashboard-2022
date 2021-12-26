@@ -66,4 +66,5 @@
     <string name="sae_dashboard_app_2022">SAE Dashboard App 2022</string>
     <string name="this_app_is_used_for_the_society_of_automotive_engineers_club_at_illinois_tech_fsae_iit">This app is used for the Society of Automotive Engineers club at Illinois Tech ( FSAE @ IIT )</string>
     <string name="the_main_use_of_this_app_is_to_interface_with_a_microcontroller_over_usb_serial">The main use of this app is to interface with a microcontroller over USB serial to display data on a car dashboard like setup</string>
+    <string name="USB">USB</string>
 </resources>

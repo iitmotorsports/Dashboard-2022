@@ -12,29 +12,10 @@ public abstract class SerialCom {
     public static final int Detached = 1 << 1; // Physical disconnection
     public static final int Opened = 1 << 2; // Digital connection
     public static final int Closed = 1 << 3; // Digital disconnection
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Attached, Detached, Opened, Closed})
-    @interface Status {
-    }
-
     protected int status = 0;
-
     protected StatusListener statusListener;
     protected DataListener dataListener;
     protected ErrorListener errorListener;
-
-    public interface StatusListener {
-        void newStatus(int flags);
-    }
-
-    public interface DataListener {
-        void newData(byte[] data);
-    }
-
-    public interface ErrorListener {
-        void newError(Exception exception);
-    }
 
     protected void newConnData(byte[] buffer) {
         if (dataListener != null)
@@ -81,4 +62,21 @@ public abstract class SerialCom {
     }
 
     public abstract void write(byte[] buffer);
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({Attached, Detached, Opened, Closed})
+    @interface Status {
+    }
+
+    public interface StatusListener {
+        void newStatus(int flags);
+    }
+
+    public interface DataListener {
+        void newData(byte[] data);
+    }
+
+    public interface ErrorListener {
+        void newError(Exception exception);
+    }
 }

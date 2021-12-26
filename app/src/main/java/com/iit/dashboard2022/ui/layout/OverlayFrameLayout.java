@@ -22,10 +22,10 @@ import com.iit.dashboard2022.R;
 public class OverlayFrameLayout extends FrameLayout {
     private final Paint paint, dstOver;
     @Nullable
-    private Drawable drawableMask;
-    @Nullable
     private final Bitmap overlay, mask;
     private final Canvas canvas;
+    @Nullable
+    private Drawable drawableMask;
 
     public OverlayFrameLayout(Context context) {
         this(context, null);

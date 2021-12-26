@@ -30,10 +30,6 @@ public class ECUKeyMap {
     private HashMap<Integer, String> tagLookUp;
     private HashMap<Integer, String> stringLookUp;
 
-    public interface StatusListener {
-        void run(boolean jsonLoaded, @Nullable String rawJson);
-    }
-
     public ECUKeyMap(String jsonStr) {
         pseudoMode = true;
         update(jsonStr);
@@ -41,20 +37,6 @@ public class ECUKeyMap {
 
     public ECUKeyMap(@NonNull AppCompatActivity activity) {
         this.jsonLoader = new JSONLoader(activity, "ECU_JSON_MAP.json", this::update);
-    }
-
-    public void addStatusListener(@NonNull StatusListener statusListener) {
-        statusListeners.add(statusListener);
-    }
-
-    private void notifyStatusListeners(boolean jsonLoaded, String rawJson) {
-        for (StatusListener sl : statusListeners) {
-            sl.run(jsonLoaded, rawJson);
-        }
-    }
-
-    public boolean loaded() {
-        return tagLookUp != null && stringLookUp != null;
     }
 
     /**
@@ -75,6 +57,20 @@ public class ECUKeyMap {
             }
         }
         return null;
+    }
+
+    public void addStatusListener(@NonNull StatusListener statusListener) {
+        statusListeners.add(statusListener);
+    }
+
+    private void notifyStatusListeners(boolean jsonLoaded, String rawJson) {
+        for (StatusListener sl : statusListeners) {
+            sl.run(jsonLoaded, rawJson);
+        }
+    }
+
+    public boolean loaded() {
+        return tagLookUp != null && stringLookUp != null;
     }
 
     @Nullable
@@ -211,6 +207,10 @@ public class ECUKeyMap {
         tagLookUp = newTagLookup;
         stringLookUp = newStringLookup;
         return true;
+    }
+
+    public interface StatusListener {
+        void run(boolean jsonLoaded, @Nullable String rawJson);
     }
 
 }
