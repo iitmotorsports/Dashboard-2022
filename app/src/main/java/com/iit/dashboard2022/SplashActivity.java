@@ -40,11 +40,13 @@ public class SplashActivity extends AppCompatActivity {
         Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.startup);
         videoView.setVideoURI(video);
         videoView.setOnCompletionListener(mp -> startNextActivity());
-        videoView.seekTo(1);
-        videoView.postDelayed(() -> {
-            videoView.setAlpha(1);
-            videoView.start();
-        }, 300);
+        videoView.setOnPreparedListener(mediaPlayer -> {
+            videoView.seekTo(1);
+            videoView.postDelayed(() -> {
+                videoView.setAlpha(1);
+                videoView.start();
+            }, 150);
+        });
     }
 
     @Override

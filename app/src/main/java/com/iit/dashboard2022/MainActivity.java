@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.iit.dashboard2022.ecu.ECU;
@@ -48,10 +49,10 @@ public class MainActivity extends AppCompatActivity {
         frontECU = new ECU(this);
         mainPager = new Pager(this);
         Toaster.setContext(this);
-        new Handler(Looper.myLooper()).postDelayed(this::postUpdate, 500);
     }
 
-    private void postUpdate() {
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         ConsoleWidget console = findViewById(R.id.console);
 
         /* PAGER */
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 //            Toaster.showToast("Initialized", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
             Toaster.setEnabled(true);
         }, 500);
+        super.onPostCreate(savedInstanceState);
     }
 
     @Override
