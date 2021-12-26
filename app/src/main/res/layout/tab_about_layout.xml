@@ -15,18 +15,35 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_dash_icon" />
 
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
         android:layout_marginEnd="64dp"
-        android:layout_marginBottom="64dp"
-        android:text="@string/about_text"
-        android:textColor="@color/foreground"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView5"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sae_dashboard_app_2022"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/this_app_is_used_for_the_society_of_automotive_engineers_club_at_illinois_tech_fsae_iit" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/the_main_use_of_this_app_is_to_interface_with_a_microcontroller_over_usb_serial" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
