@@ -19,6 +19,7 @@ import java.util.List;
 
 public class ECU extends ECUCommunication {
     public static final String LOG_TAG = "ECU";
+
     private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
 
     private final ECUMsgHandler ecuMsgHandler;
@@ -123,7 +124,7 @@ public class ECU extends ECUCommunication {
 
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
-        super.setErrorListener(exception -> errorListener.newError("Serial", "Thread Error: " + exception.getMessage()));
+        super.setErrorListener(exception -> errorListener.newError(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
     }
 
     public void addStatusListener(@NonNull ECUKeyMap.StatusListener statusListener) {
