@@ -3,6 +3,10 @@ package com.iit.dashboard2022.ui;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.view.Gravity;
+import android.widget.Toast;
+
+import com.iit.dashboard2022.util.Toaster;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -71,9 +75,11 @@ public class UITester {
             rndTest = false;
             testVal = 0;
             worker.post(UITester::uiTest);
+            Toaster.showToast("UI Test Started", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.END);
         } else {
             worker.removeCallbacksAndMessages(null);
             runTest(0);
+            Toaster.showToast("UI Test Stopped", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.END);
         }
     }
 
