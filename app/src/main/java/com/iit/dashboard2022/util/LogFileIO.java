@@ -161,6 +161,11 @@ public class LogFileIO {
         }
 
         @Override
+        public int hashCode() {
+            return getPath().hashCode();
+        }
+
+        @Override
         public boolean delete() {
             if (isActiveFile())
                 return false;

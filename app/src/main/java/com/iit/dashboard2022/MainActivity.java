@@ -92,13 +92,7 @@ public class MainActivity extends AppCompatActivity {
         new Handler(Looper.myLooper()).postDelayed(() -> {
             /* FINAL CALLS */
             ecuUpdater = new ECUUpdater(cdPage, ldPage, sidePanel, frontECU);
-            frontECU.setJSONLoadListener(() -> logPage.displayFiles(frontECU.getLocalLogs().toArray(new LogFileIO.LogFile[0])));
-
-            if (!frontECU.loadJSONFromSystem()) {
-                Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
-            } else {
-                frontECU.open();
-            }
+            frontECU.setJSONLoadListener(() -> logPage.displayFiles(frontECU.getLocalLogs()));
 
             cdPage.reset();
 
@@ -109,7 +103,14 @@ public class MainActivity extends AppCompatActivity {
                 sidePanel.consoleSwitch.setActionedCheck(true);
             }));
             WidgetUpdater.start();
-//            Toaster.showToast("Initialized", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
+
+            if (!frontECU.loadJSONFromSystem()) {
+                Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
+                logPage.displayFiles(frontECU.getLocalLogs());
+            } else {
+                frontECU.open();
+            }
+
             Toaster.setEnabled(true);
         }, 500);
         super.onPostCreate(savedInstanceState);

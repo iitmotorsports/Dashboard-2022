@@ -168,8 +168,8 @@ public class ECU extends ECUCommunication {
         return ecuMsgHandler;
     }
 
-    public List<LogFileIO.LogFile> getLocalLogs() {
-        return ecuLogger.getLocalLogs();
+    public LogFileIO.LogFile[] getLocalLogs() {
+        return ecuLogger.getLocalLogs().toArray(new LogFileIO.LogFile[0]);
     }
 
     /**
