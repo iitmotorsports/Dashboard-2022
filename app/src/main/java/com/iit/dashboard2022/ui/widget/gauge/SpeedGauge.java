@@ -193,7 +193,7 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         canvasBuffer.drawBitmap(bitmaskDraw, null, dst, dstOver);
         if (oldTaper > 0.75f)
             canvasBuffer.drawArc(arcCutout, 180, arcSweep, true, maskPaint);
-        canvasBuffer.drawOval(ovalCutout, maskPaint);
+        canvasBuffer.drawOval(ovalCutout, maskPaint); // TODO: Smooth out corner on mask
         canvas.drawBitmap(bitmaskBuffer, null, dst, null);
     }
 
