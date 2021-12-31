@@ -20,7 +20,6 @@ import androidx.annotation.StyleableRes;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +28,8 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
     private final Canvas canvasBG, canvasDraw, canvasBuffer;
     private final Paint paint, maskPaint, dstOver;
     private final Rect mask;
+    private final RectF ovalCutout = new RectF(), arcCutout = new RectF();
+    float arcSweep = 0f;
     /* User Managed */
     private final float minWidth;
     private final int BGColor;
@@ -39,7 +40,6 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
     private float taper, oldTaper = 0;
     private float percent = 0, oldPercent = 0;
     private int[] maskWidths;
-
 
     public SpeedGauge(Context context) {
         this(context, null);
@@ -115,8 +115,6 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
             return colorWheel[0];
     }
 
-    float[] distortPntMap = new float[0];
-
     void drawBars(int x, int y) {
         bitmapBG.reconfigure(x, y, Bitmap.Config.ARGB_8888);
         bitmaskDraw.reconfigure(x, y, Bitmap.Config.ARGB_8888);
@@ -139,7 +137,6 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         float varX = incX * sd;
 
         List<Float> widths = new ArrayList<>();
-        ArrayList<Float> distortPntMap_A = new ArrayList<>();
 
         widths.add(0f);
 
@@ -164,21 +161,6 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         }
         widths.remove(widths.size() - 1);
         widths.add((float) width);
-
-        for (float width : widths) {
-            distortPntMap_A.add(width);
-            distortPntMap_A.add((float) height);
-        }
-
-        for (float width : widths) {
-            distortPntMap_A.add(width);
-            distortPntMap_A.add(0f);
-        }
-
-        distortPntMap = distortPntMap_A.stream().collect(() -> FloatBuffer.allocate(distortPntMap_A.size()),
-                FloatBuffer::put, (left, right) -> {
-                    throw new UnsupportedOperationException("only be called in parallel stream");
-                }).array();
 
         bars = widths.size();
         maskWidths = new int[widths.size()];
@@ -209,8 +191,10 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         canvasBuffer.drawBitmap(bitmapBG, null, dst, null);
         canvasBuffer.drawRect(mask, maskPaint);
         canvasBuffer.drawBitmap(bitmaskDraw, null, dst, dstOver);
-
-        canvas.drawBitmapMesh(bitmaskBuffer, bars - 1, 1, distortPntMap, 0, null, 0, null);
+        if (oldTaper > 0.75f)
+            canvasBuffer.drawArc(arcCutout, 180, arcSweep, true, maskPaint);
+        canvasBuffer.drawOval(ovalCutout, maskPaint);
+        canvas.drawBitmap(bitmaskBuffer, null, dst, null);
     }
 
     public void setTaper(float percent) {
@@ -224,6 +208,7 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         width = x;
         height = y;
         dst = new RectF(0, 0, x, y);
+        arcCutout.set(-width, -height * 2, width * 3, height * 2);
         drawBars(x, y);
     }
 
@@ -233,25 +218,35 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
     }
 
     public void onWidgetUpdate() {
+        boolean invalid = false;
+
         if (oldPercent != percent) {
             float dv = WidgetUpdater.truncate((percent - oldPercent) * WidgetUpdater.DV(percent));
             oldPercent += dv;
             oldPercent = WidgetUpdater.truncate(oldPercent);
-
-            mask.set(0, 0, getMaskWidth(oldPercent), height);
-            postInvalidate();
+            invalid = true;
         }
+
         if (oldTaper != taper) {
             float dv = WidgetUpdater.truncate((taper - oldTaper) * WidgetUpdater.DV(taper));
             oldTaper += dv;
             oldTaper = WidgetUpdater.truncate(oldTaper);
-            float t = Math.max(taper * height, 1);
-            float h = height;
-            float w = width / (2f * t);
-            for (int i = 1; i < bars * 2; i += 2) {
-                distortPntMap[i] = Math.min(((i * i * i * h * h * w + i * i * i * h * h * h * h - i * i * i * i * i * i) / (h * h * w * w * w * t * t)) + h / 4f, height);
-            }
+            invalid = true;
         }
+
+        mask.set(0, 0, getMaskWidth(oldPercent), height);
+
+        float OHeight = height / 4f;
+
+        if (oldTaper > 0.75f) {
+            float _oldTaper = oldTaper - .75f;
+            OHeight -= _oldTaper * height / 4f;
+            arcSweep = _oldTaper * -10;
+        }
+        ovalCutout.set((-oldTaper * width) - width / 2f, OHeight, (oldTaper * width) + width / 2f, height * 4f);
+
+        if (invalid)
+            postInvalidate();
     }
 
 }
