@@ -2,6 +2,15 @@ plugins {
     id 'com.android.application'
 }
 
+ext {
+    lombokVersion = "1.18.22"
+    toastyVersion = "1.5.0"
+    androidXVersion = "1.4.0"
+    materialVersion = "1.4.0"
+    usbSerialVersion = "v3.4.2"
+    gmsVersion = "18.0.1"
+}
+
 allprojects {
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
@@ -42,9 +51,12 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.GrenderG:Toasty:1.5.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'com.github.mik3y:usb-serial-for-android:v3.4.2'
-    implementation 'com.google.android.gms:play-services-nearby:18.0.1'
+    implementation "com.github.GrenderG:Toasty:$toastyVersion"
+    implementation "androidx.appcompat:appcompat:$androidXVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "com.github.mik3y:usb-serial-for-android:$usbSerialVersion"
+    implementation "com.google.android.gms:play-services-nearby:$gmsVersion"
+
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 }
