@@ -100,9 +100,14 @@ public class Logs extends Page {
 
     @SuppressWarnings("SameReturnValue")
     private boolean onDeleteAllButtonLongClick(View view) { // TODO: Add dialog to confirm again
-        Toaster.showToast("Deleting all entries", Toaster.WARNING);
-        deleteAllEntries();
-        return true;
+        if (getCurrentListedFiles().size() != 0) {
+            Toaster.showToast("Deleting all entries", Toaster.WARNING);
+            deleteAllEntries();
+            return true;
+        } else {
+            Toaster.showToast("No entries present", Toaster.WARNING);
+            return false;
+        }
     }
 
     @NonNull

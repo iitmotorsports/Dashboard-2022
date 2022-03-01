@@ -15,10 +15,11 @@ public class PageManager extends FragmentStateAdapter {
     public static final int DASHBOARD = 0;
     public static final int LIVEDATA = 1;
     public static final int LOGS = 2;
-    public static final int ERRORS = 3;
-    public static final int COMMANDER = 4;
-    public static final int ABOUT = 5;
-    private final Page[] pages = new Page[6];
+    public static final int STATISTICS = 3;
+    public static final int ERRORS = 4;
+    public static final int COMMANDER = 5;
+    public static final int ABOUT = 6;
+    private final Page[] pages = new Page[7];
 
     public PageManager(@NonNull FragmentManager fragmentManager) {
         super(fragmentManager, new Lifecycle() {
@@ -41,6 +42,7 @@ public class PageManager extends FragmentStateAdapter {
         pages[DASHBOARD] = new CarDashboard();
         pages[LIVEDATA] = new LiveData();
         pages[LOGS] = new Logs();
+        pages[STATISTICS] = new Statistics();
         pages[ERRORS] = new Errors();
         pages[COMMANDER] = new Commander();
         pages[ABOUT] = new About();
@@ -76,6 +78,7 @@ public class PageManager extends FragmentStateAdapter {
             DASHBOARD,
             LIVEDATA,
             LOGS,
+            STATISTICS,
             ERRORS,
             COMMANDER,
             ABOUT
