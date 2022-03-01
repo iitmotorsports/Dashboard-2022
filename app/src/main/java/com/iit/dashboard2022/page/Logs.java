@@ -25,6 +25,7 @@ import com.iit.dashboard2022.util.Toaster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Logs extends Page {
     private final static HandlerThread workerThread = new HandlerThread("Logging Thread");
@@ -69,28 +70,19 @@ public class Logs extends Page {
     public void displayFiles(LogFileIO.LogFile[] files) {
         if (files.length == 0)
             return;
+
         worker.post(new Runnable() {
-            final HashMap<LogFileIO.LogFile, ListedFile> currentFiles = getCurrentFiles();
+            final HashSet<LogFileIO.LogFile> fileHash = new HashSet<>(getCurrentFiles().keySet());
             int c = 0;
 
             @Override
             public void run() {
                 LogFileIO.LogFile file = files[c++];
-                if (currentFiles.containsKey(file)) {
-                    ListedFile toUpdate = currentFiles.get(file);
-                    if (toUpdate != null)
-                        toUpdate.updateInfo();
-                    currentFiles.remove(file);
-                } else if (file != null) {
+                if (!fileHash.contains(file)) {
                     rootView.post(() -> displayListedFile(ListedFile.getInstance(rootView.getContext(), file)));
                 }
-                if (c == files.length) {
-                    for (LogFileIO.LogFile f : currentFiles.keySet()) {
-                        ListedFile toRemove = currentFiles.get(f);
-                        if (toRemove != null)
-                            rootView.post(() -> removeEntry(toRemove));
-                    }
-                } else {
+
+                if (c < files.length) {
                     worker.postDelayed(this, 100);
                 }
             }
