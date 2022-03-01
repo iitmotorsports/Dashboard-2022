@@ -55,6 +55,8 @@ public class CarDashboard extends Page implements UITester.TestUI {
     }
 
     public void setSpeedPercentage(float percent) {
+        sgL.setTaper(percent);
+        sgR.setTaper(percent);
         sgL.setPercent(percent);
         sgR.setPercent(percent);
     }
