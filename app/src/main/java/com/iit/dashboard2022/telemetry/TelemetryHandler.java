@@ -1,6 +1,8 @@
 package com.iit.dashboard2022.telemetry;
 
+import com.husbylabs.warptables.Field;
 import com.husbylabs.warptables.Status;
+import com.husbylabs.warptables.Table;
 import com.husbylabs.warptables.WTClient;
 import com.husbylabs.warptables.WarpTablesAPI;
 import com.iit.dashboard2022.util.Toaster;
@@ -15,6 +17,8 @@ import java.net.InetSocketAddress;
  * @author Noah Husby
  */
 public class TelemetryHandler {
+
+    public static Field beatField = null;
 
     private static final TelemetryHandler instance = new TelemetryHandler();
 
@@ -42,6 +46,11 @@ public class TelemetryHandler {
             Toaster.showToast("Couldn't start Telemetry. Please check the logs.");
             e.printStackTrace(System.err);
         }
+
+        //TODO: Temp
+        client.awaitConnection();
+        beatField = client.getTable("system").getField("beat");
+        beatField.setNumber(400);
     }
 
     /**
@@ -66,6 +75,8 @@ public class TelemetryHandler {
     public boolean isConnected() {
         return client != null && client.getStatus() == Status.CONNECTED;
     }
+
+
 
     /**
      * Gets the instance of the TelemetryHandler

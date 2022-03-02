@@ -21,12 +21,15 @@ import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.PageManager;
 import com.iit.dashboard2022.page.Pager;
+import com.iit.dashboard2022.telemetry.TelemetryHandler;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
+
+import java.net.InetSocketAddress;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
         frontECU = new ECU(this);
         mainPager = new Pager(this);
         Toaster.setContext(this);
+        new Thread(() -> {
+
+            Toaster.showToast("Starting");
+            //192.168.137.1
+            TelemetryHandler.getInstance().start(new InetSocketAddress("192.168.137.1", 50051));
+        }).start();
     }
 
     @Override

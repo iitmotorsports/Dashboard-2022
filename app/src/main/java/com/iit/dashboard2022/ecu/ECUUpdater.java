@@ -2,10 +2,13 @@ package com.iit.dashboard2022.ecu;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.common.internal.TelemetryLogging;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
+import com.iit.dashboard2022.telemetry.TelemetryHandler;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.Indicators;
+import com.iit.dashboard2022.util.Toaster;
 
 public class ECUUpdater {
 
@@ -16,14 +19,21 @@ public class ECUUpdater {
          *  DASHBOARD
          */
         ECUMsgHandler ecuMsgHandler = frontECU.getEcuMsgHandler();
-
         /* GAUGES */
         ecuMsgHandler.getMessage(ECUMsgHandler.Speedometer).addMessageListener(val -> {
             dashboardPage.setSpeedValue(val);
             dashboardPage.setSpeedPercentage(Math.abs(val - lastSpeed) * 0.32f);
             lastSpeed = val;
         });
-        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f));
+
+        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> {
+            if(TelemetryHandler.getInstance().isConnected()) {
+                if(TelemetryHandler.beatField != null) {
+                    TelemetryHandler.beatField.setNumber(Math.max(Math.min(val, 100), 0) / 100f);
+                }
+            }
+            dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f);
+        });
         ecuMsgHandler.getMessage(ECUMsgHandler.PowerGauge).addMessageListener(val -> { // NOTE: Actual MC power not being used
             long avgMCVolt = (ecuMsgHandler.requestValue(ECUMsgHandler.MC0Voltage) + ecuMsgHandler.requestValue(ECUMsgHandler.MC1Voltage)) / 2;
             float limit = ecuMsgHandler.requestValue(ECUMsgHandler.BMSVolt) * ecuMsgHandler.requestValue(ECUMsgHandler.BMSAmp);
