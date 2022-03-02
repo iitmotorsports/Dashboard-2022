@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    warptablesVersion = "0.0.1+79"
+    warptablesVersion = "0.0.1+80"
     toastyVersion = "1.5.0"
     androidXVersion = "1.4.0"
     materialVersion = "1.4.0"
