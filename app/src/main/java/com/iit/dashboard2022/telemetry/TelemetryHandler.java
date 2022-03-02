@@ -1,9 +1,11 @@
-package com.iit.dashboard2022.util;
+package com.iit.dashboard2022.telemetry;
 
+import com.husbylabs.warptables.Status;
 import com.husbylabs.warptables.WTClient;
-import com.husbylabs.warptables.WarpTableInstance;
 import com.husbylabs.warptables.WarpTablesAPI;
+import com.iit.dashboard2022.util.Toaster;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
 /**
@@ -14,37 +16,46 @@ import java.net.InetSocketAddress;
  */
 public class TelemetryHandler {
 
-    // TODO: Fix the Lombok support in IntelliJ
-
     private static final TelemetryHandler instance = new TelemetryHandler();
 
     private TelemetryHandler() {
     }
 
-    private WarpTableInstance warpTableInstance = null;
+    private WTClient client = null;
 
     /**
      * Starts the WarpTables instance
      *
      * @param address Address of remote server
      */
-    public void start(InetSocketAddress address) throws Exception {
-        if(warpTableInstance != null && ((WTClient) warpTableInstance).isConnected()) {
-            // TODO: Log
-            warpTableInstance.stop();
+    public void start(InetSocketAddress address) {
+        if (client != null) {
+            // Proper cleanup did not occur. Manually cleaning up.
+            client.stop();
+            client = null;
         }
-        warpTableInstance = WarpTablesAPI.createClient(address);
-        ((WTClient) warpTableInstance).enableAutoConnect();
-        warpTableInstance.start();
+        client = (WTClient) WarpTablesAPI.createClient(address);
+        client.addEventListener(new TelemetryEventListener());
+        try {
+            client.start();
+        } catch (IOException e) {
+            Toaster.showToast("Couldn't start Telemetry. Please check the logs.");
+            e.printStackTrace(System.err);
+        }
     }
 
     /**
      * Stops the WarpTables instance
      */
     public void stop() {
-        if(warpTableInstance != null) {
-            warpTableInstance.stop();
+        if(client != null) {
+            client.stop();
+            client = null;
         }
+    }
+
+    public boolean isStarted() {
+        return client != null && client.getStatus() != Status.STOPPED;
     }
 
     /**
@@ -53,7 +64,7 @@ public class TelemetryHandler {
      * @return True if connected, false if not
      */
     public boolean isConnected() {
-        return warpTableInstance != null && ((WTClient) warpTableInstance).isConnected();
+        return client != null && client.getStatus() == Status.CONNECTED;
     }
 
     /**
@@ -65,5 +76,4 @@ public class TelemetryHandler {
     public static TelemetryHandler getInstance() {
         return instance;
     }
-
 }

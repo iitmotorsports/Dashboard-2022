@@ -73,7 +73,6 @@ public class ECUJUSB {
         if (JUSB_size != -1) {
             try {
                 JUSB_data.write(data);
-
                 if (JUSB_data.size() >= JUSB_size) {
                     Inflater decompressor = new Inflater();
                     decompressor.setInput(JUSB_data.toByteArray(), 0, JUSB_size);
