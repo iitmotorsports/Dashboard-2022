@@ -14,6 +14,7 @@ import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ECU extends ECUCommunication {
     public static final String LOG_TAG = "ECU";
@@ -30,9 +31,9 @@ public class ECU extends ECUCommunication {
     private final ECUJUSB J_USB;
     private final long[] iBuffer = new long[4];
     boolean fileLogging = true;
-    private ErrorListener errorListener;
+    private BiConsumer<String, String> errorListener;
     private Runnable jsonLoadListener;
-    private InterpretListener interpretListener;
+    private Consumer<String> interpretListener;
     private MODE interpreterMode = MODE.DISABLED;
     private int errorCount = 0;
 
@@ -108,7 +109,7 @@ public class ECU extends ECUCommunication {
         if (interpreterMode != ECU.MODE.DISABLED) {
             String msg = processData(epoch, data);
             if (interpretListener != null && msg.length() > 0) {
-                interpretListener.newMessage(msg);
+                interpretListener.accept(msg);
             }
         } else {
             consumeData(epoch, data);
@@ -145,9 +146,9 @@ public class ECU extends ECUCommunication {
         this.jsonLoadListener = listener;
     }
 
-    public void setErrorListener(ErrorListener errorListener) {
+    public void setErrorListener(BiConsumer<String, String> errorListener) {
         this.errorListener = errorListener;
-        super.setErrorListener(exception -> errorListener.newError(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
+        super.setErrorListener(exception -> errorListener.accept(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
     }
 
     public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
@@ -165,7 +166,7 @@ public class ECU extends ECUCommunication {
         this.interpreterMode = mode;
     }
 
-    public void setLogListener(InterpretListener interpretListener) {
+    public void setLogListener(Consumer<String> interpretListener) {
         this.interpretListener = interpretListener;
     }
 
@@ -216,7 +217,7 @@ public class ECU extends ECUCommunication {
         interpretMsg(iBuffer, data_block);
         String fault = ecuMsgHandler.checkFaults(iBuffer[iBuf_StringID]);
         if (fault != null && errorListener != null) {
-            errorListener.newError("CAN Fault", fault);
+            errorListener.accept("CAN Fault", fault);
             return null;
         }
         return ecuMsgHandler.updateMessage(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
@@ -253,7 +254,7 @@ public class ECU extends ECUCommunication {
                 System.arraycopy(raw_data, i, data_block, 0, 8);
             } catch (ArrayIndexOutOfBoundsException e) {
                 if (errorListener != null) {
-                    errorListener.newError(LOG_TAG, "Received cutoff array");
+                    errorListener.accept(LOG_TAG, "Received cutoff array");
                 }
                 continue;
             }
@@ -279,7 +280,7 @@ public class ECU extends ECUCommunication {
                     System.arraycopy(raw_data, i, data_block, 0, 8);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     if (errorListener != null) {
-                        errorListener.newError(LOG_TAG, "Received cutoff array");
+                        errorListener.accept(LOG_TAG, "Received cutoff array");
                     }
                     continue;
                 }
@@ -305,7 +306,7 @@ public class ECU extends ECUCommunication {
             }
             if (output.length() == 0) {
                 if (errorListener != null) {
-                    errorListener.newError(LOG_TAG, "USB serial might be overwhelmed!");
+                    errorListener.accept(LOG_TAG, "USB serial might be overwhelmed!");
                 }
                 return output.toString();
             }
@@ -321,14 +322,6 @@ public class ECU extends ECUCommunication {
         ASCII,
         HEX,
         RAW
-    }
-
-    public interface InterpretListener {
-        void newMessage(String msg);
-    }
-
-    public interface ErrorListener {
-        void newError(String tag, String msg);
     }
 
     public enum Command {
