@@ -47,7 +47,7 @@ public class ECULogger {
                 System.arraycopy(bytes, i + 8, msg, 0, 8);
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
-                Toaster.showToast("Warning: log file has leftover bytes", Toaster.WARNING);
+                Toaster.showToast("Warning: log file has leftover bytes", Toaster.Status.WARNING);
                 break;
             }
             long epoch = ByteBuffer.wrap(epochB).order(ByteOrder.LITTLE_ENDIAN).getLong();
@@ -63,7 +63,7 @@ public class ECULogger {
             return fnl;
         }
 
-        Toaster.showToast("Returning string interpretation", Toaster.WARNING);
+        Toaster.showToast("Returning string interpretation", Toaster.Status.WARNING);
         return LogFileIO.getString(file);
     }
 
@@ -96,7 +96,7 @@ public class ECULogger {
         int logStart = jsonStr.getBytes().length;
         String output = interpretRawData(jsonStr.substring(LOG_MAP_START.length()), bytes, logStart);
         if (output.length() == 0) {
-            Toaster.showToast("Returning string interpretation", Toaster.WARNING);
+            Toaster.showToast("Returning string interpretation", Toaster.Status.WARNING);
             return LogFileIO.getString(file);
         }
         return output;

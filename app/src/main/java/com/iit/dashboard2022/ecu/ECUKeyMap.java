@@ -102,7 +102,7 @@ public class ECUKeyMap {
      */
     public long requestMsgID(String stringTag, String stringMsg) {
         if (!loaded()) {
-            Toaster.showToast("JSON map has not been loaded, unable to process request", Toaster.WARNING);
+            Toaster.showToast("JSON map has not been loaded, unable to process request", Toaster.Status.WARNING);
             return -1;
         }
         Integer tagID = getTagID(stringTag);
@@ -115,7 +115,7 @@ public class ECUKeyMap {
             mapping.putShort(strID.shortValue());
             return mapping.getInt(0);
         } else {
-            Toaster.showToast("Unable to match string " + stringTag + " " + stringMsg, Toaster.WARNING);
+            Toaster.showToast("Unable to match string " + stringTag + " " + stringMsg, Toaster.Status.WARNING);
         }
 
         return -1;
@@ -141,10 +141,10 @@ public class ECUKeyMap {
         if (jsonLoader.clear()) {
             tagLookUp = null;
             stringLookUp = null;
-            Toaster.showToast("JSON map deleted", Toaster.INFO);
+            Toaster.showToast("JSON map deleted", Toaster.Status.INFO);
             status = false;
         } else {
-            Toaster.showToast("Failed to delete JSON map", Toaster.ERROR);
+            Toaster.showToast("Failed to delete JSON map", Toaster.Status.ERROR);
         }
         notifyStatusListeners(status, null);
     }
@@ -160,10 +160,10 @@ public class ECUKeyMap {
             if (pseudoMode)
                 return false;
             if (loaded()) {
-                Toaster.showToast("JSON map unchanged", Toaster.INFO);
+                Toaster.showToast("JSON map unchanged", Toaster.Status.INFO);
                 return true;
             }
-            Toaster.showToast("No JSON map has been loaded", Toaster.WARNING, Toast.LENGTH_LONG);
+            Toaster.showToast("No JSON map has been loaded", Toaster.Status.WARNING, Toast.LENGTH_LONG);
             return false;
         }
 
@@ -192,15 +192,15 @@ public class ECUKeyMap {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Toaster.showToast("JSON does not match correct format", Toaster.ERROR, Toast.LENGTH_LONG);
+            Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
             return loaded();
         }
 
         if (!pseudoMode) {
             if (loaded())
-                Toaster.showToast("JSON map updated", Toaster.SUCCESS);
+                Toaster.showToast("JSON map updated", Toaster.Status.SUCCESS);
             else
-                Toaster.showToast("Loaded JSON map", Toaster.INFO, Toast.LENGTH_SHORT);
+                Toaster.showToast("Loaded JSON map", Toaster.Status.INFO, Toast.LENGTH_SHORT);
             jsonLoader.saveToSystem(rawJSON);
         }
 

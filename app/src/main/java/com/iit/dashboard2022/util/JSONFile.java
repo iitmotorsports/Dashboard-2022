@@ -23,7 +23,7 @@ public class JSONFile {
         mGetContent = activity.registerForActivityResult(new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri == null) {
-                        Toaster.showToast("Failed to load file", Toaster.ERROR, Toast.LENGTH_LONG);
+                        Toaster.showToast("Failed to load file", Toaster.Status.ERROR, Toast.LENGTH_LONG);
                         return;
                     }
                     try {
@@ -52,7 +52,7 @@ public class JSONFile {
             mGetContent.launch("*/*");
         } catch (Exception e) {
             e.printStackTrace();
-            Toaster.showToast("Failed to request for file", Toaster.ERROR, Toast.LENGTH_LONG);
+            Toaster.showToast("Failed to request for file", Toaster.Status.ERROR, Toast.LENGTH_LONG);
         }
     }
 

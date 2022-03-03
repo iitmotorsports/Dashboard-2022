@@ -16,11 +16,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import es.dmoral.toasty.Toasty;
 
 public class Toaster {
-    public static final int NORMAL = 0;
-    public static final int INFO = 1;
-    public static final int SUCCESS = 2;
-    public static final int WARNING = 3;
-    public static final int ERROR = 4;
     private static final ConcurrentLinkedQueue<ToastMessage> queue = new ConcurrentLinkedQueue<>();
     private static final Handler uiHandle = new Handler(Looper.getMainLooper());
     private static boolean enable = true;
@@ -58,18 +53,18 @@ public class Toaster {
     }
 
     public static void showToast(String msg) {
-        showToast(msg, NORMAL);
+        showToast(msg, Status.NORMAL);
     }
 
-    public static void showToast(String msg, @ToasterStatus int status) {
+    public static void showToast(String msg, Status status) {
         showToast(msg, status, Toast.LENGTH_SHORT, Gravity.CENTER);
     }
 
-    public static void showToast(String msg, @ToasterStatus int status, @ToasterDuration int duration) {
+    public static void showToast(String msg, Status status, @ToasterDuration int duration) {
         showToast(msg, status, duration, Gravity.CENTER);
     }
 
-    public static void showToast(String msg, @ToasterStatus int status, @ToasterDuration int duration, @ToasterGravity int gravity) {
+    public static void showToast(String msg, Status status, @ToasterDuration int duration, @ToasterGravity int gravity) {
         Log.i("Toast", msg);
         if (!enable || newToast == null)
             return;
@@ -87,7 +82,6 @@ public class Toaster {
         Toaster.enable = enable;
     }
 
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Toast.LENGTH_LONG, Toast.LENGTH_SHORT})
     @interface ToasterDuration {
@@ -98,9 +92,8 @@ public class Toaster {
     @interface ToasterGravity {
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NORMAL, INFO, SUCCESS, WARNING, ERROR})
-    @interface ToasterStatus {
+    public enum Status {
+        NORMAL, INFO, SUCCESS, WARNING, ERROR
     }
 
     private static class ToastMessage {
@@ -110,19 +103,18 @@ public class Toaster {
         @ToasterGravity
         final
         int gravity;
-        @ToasterStatus
-        final
-        int status;
+        final Status status;
         final int xOffset;
         final String msg;
 
-        public ToastMessage(int duration, int gravity, int status, int xOffset, String msg) {
+        public ToastMessage(int duration, int gravity, Status status, int xOffset, String msg) {
             this.duration = duration;
             this.gravity = gravity;
             this.status = status;
             this.xOffset = xOffset;
             this.msg = msg;
         }
+
     }
 
 }

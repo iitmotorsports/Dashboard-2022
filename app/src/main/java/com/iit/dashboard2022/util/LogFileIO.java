@@ -85,7 +85,7 @@ public class LogFileIO {
             dis.readFully(bytes);
         } catch (IOException e) {
             e.printStackTrace();
-            Toaster.showToast("Failed to read file bytes", Toaster.ERROR);
+            Toaster.showToast("Failed to read file bytes", Toaster.Status.ERROR);
         }
         return bytes;
     }
@@ -103,7 +103,7 @@ public class LogFileIO {
             e.printStackTrace();
             activeFile = null;
             activeFileStream = null;
-            Toaster.showToast("Failed to open new file for logging", Toaster.ERROR, Toast.LENGTH_LONG);
+            Toaster.showToast("Failed to open new file for logging", Toaster.Status.ERROR, Toast.LENGTH_LONG);
         }
     }
 
@@ -125,7 +125,7 @@ public class LogFileIO {
                 if (file.getName().endsWith(".log"))
                     if (logFileSanitizer != null && !file.isActiveFile() && logFileSanitizer.shouldSanitize(file)) {
                         if (!file.delete()) {
-                            Toaster.showToast("Failed to delete empty log: " + file.getFormattedName(), Toaster.WARNING);
+                            Toaster.showToast("Failed to delete empty log: " + file.getFormattedName(), Toaster.Status.WARNING);
                         }
                     } else {
                         fileList.add(file);

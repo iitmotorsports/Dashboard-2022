@@ -70,11 +70,11 @@ public class UITester {
             rndTest = false;
             testVal = 0;
             worker.post(UITester::uiTest);
-            Toaster.showToast("UI Test Started", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.END);
+            Toaster.showToast("UI Test Started", Toaster.Status.INFO, Toast.LENGTH_SHORT, Gravity.END);
         } else {
             worker.removeCallbacksAndMessages(null);
             runTest(0);
-            Toaster.showToast("UI Test Stopped", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.END);
+            Toaster.showToast("UI Test Stopped", Toaster.Status.INFO, Toast.LENGTH_SHORT, Gravity.END);
         }
     }
 

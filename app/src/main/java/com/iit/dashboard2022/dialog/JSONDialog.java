@@ -36,7 +36,7 @@ public class JSONDialog {
         downloadBtn.setOnClickListener(v -> {
             PasteAPI.getLastJSONPaste(response -> {
                 boolean pasteAPILoad = frontECU.loadJSONString(response);
-                Toaster.showToast(pasteAPILoad ? "Loaded JSON from Paste API" : "Failed to load JSON from Paste API", pasteAPILoad ? Toaster.SUCCESS : Toaster.ERROR);
+                Toaster.showToast(pasteAPILoad ? "Loaded JSON from Paste API" : "Failed to load JSON from Paste API", pasteAPILoad ? Toaster.Status.SUCCESS : Toaster.Status.ERROR);
             });
             dialog.dismiss();
         });

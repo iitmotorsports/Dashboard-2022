@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.function.Consumer;
 
 public abstract class SerialCom {
 
@@ -13,40 +14,40 @@ public abstract class SerialCom {
     public static final int Opened = 1 << 2; // Digital connection
     public static final int Closed = 1 << 3; // Digital disconnection
     protected int status = 0;
-    protected StatusListener statusListener;
-    protected DataListener dataListener;
-    protected ErrorListener errorListener;
+    protected Consumer<Integer> statusListener;
+    protected Consumer<byte[]> dataListener;
+    protected Consumer<Exception> errorListener;
 
     protected void newConnData(byte[] buffer) {
         if (dataListener != null)
-            dataListener.newData(buffer);
+            dataListener.accept(buffer);
     }
 
     protected void newConnError(Exception exception) {
         if (errorListener != null)
-            errorListener.newError(exception);
+            errorListener.accept(exception);
     }
 
     protected void setConnStatus(int flags) {
         status = flags;
         if (statusListener != null)
-            statusListener.newStatus(flags);
+            statusListener.accept(flags);
     }
 
     public boolean checkStatus(int flags) {
         return (status & flags) == flags;
     }
 
-    public void setDataListener(@Nullable DataListener dataListener) {
-        this.dataListener = dataListener;
+    public void setDataListener(@Nullable Consumer<byte[]> data) {
+        this.dataListener = data;
     }
 
-    public void setStatusListener(@Nullable StatusListener statusListener) {
-        this.statusListener = statusListener;
+    public void setStatusListener(@Nullable Consumer<Integer> flags) {
+        this.statusListener = flags;
     }
 
-    public void setErrorListener(@Nullable ErrorListener errorListener) {
-        this.errorListener = errorListener;
+    public void setErrorListener(@Nullable Consumer<Exception> exception) {
+        this.errorListener = exception;
     }
 
     public abstract boolean open();
@@ -66,17 +67,5 @@ public abstract class SerialCom {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Attached, Detached, Opened, Closed})
     @interface Status {
-    }
-
-    public interface StatusListener {
-        void newStatus(int flags);
-    }
-
-    public interface DataListener {
-        void newData(byte[] data);
-    }
-
-    public interface ErrorListener {
-        void newError(Exception exception);
     }
 }

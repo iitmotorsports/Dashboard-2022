@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             WidgetUpdater.start();
 
             if (!frontECU.loadJSONFromSystem()) {
-                Toaster.showToast("No JSON is currently loaded", Toaster.WARNING);
+                Toaster.showToast("No JSON is currently loaded", Toaster.Status.WARNING);
                 logPage.displayFiles(frontECU.getLocalLogs());
             } else {
                 frontECU.open();

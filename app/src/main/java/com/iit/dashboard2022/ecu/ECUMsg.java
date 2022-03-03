@@ -1,31 +1,20 @@
 package com.iit.dashboard2022.ecu;
 
-import androidx.annotation.IntDef;
-
+import com.google.common.collect.Maps;
 import com.iit.dashboard2022.util.ByteSplit;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class ECUMsg {
 
-    public static final int ON_RECEIVE = 0;
-    public static final int ON_VALUE_CHANGE = 1;
-    public static final int ON_VALUE_DECREASE = 2;
-    public static final int ON_VALUE_INCREASE = 3;
-    public static final int SIGNED_BYTE = 0;
-    public static final int SIGNED_SHORT = 1;
-    public static final int SIGNED_INT = 2;
-    public static final int UNSIGNED = 3;
     public final String stringTag, stringMsg;
-    @DataType
-    private final int dataType;
-    public MessageListener[] messageListeners = new MessageListener[0];
-    public int[] updateMethods = new int[0];
+    private final DataType dataType;
+    public Map<Consumer<Long>, UpdateMethod> messageListeners = Maps.newHashMap();
     public long value = 0;
 
-    public ECUMsg(String stringTag, String stringMsg, @DataType int dataType) {
+    public ECUMsg(String stringTag, String stringMsg, DataType dataType) {
         this.stringTag = stringTag;
         this.stringMsg = stringMsg;
         this.dataType = dataType;
@@ -35,6 +24,11 @@ public class ECUMsg {
         messageMap.put(keyMap.requestMsgID(stringTag, stringMsg), this);
     }
 
+    /**
+     * Update the message from the ECU
+     *
+     * @param val The value of the field
+     */
     public void update(long val) {
         long prevValue = this.value;
         switch (this.dataType) {
@@ -51,71 +45,76 @@ public class ECUMsg {
                 this.value = val;
         }
 
-        for (int i = 0; i < messageListeners.length; i++) {
-            MessageListener ml = messageListeners[i];
-            switch (updateMethods[i]) {
+        for(Map.Entry<Consumer<Long>, UpdateMethod> entry : messageListeners.entrySet()) {
+            Consumer<Long> consumer = entry.getKey();
+            switch(entry.getValue()) {
                 case ON_VALUE_CHANGE:
                     if (prevValue != value)
-                        ml.run(val);
+                        consumer.accept(val);
                     break;
                 case ON_VALUE_DECREASE:
                     if (prevValue > value)
-                        ml.run(val);
+                        consumer.accept(val);
                     break;
                 case ON_VALUE_INCREASE:
                     if (prevValue < value)
-                        ml.run(val);
+                        consumer.accept(val);
                 case ON_RECEIVE:
-                    ml.run(val);
+                    consumer.accept(val);
                     break;
             }
         }
     }
 
-    public void addMessageListener(MessageListener messageListener) {
-        addMessageListener(messageListener, ON_VALUE_CHANGE);
+    /**
+     * Adds a message listener
+     *
+     * @param consumer The listener to be consumed
+     */
+    public void addMessageListener(Consumer<Long> consumer) {
+        addMessageListener(consumer, UpdateMethod.ON_VALUE_CHANGE);
     }
 
-    public void addMessageListener(MessageListener messageListener, @UpdateMethod int updateMethod) {
-        MessageListener[] messageListeners = new MessageListener[this.messageListeners.length + 1];
-        int[] updateMethods = new int[this.updateMethods.length + 1];
-
-        System.arraycopy(this.messageListeners, 0, messageListeners, 0, this.messageListeners.length);
-        System.arraycopy(this.updateMethods, 0, updateMethods, 0, this.updateMethods.length);
-
-        messageListeners[messageListeners.length - 1] = messageListener;
-        updateMethods[updateMethods.length - 1] = updateMethod;
-
-        this.updateMethods = updateMethods;
-        this.messageListeners = messageListeners;
+    /**
+     * Adds a message listener
+     *
+     * @param messageListener The listener to be consumed
+     * @param updateMethod {@link UpdateMethod}
+     */
+    public void addMessageListener(Consumer<Long> messageListener, UpdateMethod updateMethod) {
+       messageListeners.put(messageListener, updateMethod);
     }
 
     public void clear() {
         this.value = 0;
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({
-            ON_RECEIVE,
-            ON_VALUE_CHANGE,
-            ON_VALUE_DECREASE,
-            ON_VALUE_INCREASE
-    })
-    @interface UpdateMethod {
+    public enum UpdateMethod {
+        /**
+         * Fire the event each time a value is received
+         */
+        ON_RECEIVE,
+
+        /**
+         * Fire the event each time the value changes
+         */
+        ON_VALUE_CHANGE,
+
+        /**
+         * Fire the event each time the value decreases
+         */
+        ON_VALUE_DECREASE,
+
+        /**
+         * Fire the event each time the value increases
+         */
+        ON_VALUE_INCREASE
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({
-            SIGNED_BYTE,
-            SIGNED_SHORT,
-            SIGNED_INT,
-            UNSIGNED
-    })
-    @interface DataType {
+    public enum DataType {
+        SIGNED_BYTE,
+        SIGNED_SHORT,
+        SIGNED_INT,
+        UNSIGNED
     }
-
-    public interface MessageListener {
-        void run(long val);
-    }
-
 }

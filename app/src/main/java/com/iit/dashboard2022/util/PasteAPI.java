@@ -74,7 +74,7 @@ public class PasteAPI {
 
     public static void uploadPaste(String data) {
         if (data == null || data.length() == 0) {
-            Toaster.showToast("No data to upload", Toaster.ERROR);
+            Toaster.showToast("No data to upload", Toaster.Status.ERROR);
             return;
         }
 
@@ -91,7 +91,7 @@ public class PasteAPI {
                 listConn.setRequestProperty("Content-Type", "application/json");
                 listConn.setRequestProperty("X-Auth-Token", getLOG_APIKey());
                 OutputStream wr = listConn.getOutputStream();
-                Toaster.showToast("Uploading", Toaster.INFO);
+                Toaster.showToast("Uploading", Toaster.Status.INFO);
                 wr.write(dataPlate[0].getBytes());
                 wr.write(data.getBytes());
                 wr.write(dataPlate[1].getBytes());
@@ -101,13 +101,13 @@ public class PasteAPI {
                 JSONObject jObject = new JSONObject(getResponse(listConn));
                 String id = jObject.getString("id");
 
-                Toaster.showToast("ID: " + id, Toaster.SUCCESS, Toast.LENGTH_LONG);
+                Toaster.showToast("ID: " + id, Toaster.Status.SUCCESS, Toast.LENGTH_LONG);
 
                 listConn.disconnect();
 
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
-                Toaster.showToast("Failed to communicate with API", Toaster.ERROR);
+                Toaster.showToast("Failed to communicate with API", Toaster.Status.ERROR);
             } finally {
                 if (listConn != null)
                     listConn.disconnect();
@@ -153,9 +153,9 @@ public class PasteAPI {
                 responseCallback.run(content);
 
             } catch (NoPastesUploadedException e) {
-                Toaster.showToast("API showed no pastes", Toaster.ERROR);
+                Toaster.showToast("API showed no pastes", Toaster.Status.ERROR);
             } catch (IOException | JSONException e) {
-                Toaster.showToast("Failed to communicate with API", Toaster.ERROR);
+                Toaster.showToast("Failed to communicate with API", Toaster.Status.ERROR);
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();

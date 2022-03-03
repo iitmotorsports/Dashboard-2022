@@ -9,6 +9,7 @@ import com.iit.dashboard2022.util.Toaster;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
+import com.iit.dashboard2022.ecu.ECUMsg.DataType;
 
 public class ECUMsgHandler {
 
@@ -44,33 +45,33 @@ public class ECUMsgHandler {
 
     public ECUMsgHandler(@NonNull ECUKeyMap ecuKeyMap) {
         keyMap = ecuKeyMap;
-        messages[MC0Voltage] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 DC BUS Voltage:", ECUMsg.SIGNED_SHORT);
-        messages[MC1Voltage] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 DC BUS Voltage:", ECUMsg.SIGNED_SHORT);
-        messages[MC1Current] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 DC BUS Current:", ECUMsg.SIGNED_SHORT);
-        messages[MC0Current] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 DC BUS Current:", ECUMsg.SIGNED_SHORT);
-        messages[MC1BoardTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 Board Temp:", ECUMsg.SIGNED_SHORT);
-        messages[MC0BoardTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 Board Temp:", ECUMsg.SIGNED_SHORT);
-        messages[MC1MotorTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 Motor Temp:", ECUMsg.SIGNED_SHORT);
-        messages[MC0MotorTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 Motor Temp:", ECUMsg.SIGNED_SHORT);
-        messages[Speedometer] = new ECUMsg("[Front Teensy]", "[ LOG ] Current Motor Speed:", ECUMsg.SIGNED_INT);
-        messages[PowerGauge] = new ECUMsg("[Front Teensy]", "[ LOG ] MC Current Power:", ECUMsg.UNSIGNED);
-        messages[BatteryLife] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS State Of Charge:", ECUMsg.SIGNED_BYTE);
-        messages[BMSVolt] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Immediate Voltage:", ECUMsg.SIGNED_SHORT);
-        messages[BMSAmp] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Pack Average Current:", ECUMsg.SIGNED_SHORT);
-        messages[BMSHighTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Pack Highest Temp:", ECUMsg.UNSIGNED);
-        messages[BMSLowTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Pack Lowest Temp:", ECUMsg.UNSIGNED);
-        messages[BMSDischargeLim] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Discharge current limit:", ECUMsg.SIGNED_SHORT);
-        messages[BMSChargeLim] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Charge current limit:", ECUMsg.SIGNED_SHORT);
-        messages[Fault] = new ECUMsg("[Front Teensy]", "[ LOG ] Fault State", ECUMsg.UNSIGNED);
-        messages[Lag] = new ECUMsg("[HeartBeat]", "[WARN]  Heartbeat is taking too long", ECUMsg.UNSIGNED);
-        messages[Beat] = new ECUMsg("[HeartBeat]", "[ LOG ] Beat", ECUMsg.UNSIGNED);
-        messages[StartLight] = new ECUMsg("[Front Teensy]", "[ LOG ] Start Light", ECUMsg.UNSIGNED);
-        messages[State] = new ECUMsg("[Front Teensy]", "[ LOG ] Current State", ECUMsg.UNSIGNED);
+        messages[MC0Voltage] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 DC BUS Voltage:", DataType.SIGNED_SHORT);
+        messages[MC1Voltage] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 DC BUS Voltage:", DataType.SIGNED_SHORT);
+        messages[MC1Current] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 DC BUS Current:", DataType.SIGNED_SHORT);
+        messages[MC0Current] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 DC BUS Current:", DataType.SIGNED_SHORT);
+        messages[MC1BoardTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 Board Temp:", DataType.SIGNED_SHORT);
+        messages[MC0BoardTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 Board Temp:", DataType.SIGNED_SHORT);
+        messages[MC1MotorTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC1 Motor Temp:", DataType.SIGNED_SHORT);
+        messages[MC0MotorTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] MC0 Motor Temp:", DataType.SIGNED_SHORT);
+        messages[Speedometer] = new ECUMsg("[Front Teensy]", "[ LOG ] Current Motor Speed:", DataType.SIGNED_INT);
+        messages[PowerGauge] = new ECUMsg("[Front Teensy]", "[ LOG ] MC Current Power:", DataType.UNSIGNED);
+        messages[BatteryLife] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS State Of Charge:", DataType.SIGNED_BYTE);
+        messages[BMSVolt] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Immediate Voltage:", DataType.SIGNED_SHORT);
+        messages[BMSAmp] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Pack Average Current:", DataType.SIGNED_SHORT);
+        messages[BMSHighTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Pack Highest Temp:", DataType.UNSIGNED);
+        messages[BMSLowTemp] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Pack Lowest Temp:", DataType.UNSIGNED);
+        messages[BMSDischargeLim] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Discharge current limit:", DataType.SIGNED_SHORT);
+        messages[BMSChargeLim] = new ECUMsg("[Front Teensy]", "[ LOG ] BMS Charge current limit:", DataType.SIGNED_SHORT);
+        messages[Fault] = new ECUMsg("[Front Teensy]", "[ LOG ] Fault State", DataType.UNSIGNED);
+        messages[Lag] = new ECUMsg("[HeartBeat]", "[WARN]  Heartbeat is taking too long", DataType.UNSIGNED);
+        messages[Beat] = new ECUMsg("[HeartBeat]", "[ LOG ] Beat", DataType.UNSIGNED);
+        messages[StartLight] = new ECUMsg("[Front Teensy]", "[ LOG ] Start Light", DataType.UNSIGNED);
+        messages[State] = new ECUMsg("[Front Teensy]", "[ LOG ] Current State", DataType.UNSIGNED);
         messages[State].addMessageListener(val -> {
             if (stateListener != null)
                 stateListener.onStateChanged(stateMap.get(val));
         });
-        messages[SerialVarResponse] = new ECUMsg("[SerialVar]", "[INFO]  Approximate Float value:", ECUMsg.UNSIGNED);
+        messages[SerialVarResponse] = new ECUMsg("[SerialVar]", "[INFO]  Approximate Float value:", DataType.UNSIGNED);
     }
 
     private void getFaultStrIDs() {
@@ -99,7 +100,7 @@ public class ECUMsgHandler {
         for (STATE state : STATE.values()) {
             Integer tagID = keyMap.getTagID(String.format("[%s]", state.title));
             if (tagID == null) {
-                Toaster.showToast("Failed to set State Enum for " + state.title, Toaster.WARNING);
+                Toaster.showToast("Failed to set State Enum for " + state.title, Toaster.Status.WARNING);
             } else {
                 stateMap.put(Long.valueOf(tagID), state);
             }

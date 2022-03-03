@@ -46,7 +46,7 @@ public class Logs extends Page {
         fileEntries = rootView.findViewById(R.id.fileEntries);
 
         ListedFile.setGlobalFileListListener(this::onListedFileAction);
-        deleteAllButton.setOnClickListener(v -> Toaster.showToast("Hold to confirm", Toaster.INFO));
+        deleteAllButton.setOnClickListener(v -> Toaster.showToast("Hold to confirm", Toaster.Status.INFO));
         deleteAllButton.setOnLongClickListener(this::onDeleteAllButtonLongClick);
         updateAllButton.setOnClickListener(v -> updateAll());
 
@@ -100,7 +100,7 @@ public class Logs extends Page {
 
     @SuppressWarnings("SameReturnValue")
     private boolean onDeleteAllButtonLongClick(View view) { // TODO: Add dialog to confirm again
-        Toaster.showToast("Deleting all entries", Toaster.WARNING);
+        Toaster.showToast("Deleting all entries", Toaster.Status.WARNING);
         deleteAllEntries();
         return true;
     }
@@ -141,7 +141,7 @@ public class Logs extends Page {
                 if (file != null && file.delete())
                     rootView.post(() -> removeEntry(view));
                 if (views.size() == 0) {
-                    Toaster.showToast("Done deleting", Toaster.INFO);
+                    Toaster.showToast("Done deleting", Toaster.Status.INFO);
                     return;
                 }
                 worker.postDelayed(this, 100);
@@ -153,7 +153,7 @@ public class Logs extends Page {
         switch (action) {
             case SHOW:
                 if (console == null) {
-                    Toaster.showToast("No console attached", Toaster.ERROR);
+                    Toaster.showToast("No console attached", Toaster.Status.ERROR);
                     return;
                 }
                 ListedFile.deselectActive();
@@ -162,18 +162,18 @@ public class Logs extends Page {
 
                     LogFileIO.LogFile file = listedFile.getFile();
                     if (file == null) {
-                        Toaster.showToast("File returned null", Toaster.ERROR);
+                        Toaster.showToast("File returned null", Toaster.Status.ERROR);
                         return;
                     }
 
                     String msg = ECULogger.interpretLogFile(file);
                     if (msg.length() == 0) {
-                        Toaster.showToast("File returned empty", Toaster.WARNING);
+                        Toaster.showToast("File returned empty", Toaster.Status.WARNING);
                         return;
                     }
 
                     Spannable[] msgBlocks = ECUColor.colorMsgString(rootView.getContext(), msg);
-                    Toaster.showToast("Showing file on console", Toaster.INFO);
+                    Toaster.showToast("Showing file on console", Toaster.Status.INFO);
                     showConsole.run();
                     worker.post(new Runnable() {
                         int c = 0;
@@ -190,22 +190,22 @@ public class Logs extends Page {
                 });
                 break;
             case UPLOAD:
-                Toaster.showToast("Uploading File", Toaster.INFO);
+                Toaster.showToast("Uploading File", Toaster.Status.INFO);
                 worker.post(() -> PasteAPI.uploadPaste(ECULogger.stringifyLogFile(listedFile.getFile())));
                 break;
             case DELETE:
-                Toaster.showToast("Deleting File", Toaster.INFO);
+                Toaster.showToast("Deleting File", Toaster.Status.INFO);
                 LogFileIO.LogFile file = listedFile.getFile();
                 if (file != null) {
                     if (file.delete()) {
-                        Toaster.showToast("File deleted", Toaster.SUCCESS);
+                        Toaster.showToast("File deleted", Toaster.Status.SUCCESS);
                         removeEntry(listedFile);
                     } else {
-                        Toaster.showToast("Failed to delete file", Toaster.ERROR);
+                        Toaster.showToast("Failed to delete file", Toaster.Status.ERROR);
                     }
                     return;
                 }
-                Toaster.showToast("File returned null", Toaster.WARNING);
+                Toaster.showToast("File returned null", Toaster.Status.WARNING);
                 removeEntry(listedFile);
                 break;
         }

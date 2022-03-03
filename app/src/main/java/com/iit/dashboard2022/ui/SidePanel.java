@@ -151,7 +151,7 @@ public class SidePanel extends ConstraintLayout {
                 msg.append("closed");
             }
 
-            Toaster.showToast(msg.toString(), Toaster.INFO, Toast.LENGTH_SHORT, Gravity.END);
+            Toaster.showToast(msg.toString(), Toaster.Status.INFO, Toast.LENGTH_SHORT, Gravity.END);
 
             connToggle.post(() -> connToggle.setChecked(opened));
             console.setStatus(opened ? ConsoleWidget.Status.Connected : (attached ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));

@@ -7,12 +7,14 @@ import com.iit.dashboard2022.util.NearbySerial;
 import com.iit.dashboard2022.util.SerialCom;
 import com.iit.dashboard2022.util.USBSerial;
 
+import java.util.function.Consumer;
+
 public class ECUCommunication {
     private USBSerial USBMethod;
     private NearbySerial nearbyMethod;
-    private SerialCom.DataListener dataListener;
+    private Consumer<byte[]> dataListener;
 
-    protected void startSerial(Activity activity, SerialCom.DataListener receiveData) {
+    protected void startSerial(Activity activity, Consumer<byte[]> receiveData) {
         this.dataListener = receiveData;
         USBMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
         USBMethod.setDataListener(receiveData);
@@ -22,15 +24,15 @@ public class ECUCommunication {
         nearbyMethod.setDataListener(receiveData);
     }
 
-    public void setErrorListener(SerialCom.ErrorListener errorListener) {
+    public void setErrorListener(Consumer<Exception> errorListener) {
         USBMethod.setErrorListener(errorListener);
         nearbyMethod.setErrorListener(errorListener);
     }
 
-    public void setConnectionListener(SerialCom.StatusListener StatusListener) {
-        USBMethod.setStatusListener(StatusListener);
+    public void setConnectionListener(Consumer<Integer> statusListener) {
+        USBMethod.setStatusListener(statusListener);
         nearbyMethod.setStatusListener(flags -> {
-            if (!USBMethod.isAttached()) StatusListener.newStatus(flags);
+            if (!USBMethod.isAttached()) statusListener.accept(flags);
         });
     }
 
@@ -38,7 +40,7 @@ public class ECUCommunication {
         if (isChecked) {
             nearbyMethod.open();
             USBMethod.setDataListener(data -> {
-                dataListener.newData(data);
+                dataListener.accept(data);
                 nearbyMethod.write(data);
             });
         } else {

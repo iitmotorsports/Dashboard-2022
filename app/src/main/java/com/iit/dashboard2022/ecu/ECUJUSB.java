@@ -47,7 +47,7 @@ public class ECUJUSB {
 
     boolean receive(byte[] data) {
         if (SystemClock.elapsedRealtime() - JUSB_requesting > 30000) {
-            Toaster.showToast("Requesting JSON from USB Timeout", Toaster.WARNING);
+            Toaster.showToast("Requesting JSON from USB Timeout", Toaster.Status.WARNING);
             resetJUSB();
             return false;
         }
@@ -88,7 +88,7 @@ public class ECUJUSB {
                 }
                 mainECU.issueCommand(ECUCommands.PRINT_LOOKUP);
             } catch (DataFormatException e) {
-                Toaster.showToast("USB Serial JSON decompression failed", Toaster.ERROR);
+                Toaster.showToast("USB Serial JSON decompression failed", Toaster.Status.ERROR);
             } catch (IOException ignored) {
             }
             return true;
@@ -98,7 +98,7 @@ public class ECUJUSB {
 
     public void request() {
         resetJUSB();
-        Toaster.showToast("Requesting JSON over USB", Toaster.INFO);
+        Toaster.showToast("Requesting JSON over USB", Toaster.Status.INFO);
         JUSB_requesting = SystemClock.elapsedRealtime();
         mainECU.issueCommand(ECUCommands.PRINT_LOOKUP);
     }

@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class ECU extends ECUCommunication {
     public static final String LOG_TAG = "ECU";
@@ -97,7 +97,7 @@ public class ECU extends ECUCommunication {
 
         if (!ecuKeyMap.loaded()) {
             if (errorCount == 0)
-                Toaster.showToast("No JSON map Loaded", Toaster.WARNING, Toast.LENGTH_SHORT, Gravity.START);
+                Toaster.showToast("No JSON map Loaded", Toaster.Status.WARNING, Toast.LENGTH_SHORT, Gravity.START);
             errorCount = ++errorCount % 8;
             return;
         }

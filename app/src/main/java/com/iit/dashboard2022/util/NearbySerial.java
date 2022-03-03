@@ -75,20 +75,20 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
         public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution result) {
             switch (result.getStatus().getStatusCode()) {
                 case ConnectionsStatusCodes.STATUS_OK:
-                    Toaster.showToast("Nearby serial connected", Toaster.SUCCESS);
+                    Toaster.showToast("Nearby serial connected", Toaster.Status.SUCCESS);
                     setConnStatus(Attached | Opened);
                     client.stopAdvertising();
                     client.stopDiscovery();
                     return;
                 case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
-                    Toaster.showToast("Nearby serial connection rejected", Toaster.ERROR);
+                    Toaster.showToast("Nearby serial connection rejected", Toaster.Status.ERROR);
                     acceptDialog.dismiss();
                     break;
                 case ConnectionsStatusCodes.STATUS_ERROR:
-                    Toaster.showToast("Nearby serial connection dropped", Toaster.ERROR);
+                    Toaster.showToast("Nearby serial connection dropped", Toaster.Status.ERROR);
                     break;
                 default:
-                    Toaster.showToast("Nearby serial stream unknown error", Toaster.ERROR);
+                    Toaster.showToast("Nearby serial stream unknown error", Toaster.Status.ERROR);
             }
             setConnStatus(Detached | Closed);
         }
@@ -96,20 +96,20 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
         @Override
         public void onDisconnected(@NonNull String s) {
             setConnStatus(Detached | Closed);
-            Toaster.showToast("Nearby serial disconnected", Toaster.WARNING);
+            Toaster.showToast("Nearby serial disconnected", Toaster.Status.WARNING);
         }
 
     };
     private final EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
         public void onEndpointFound(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
-            Toaster.showToast("Found Endpoint, wait for connection", Toaster.INFO);
+            Toaster.showToast("Found Endpoint, wait for connection", Toaster.Status.INFO);
             client.requestConnection(USERNAME, endpointId, connectionLifecycleCallback);
         }
 
         @Override
         public void onEndpointLost(@NonNull String s) {
-            Toaster.showToast("Lost Endpoint", Toaster.INFO);
+            Toaster.showToast("Lost Endpoint", Toaster.Status.INFO);
         }
     };
     private String currentEndpointId, pendingEndpointId = "";
@@ -133,13 +133,13 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
     }
 
     private void acceptConnection(String endpointId) {
-        Toaster.showToast("Connection accepted with " + endpointId, Toaster.SUCCESS);
+        Toaster.showToast("Connection accepted with " + endpointId, Toaster.Status.SUCCESS);
         currentEndpointId = endpointId;
         client.acceptConnection(endpointId, payloadCallback);
     }
 
     private void rejectConnection(String endpointId) {
-        Toaster.showToast("Connection Rejected!", Toaster.ERROR);
+        Toaster.showToast("Connection Rejected!", Toaster.Status.ERROR);
         client.rejectConnection(endpointId);
     }
 
@@ -193,18 +193,18 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
 
     private void startAdvertising() {
         client.startAdvertising(USERNAME, SERVICE_ID, connectionLifecycleCallback, advertisingOptions)
-                .addOnSuccessListener((Void unused) -> Toaster.showToast("Searching for receiver", Toaster.INFO))
+                .addOnSuccessListener((Void unused) -> Toaster.showToast("Searching for receiver", Toaster.Status.INFO))
                 .addOnFailureListener((Exception e) -> {
-                    Toaster.showToast("Failed to start search for a receiver", Toaster.ERROR, Toast.LENGTH_LONG);
+                    Toaster.showToast("Failed to start search for a receiver", Toaster.Status.ERROR, Toast.LENGTH_LONG);
                     e.printStackTrace();
                 });
     }
 
     private void startDiscovery() {
         client.startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
-                .addOnSuccessListener((Void unused) -> Toaster.showToast("Searching for broadcaster", Toaster.INFO))
+                .addOnSuccessListener((Void unused) -> Toaster.showToast("Searching for broadcaster", Toaster.Status.INFO))
                 .addOnFailureListener((Exception e) -> {
-                    Toaster.showToast("Failed to start search for a broadcaster", Toaster.ERROR, Toast.LENGTH_LONG);
+                    Toaster.showToast("Failed to start search for a broadcaster", Toaster.Status.ERROR, Toast.LENGTH_LONG);
                     e.printStackTrace();
                 });
     }
@@ -215,7 +215,7 @@ public class NearbySerial extends SerialCom { // TODO: ditch google API
             return false;
         }
         if (!isLocationEnabled(activity)) {
-            Toaster.showToast("Location services must be on!", Toaster.ERROR);
+            Toaster.showToast("Location services must be on!", Toaster.Status.ERROR);
             return false;
         }
         return true;

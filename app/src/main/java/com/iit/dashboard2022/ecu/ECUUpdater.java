@@ -48,11 +48,11 @@ public class ECUUpdater {
             dashboardPage.setPowerValue(usage);
         });
         /* INDICATORS */
-        ecuMsgHandler.getMessage(ECUMsgHandler.Beat).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Lag, false), ECUMsg.ON_RECEIVE);
+        ecuMsgHandler.getMessage(ECUMsgHandler.Beat).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Lag, false), ECUMsg.UpdateMethod.ON_RECEIVE);
         ecuMsgHandler.getMessage(ECUMsgHandler.Lag).addMessageListener(val -> {
             dashboardPage.setIndicator(Indicators.Indicator.Lag, true);
             dashboardPage.setLagTime(val);
-        }, ECUMsg.ON_RECEIVE);
+        }, ECUMsg.UpdateMethod.ON_RECEIVE);
         ecuMsgHandler.getMessage(ECUMsgHandler.Fault).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Fault, val > 0));
         ecuMsgHandler.getMessage(ECUMsgHandler.StartLight).addMessageListener(val -> dashboardPage.setStartLight(val == 1));
 
@@ -84,7 +84,7 @@ public class ECUUpdater {
             messages[i].addMessageListener(val -> {
                 values[finalI] = val;
                 liveDataPage.updateValue(finalI);
-            }, ECUMsg.ON_RECEIVE);
+            }, ECUMsg.UpdateMethod.ON_RECEIVE);
         }
     }
 

@@ -41,7 +41,7 @@ public class JSONLoader {
             writer = new PrintWriter(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Toaster.showToast("Failed to save JSON to system", Toaster.ERROR, Toast.LENGTH_LONG);
+            Toaster.showToast("Failed to save JSON to system", Toaster.Status.ERROR, Toast.LENGTH_LONG);
             return;
         }
         writer.print(jsonStr);
@@ -63,7 +63,7 @@ public class JSONLoader {
             br.close();
             return text.toString();
         } catch (IOException e) {
-            Toaster.showToast("Failed to load JSON from system", Toaster.ERROR, Toast.LENGTH_LONG);
+            Toaster.showToast("Failed to load JSON from system", Toaster.Status.ERROR, Toast.LENGTH_LONG);
         }
         return null;
     }

@@ -206,13 +206,13 @@ public class ListedFile extends FrameLayout {
     }
 
     private void onDeletePressed(View v) {
-        Toaster.showToast("Hold to confirm", Toaster.INFO);
+        Toaster.showToast("Hold to confirm", Toaster.Status.INFO);
     }
 
     @SuppressWarnings("SameReturnValue")
     private boolean onDeleteLongPressed(View v) {
         if (file.isActiveFile())
-            Toaster.showToast("Cannot delete active file", Toaster.WARNING);
+            Toaster.showToast("Cannot delete active file", Toaster.Status.WARNING);
         else
             notifyListener(ListedFileAction.DELETE);
         return true;

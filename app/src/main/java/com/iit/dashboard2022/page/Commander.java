@@ -69,11 +69,11 @@ public class Commander extends Page {
 
         submitBtn.setOnClickListener(view -> {
             if (frontECU == null || !frontECU.isOpen()) {
-                Toaster.showToast("Unable to submit, not connected to device", Toaster.ERROR);
+                Toaster.showToast("Unable to submit, not connected to device", Toaster.Status.ERROR);
                 return;
             }
             valueEdit.clearFocus();
-            Toaster.showToast("Submitting Value", Toaster.INFO);
+            Toaster.showToast("Submitting Value", Toaster.Status.INFO);
             frontECU.issueCommand(ECUCommands.SET_SERIAL_VAR);
 
             ByteBuffer bb = ByteBuffer.allocate(8);
@@ -132,7 +132,7 @@ public class Commander extends Page {
 
     public void setECU(ECU frontECU) {
         this.frontECU = frontECU;
-        frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.SerialVarResponse).addMessageListener(val -> Toaster.showToast("Value received (truncated): " + val, Toaster.SUCCESS), ECUMsg.ON_RECEIVE);
+        frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.SerialVarResponse).addMessageListener(val -> Toaster.showToast("Value received (truncated): " + val, Toaster.Status.SUCCESS), ECUMsg.UpdateMethod.ON_RECEIVE);
     }
 
     @UiThread
