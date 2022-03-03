@@ -2,6 +2,7 @@
 <img src="" alt="Logo" width="250" height="250">
 
 # Dashboard
+
 <p>
   <b>Dashboard app for the 2021-2022 IIT SAE car.</b>
   <br/>
@@ -15,4 +16,5 @@
 </div>
 
 ## License
+
 Distributed under the GNU General Public License v3. See `LICENSE`

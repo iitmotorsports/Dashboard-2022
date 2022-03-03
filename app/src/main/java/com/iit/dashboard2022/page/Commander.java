@@ -16,7 +16,6 @@ import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUCommands;
 import com.iit.dashboard2022.ecu.ECUMsg;
 import com.iit.dashboard2022.ecu.ECUMsgHandler;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
@@ -72,7 +71,7 @@ public class Commander extends Page {
             }
             valueEdit.clearFocus();
             Toaster.showToast("Submitting Value", Toaster.Status.INFO);
-            frontECU.issueCommand(ECUCommands.SET_SERIAL_VAR);
+            frontECU.issueCommand(ECU.Command.SET_SERIAL_VAR);
 
             ByteBuffer bb = ByteBuffer.allocate(8);
             bb.order(ByteOrder.LITTLE_ENDIAN);

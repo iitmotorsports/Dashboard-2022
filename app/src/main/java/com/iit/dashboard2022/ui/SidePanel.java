@@ -12,7 +12,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUCommands;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Errors;
 import com.iit.dashboard2022.page.LiveData;
@@ -170,9 +169,9 @@ public class SidePanel extends ConstraintLayout {
         connToggle.setHasToggleMediator(true);
         chargeToggle.setHasToggleMediator(true);
         reverseSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            frontECU.issueCommand(ECUCommands.TOGGLE_REVERSE); // TODO: Use discrete ON / OFF, instead of a toggle
+            frontECU.issueCommand(ECU.Command.TOGGLE_REVERSE); // TODO: Use discrete ON / OFF, instead of a toggle
         });
-        chargeToggle.setOnClickListener(v -> frontECU.issueCommand(ECUCommands.CHARGE));
+        chargeToggle.setOnClickListener(v -> frontECU.issueCommand(ECU.Command.CHARGE));
     }
 
     public void onLayoutChange() {

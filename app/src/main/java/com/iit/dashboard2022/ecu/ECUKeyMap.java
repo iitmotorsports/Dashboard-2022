@@ -18,9 +18,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 public class ECUKeyMap {
-    private final List<StatusListener> statusListeners = new ArrayList<>();
+    private final List<BiConsumer<Boolean, String>> statusListeners = new ArrayList<>();
     private JSONLoader jsonLoader;
     private boolean pseudoMode = false;
 
@@ -56,14 +57,12 @@ public class ECUKeyMap {
         return null;
     }
 
-    public void addStatusListener(@NonNull StatusListener statusListener) {
+    public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
         statusListeners.add(statusListener);
     }
 
     private void notifyStatusListeners(boolean jsonLoaded, String rawJson) {
-        for (StatusListener sl : statusListeners) {
-            sl.run(jsonLoaded, rawJson);
-        }
+        statusListeners.forEach(b -> b.accept(jsonLoaded, rawJson));
     }
 
     public boolean loaded() {
@@ -190,6 +189,7 @@ public class ECUKeyMap {
             }
 
         } catch (JSONException e) {
+
             e.printStackTrace();
             Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
             return loaded();
@@ -208,9 +208,4 @@ public class ECUKeyMap {
         stringLookUp = newStringLookup;
         return true;
     }
-
-    public interface StatusListener {
-        void run(boolean jsonLoaded, @Nullable String rawJson);
-    }
-
 }

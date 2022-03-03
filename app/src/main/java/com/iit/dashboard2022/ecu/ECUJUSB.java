@@ -90,7 +90,7 @@ public class ECUJUSB {
 
                     mainECU.loadJSONString(outputString);
                 }
-                mainECU.issueCommand(ECUCommands.PRINT_LOOKUP);
+                mainECU.issueCommand(ECU.Command.PRINT_LOOKUP);
             } catch (DataFormatException e) {
                 Toaster.showToast("USB Serial JSON decompression failed", Toaster.Status.ERROR);
             } catch (IOException ignored) {
@@ -104,7 +104,7 @@ public class ECUJUSB {
         resetJUSB();
         Toaster.showToast("Requesting JSON over USB", Toaster.Status.INFO);
         JUSB_requesting = SystemClock.elapsedRealtime();
-        mainECU.issueCommand(ECUCommands.PRINT_LOOKUP);
+        mainECU.issueCommand(ECU.Command.PRINT_LOOKUP);
     }
 
 }

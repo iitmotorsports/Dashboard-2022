@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.function.BiConsumer;
 
 public class ECU extends ECUCommunication {
     public static final String LOG_TAG = "ECU";
@@ -120,8 +121,8 @@ public class ECU extends ECUCommunication {
         }
     }
 
-    public void issueCommand(@ECUCommands.ECUCommand int Command) {
-        write(ECUCommands.COMMANDS[Command]);
+    public void issueCommand(Command command) {
+        write(command.getData());
     }
 
     public void clear() {
@@ -149,7 +150,7 @@ public class ECU extends ECUCommunication {
         super.setErrorListener(exception -> errorListener.newError(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
     }
 
-    public void addStatusListener(@NonNull ECUKeyMap.StatusListener statusListener) {
+    public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
         ecuKeyMap.addStatusListener(statusListener);
     }
 
@@ -330,4 +331,26 @@ public class ECU extends ECUCommunication {
         void newError(String tag, String msg);
     }
 
+    public enum Command {
+        CHARGE(123),
+        SEND_CAN_BUS_MESSAGE(111),
+        CLEAR_FAULT(45),
+        TOGGLE_CAN_BUS_SNIFF(127),
+        TOGGLE_MIRROR_MODE(90),
+        ENTER_MIRROR_SET(-1),
+        SEND_ECHO(84),
+        TOGGLE_REVERSE(25),
+        PRINT_LOOKUP(101),
+        SET_SERIAL_VAR(61);
+
+        private final byte[] data;
+
+        Command(int id) {
+            this.data = new byte[]{ Integer.valueOf(id).byteValue() };
+        }
+
+        public byte[] getData() {
+            return data;
+        }
+    }
 }
