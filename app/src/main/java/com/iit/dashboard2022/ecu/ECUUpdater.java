@@ -3,7 +3,6 @@ package com.iit.dashboard2022.ecu;
 import androidx.annotation.NonNull;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
-import com.iit.dashboard2022.telemetry.TelemetryHandler;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.Indicators;
 
@@ -24,11 +23,6 @@ public class ECUUpdater {
         });
 
         ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> {
-            if (TelemetryHandler.getInstance().isConnected()) {
-                if (TelemetryHandler.beatField != null) {
-                    TelemetryHandler.beatField.setNumber(Math.max(Math.min(val, 100), 0) / 100f);
-                }
-            }
             dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f);
         });
         ecuMsgHandler.getMessage(ECUMsgHandler.PowerGauge).addMessageListener(val -> { // NOTE: Actual MC power not being used

@@ -11,7 +11,7 @@ public class ECUMsg {
 
     public final String stringTag, stringMsg;
     private final DataType dataType;
-    public Map<Consumer<Long>, UpdateMethod> messageListeners = Maps.newHashMap();
+    public final Map<Consumer<Long>, UpdateMethod> messageListeners = Maps.newHashMap();
     public long value = 0;
 
     public ECUMsg(String stringTag, String stringMsg, DataType dataType) {

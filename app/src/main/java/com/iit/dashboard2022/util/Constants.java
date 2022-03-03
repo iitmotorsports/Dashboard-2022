@@ -1,6 +1,18 @@
-package com.iit.dashboard2022.ecu;
+package com.iit.dashboard2022.util;
 
-public final class ECUFaults {
+/**
+ * Utility class containing constants for the dashboard
+ *
+ * @author Noah Husby
+ */
+public class Constants {
+    // PasteAPI
+    public static final String PASTE_API = "https://api.paste.ee/v1/pastes";
+    public static final String JSON_API_BASE64 = "dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=";
+    public static final String LOG_API_BASE64 = "dTBXUXZabUNsdVFkZWJycUlUNjZSRHJoR1paTlVXaXE3U09LTVlPUE8=";
+
+    // ECU
+    // TODO: Replace FAULTS
     public static final String[] FAULTS = {
             "[ LOG ] MC0 Fault: Hardware Gate/Desaturation Fault",
             "[ LOG ] MC0 Fault: HW over-current Fault",

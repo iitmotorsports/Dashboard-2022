@@ -4,6 +4,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.iit.dashboard2022.ecu.ECUMsg.DataType;
+import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.Toaster;
 
 import java.lang.annotation.Retention;
@@ -35,7 +36,7 @@ public class ECUMsgHandler {
     public static final int StartLight = 20;
     public static final int State = 21; // State is special :)
     public static final int SerialVarResponse = 22;
-    private final HashMap<Long, String> faultMap = new HashMap<>(ECUFaults.FAULTS.length);
+    private final HashMap<Long, String> faultMap = new HashMap<>(Constants.FAULTS.length);
     private final HashMap<Long, ECUMsg> messageMap = new HashMap<>();
     private final HashMap<Long, STATE> stateMap = new HashMap<>();
     private final ECUMsg[] messages = new ECUMsg[23];
@@ -76,7 +77,7 @@ public class ECUMsgHandler {
 
     private void getFaultStrIDs() {
         faultMap.clear();
-        for (String fMsg : ECUFaults.FAULTS) {
+        for (String fMsg : Constants.FAULTS) {
             Integer i = keyMap.getStrID(fMsg);
             if (i != null) {
                 faultMap.put(i.longValue(), fMsg);

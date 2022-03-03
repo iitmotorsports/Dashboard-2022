@@ -24,7 +24,7 @@
                 android:name=".SplashActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:launchMode="singleInstance"
-                android:screenOrientation="landscape"></activity>
+                android:screenOrientation="landscape"/>
 
         <activity
                 android:name=".MainActivity"

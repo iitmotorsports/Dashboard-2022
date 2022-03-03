@@ -222,7 +222,7 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
             newError();
             if (!testingState) {
                 uiHandle.post(() -> {
-                    consoleStatus.setText(String.format(Locale.US, statusFormat, Status.Testing.toString()));
+                    consoleStatus.setText(String.format(Locale.US, statusFormat, Status.Testing));
                     consoleStatus.setBackgroundColor(getResources().getColor(Status.Testing.color, getContext().getTheme()));
                 });
                 testingState = true;

@@ -19,21 +19,18 @@ import java.util.concurrent.Executors;
 
 public class PasteAPI {
 
-    private static final String API_URL = "https://api.paste.ee/v1/pastes";
     private static final String[] dataPlate =
             {
                     "{\"sections\":[{\"contents\":\"",
                     "\"}]}"
             };
 
-    @SuppressWarnings("SpellCheckingInspection")
     private static String getJSON_APIKey() {
-        return new String(android.util.Base64.decode("dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=", android.util.Base64.DEFAULT));
+        return new String(android.util.Base64.decode(Constants.JSON_API_BASE64, android.util.Base64.DEFAULT));
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
     private static String getLOG_APIKey() {
-        return new String(android.util.Base64.decode("dTBXUXZabUNsdVFkZWJycUlUNjZSRHJoR1paTlVXaXE3U09LTVlPUE8=", android.util.Base64.DEFAULT));
+        return new String(android.util.Base64.decode(Constants.LOG_API_BASE64, android.util.Base64.DEFAULT));
     }
 
     public static boolean checkInternetConnection(Context context) {
@@ -80,7 +77,7 @@ public class PasteAPI {
         executor.submit(() -> {
             HttpsURLConnection listConn = null;
             try {
-                URL url = new URL(API_URL);
+                URL url = new URL(Constants.PASTE_API);
                 listConn = (HttpsURLConnection) url.openConnection();
 
                 listConn.setDoOutput(true);
@@ -121,7 +118,7 @@ public class PasteAPI {
             HttpsURLConnection listConn = null;
             HttpsURLConnection getConn = null;
             try {
-                URL url = new URL(API_URL);
+                URL url = new URL(Constants.PASTE_API);
                 listConn = (HttpsURLConnection) url.openConnection();
 
                 listConn.setDoInput(true);
@@ -138,7 +135,7 @@ public class PasteAPI {
 
                 listConn.disconnect();
 
-                url = new URL(API_URL + "/" + ID);
+                url = new URL(Constants.PASTE_API + "/" + ID);
                 getConn = (HttpsURLConnection) url.openConnection();
 
                 getConn.setDoInput(true);

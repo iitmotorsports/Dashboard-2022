@@ -1,15 +1,12 @@
 package com.iit.dashboard2022.util;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.function.Consumer;
 
 public abstract class SerialCom {
 
-    public static final int Attached = 1 << 0; // Physical connection
+    public static final int Attached = 1; // Physical connection
     public static final int Detached = 1 << 1; // Physical disconnection
     public static final int Opened = 1 << 2; // Digital connection
     public static final int Closed = 1 << 3; // Digital disconnection
@@ -67,8 +64,4 @@ public abstract class SerialCom {
 
     public abstract void write(byte[] buffer);
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ Attached, Detached, Opened, Closed })
-    @interface Status {
-    }
 }
