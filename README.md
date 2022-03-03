@@ -14,5 +14,9 @@
 [![](https://img.shields.io/tokei/lines/github/illinois-tech-motorsports/dashboard-2022)](https://github.com/illinois-tech-motorsports/dashboard-2022)
 </div>
 
+## About
+
+<img src="https://github.com/Illinois-Tech-Motorsports/Dashboard-2022/blob/feature/telemetry/raw-assets/uitest.gif?raw=true" width=100%/>
+
 ## License
 Distributed under the GNU General Public License v3. See `LICENSE`
