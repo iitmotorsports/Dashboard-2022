@@ -3,16 +3,16 @@
     <item>
         <shape android:shape="rectangle">
             <padding
-                android:bottom="8dp"
-                android:left="8dp"
-                android:right="8dp"
-                android:top="8dp" />
+                    android:bottom="8dp"
+                    android:left="8dp"
+                    android:right="8dp"
+                    android:top="8dp"/>
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="4dp" />
-            <solid android:color="@android:color/black" />
+            <corners android:radius="4dp"/>
+            <solid android:color="@android:color/black"/>
         </shape>
     </item>
 </layer-list>

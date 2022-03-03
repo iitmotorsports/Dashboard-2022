@@ -4,10 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMsgHandler;
@@ -103,7 +101,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     }
 
     public void reset() {
-        if (dashStartLight != null)
+        if (dashStartLight != null) {
             dashStartLight.postDelayed(() -> {
                 setSpeedPercentage(0);
                 setBatteryPercentage(0);
@@ -117,10 +115,12 @@ public class CarDashboard extends Page implements UITester.TestUI {
                     setIndicator(indicator, false);
                 }
                 setStartLight(false);
-                if (frontECU != null)
+                if (frontECU != null) {
                     frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.State).update(-1);
+                }
                 setState(ECUMsgHandler.STATE.Initializing.toString());
             }, 20);
+        }
     }
 
     @NonNull
@@ -146,8 +146,9 @@ public class CarDashboard extends Page implements UITester.TestUI {
         } else {
             setState(UITester.rndStr((int) (percent * 25)));
             for (Indicators.Indicator i : Indicators.Indicator.values()) {
-                if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9)
+                if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9) {
                     setIndicator(i, percent > 0.5);
+                }
             }
             setIndicator(Indicators.Indicator.Lag, true);
             setLagTime((long) (percent * 5000));

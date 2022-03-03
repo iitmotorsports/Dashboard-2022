@@ -10,14 +10,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.PrecomputedTextCompat;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
@@ -162,8 +160,9 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
     }
 
     public void enable(boolean enabled) {
-        if (run == enabled)
+        if (run == enabled) {
             return;
+        }
         if (enabled) {
             run = true;
         } else {
@@ -209,10 +208,11 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
 
     @Override
     public void testUI(float percent) {
-        if (percent > 0.1)
+        if (percent > 0.1) {
             post(UITester.rndStr((int) (percent * 50)));
-        else
+        } else {
             systemPost(UITester.rndStr((int) (percent * 10)), UITester.rndStr((int) (percent * 50)));
+        }
 
         if (percent == 0) {
             uiHandle.postDelayed(this::clear, 100);

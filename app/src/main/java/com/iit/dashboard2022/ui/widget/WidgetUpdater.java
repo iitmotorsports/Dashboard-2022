@@ -1,7 +1,6 @@
 package com.iit.dashboard2022.ui.widget;
 
 import android.os.SystemClock;
-
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 
 import java.util.HashSet;
@@ -72,8 +71,9 @@ public class WidgetUpdater {
         }
 
         private boolean enoughMinTimePassed() {
-            if (lastTime + UPDATE_TIME_MS > SystemClock.uptimeMillis())
+            if (lastTime + UPDATE_TIME_MS > SystemClock.uptimeMillis()) {
                 return false;
+            }
 
             lastTime = SystemClock.uptimeMillis();
 

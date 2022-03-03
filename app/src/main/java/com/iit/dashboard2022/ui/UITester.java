@@ -5,7 +5,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import com.iit.dashboard2022.util.Toaster;
 
 import java.util.HashSet;
@@ -62,7 +61,7 @@ public class UITester {
     public static void enable(boolean enabled) {
         if (worker == null) {
             testThread.start();
-//            worker = new Handler(testThread.getLooper());
+            //            worker = new Handler(testThread.getLooper());
             worker = new Handler(Looper.getMainLooper());
         }
         if (enabled) {

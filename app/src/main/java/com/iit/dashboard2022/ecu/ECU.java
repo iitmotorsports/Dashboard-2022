@@ -3,10 +3,8 @@ package com.iit.dashboard2022.ecu;
 import android.os.SystemClock;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
@@ -15,7 +13,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.function.Consumer;
 
 public class ECU extends ECUCommunication {
     public static final String LOG_TAG = "ECU";
@@ -47,10 +44,12 @@ public class ECU extends ECUCommunication {
         ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
             if (jsonLoaded) {
                 ecuMsgHandler.loadMessageKeys();
-                if (rawJson != null)
+                if (rawJson != null) {
                     ecuLogger.newLog(rawJson);
-                if (jsonLoadListener != null)
+                }
+                if (jsonLoadListener != null) {
                     jsonLoadListener.run();
+                }
             }
         });
 
@@ -82,22 +81,25 @@ public class ECU extends ECUCommunication {
      * @return Formatted message string
      */
     static String formatMsg(long epoch, String tagString, String msgString, long number) {
-        if (tagString == null || msgString == null)
+        if (tagString == null || msgString == null) {
             return "";
+        }
         d.setTime(epoch);
         String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(d) + ' ' : "";
         return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
     }
 
     private void receiveData(byte[] data) {
-        if (J_USB.JUSB_requesting != 0 && J_USB.receive(data))
+        if (J_USB.JUSB_requesting != 0 && J_USB.receive(data)) {
             return;
+        }
 
         long epoch = SystemClock.elapsedRealtime();
 
         if (!ecuKeyMap.loaded()) {
-            if (errorCount == 0)
+            if (errorCount == 0) {
                 Toaster.showToast("No JSON map Loaded", Toaster.Status.WARNING, Toast.LENGTH_SHORT, Gravity.START);
+            }
             errorCount = ++errorCount % 8;
             return;
         }
@@ -113,8 +115,9 @@ public class ECU extends ECUCommunication {
     }
 
     public void requestJSONFromUSBSerial() {// Request ZLib compressed JSON map if we are connected directly
-        if (isOpen())
+        if (isOpen()) {
             J_USB.request();
+        }
     }
 
     public void issueCommand(@ECUCommands.ECUCommand int Command) {
@@ -151,8 +154,9 @@ public class ECU extends ECUCommunication {
     }
 
     public long requestMsgID(String stringTag, String stringMsg) {
-        if (ecuKeyMap != null)
+        if (ecuKeyMap != null) {
             return ecuKeyMap.requestMsgID(stringTag, stringMsg);
+        }
         return -1;
     }
 
@@ -247,8 +251,9 @@ public class ECU extends ECUCommunication {
             try {
                 System.arraycopy(raw_data, i, data_block, 0, 8);
             } catch (ArrayIndexOutOfBoundsException e) {
-                if (errorListener != null)
+                if (errorListener != null) {
                     errorListener.newError(LOG_TAG, "Received cutoff array");
+                }
                 continue;
             }
             updateData(data_block);
@@ -272,16 +277,18 @@ public class ECU extends ECUCommunication {
                 try {
                     System.arraycopy(raw_data, i, data_block, 0, 8);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    if (errorListener != null)
+                    if (errorListener != null) {
                         errorListener.newError(LOG_TAG, "Received cutoff array");
+                    }
                     continue;
                 }
                 updateData(data_block);
                 logRawData(epoch, data_block);
                 output.append(ByteSplit.bytesToHex(data_block)).append("\n");
             }
-            if (output.length() == 0)
+            if (output.length() == 0) {
                 return "";
+            }
             return output.substring(0, output.length() - 1);
         } else if (interpreterMode == MODE.ASCII) {
             for (int i = 0; i < raw_data.length; i += 8) {
@@ -296,8 +303,9 @@ public class ECU extends ECUCommunication {
                 output.append(updateFormattedData(epoch, data_block));
             }
             if (output.length() == 0) {
-                if (errorListener != null)
+                if (errorListener != null) {
                     errorListener.newError(LOG_TAG, "USB serial might be overwhelmed!");
+                }
                 return output.toString();
             }
             return output.substring(0, output.length() - 1);

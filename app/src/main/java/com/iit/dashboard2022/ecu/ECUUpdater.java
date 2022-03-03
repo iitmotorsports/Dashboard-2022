@@ -1,14 +1,11 @@
 package com.iit.dashboard2022.ecu;
 
 import androidx.annotation.NonNull;
-
-import com.google.android.gms.common.internal.TelemetryLogging;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.telemetry.TelemetryHandler;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.Indicators;
-import com.iit.dashboard2022.util.Toaster;
 
 public class ECUUpdater {
 
@@ -27,8 +24,8 @@ public class ECUUpdater {
         });
 
         ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> {
-            if(TelemetryHandler.getInstance().isConnected()) {
-                if(TelemetryHandler.beatField != null) {
+            if (TelemetryHandler.getInstance().isConnected()) {
+                if (TelemetryHandler.beatField != null) {
                     TelemetryHandler.beatField.setNumber(Math.max(Math.min(val, 100), 0) / 100f);
                 }
             }
@@ -40,8 +37,9 @@ public class ECUUpdater {
             int usage = (int) (avgMCVolt * ecuMsgHandler.requestValue(ECUMsgHandler.BMSDischargeLim));
 
             dashboardPage.setPowerLimit((int) limit);
-            if (limit == 0)
+            if (limit == 0) {
                 limit = 1;
+            }
 
             float percent = Math.abs(usage / limit) * 100f;
             dashboardPage.setPowerPercentage(Math.max(Math.min(percent, 100), 0) / 100f);
@@ -58,8 +56,9 @@ public class ECUUpdater {
 
         /* State Listener */
         ecuMsgHandler.setGlobalStateListener(state -> {
-            if (state == null)
+            if (state == null) {
                 return;
+            }
             dashboardPage.setState(state.title);
             dashboardPage.setIndicator(Indicators.Indicator.Waiting, state == ECUMsgHandler.STATE.Idle);
             dashboardPage.setIndicator(Indicators.Indicator.Charging, state == ECUMsgHandler.STATE.Charging);
@@ -99,8 +98,9 @@ public class ECUUpdater {
         }
 
         stringMsg = stringMsg.trim();
-        if (stringMsg.endsWith(":"))
+        if (stringMsg.endsWith(":")) {
             stringMsg = stringMsg.substring(0, stringMsg.length() - 1);
+        }
 
         return stringMsg;
     }

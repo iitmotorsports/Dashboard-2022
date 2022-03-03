@@ -2,7 +2,6 @@ package com.iit.dashboard2022.telemetry;
 
 import com.husbylabs.warptables.Field;
 import com.husbylabs.warptables.Status;
-import com.husbylabs.warptables.Table;
 import com.husbylabs.warptables.WTClient;
 import com.husbylabs.warptables.WarpTablesAPI;
 import com.iit.dashboard2022.util.Toaster;
@@ -13,8 +12,8 @@ import java.net.InetSocketAddress;
 /**
  * A telemetry handler utilizing the WarpTables API
  *
- * @see <a href="https://husbylabs.com/warptables">https://husbylabs.com/warptables</a>
  * @author Noah Husby
+ * @see <a href="https://husbylabs.com/warptables">https://husbylabs.com/warptables</a>
  */
 public class TelemetryHandler {
 
@@ -57,7 +56,7 @@ public class TelemetryHandler {
      * Stops the WarpTables instance
      */
     public void stop() {
-        if(client != null) {
+        if (client != null) {
             client.stop();
             client = null;
         }
@@ -77,11 +76,11 @@ public class TelemetryHandler {
     }
 
 
-
     /**
      * Gets the instance of the TelemetryHandler
-     *
+     * <p>
      * To be replaced by Lombok
+     *
      * @return {@link TelemetryHandler}
      */
     public static TelemetryHandler getInstance() {

@@ -2,7 +2,6 @@ package com.iit.dashboard2022.util;
 
 import android.app.Activity;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -66,8 +65,9 @@ public class LogFileIO {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append("\n");
-                if (line.trim().equals(lineStop.trim()))
+                if (line.trim().equals(lineStop.trim())) {
                     break;
+                }
             }
             reader.close();
         } catch (IOException e) {
@@ -122,7 +122,7 @@ public class LogFileIO {
         List<LogFile> fileList = new ArrayList<>();
         if (files != null) {
             for (LogFile file : files) {
-                if (file.getName().endsWith(".log"))
+                if (file.getName().endsWith(".log")) {
                     if (logFileSanitizer != null && !file.isActiveFile() && logFileSanitizer.shouldSanitize(file)) {
                         if (!file.delete()) {
                             Toaster.showToast("Failed to delete empty log: " + file.getFormattedName(), Toaster.Status.WARNING);
@@ -130,6 +130,7 @@ public class LogFileIO {
                     } else {
                         fileList.add(file);
                     }
+                }
             }
         }
         fileList.sort(Comparator.naturalOrder());
@@ -138,12 +139,13 @@ public class LogFileIO {
     }
 
     public void write(byte[] bytes) {
-        if (opened)
+        if (opened) {
             try {
                 activeFileStream.write(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
     }
 
     public interface LogFileSanitizer {
@@ -167,8 +169,9 @@ public class LogFileIO {
 
         @Override
         public boolean delete() {
-            if (isActiveFile())
+            if (isActiveFile()) {
                 return false;
+            }
             return super.delete();
         }
 
@@ -177,8 +180,9 @@ public class LogFileIO {
             name = name.substring(PREFIX.length(), name.length() - SUFFIX.length());
             try {
                 Date date = new SimpleDateFormat(simpleDataFormatString, Locale.US).parse(name);
-                if (date != null)
+                if (date != null) {
                     name = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.US).format(date);
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
             }

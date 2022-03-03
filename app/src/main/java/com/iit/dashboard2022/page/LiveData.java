@@ -5,10 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
@@ -48,10 +46,11 @@ public class LiveData extends Page implements UITester.TestUI {
         int i = 0;
         for (String title : titles) {
             entries[i] = new LiveDataEntry(title, rootView.getContext());
-            if (alt)
+            if (alt) {
                 liveDataEntries1.addView(entries[i++]);
-            else
+            } else {
                 liveDataEntries2.addView(entries[i++]);
+            }
             alt = !alt;
         }
 
@@ -67,24 +66,28 @@ public class LiveData extends Page implements UITester.TestUI {
     }
 
     public void reset() {
-        if (values != null)
+        if (values != null) {
             Arrays.fill(values, 0);
-        if (entries != null)
+        }
+        if (entries != null) {
             for (LiveDataEntry lde : entries) {
                 lde.clear();
             }
+        }
     }
 
     public void updateValue(int index) {
-        if (enabled && values != null)
+        if (enabled && values != null) {
             entries[index].setValue(values[index]);
+        }
     }
 
     public void updateValues() {
-        if (enabled && values != null)
+        if (enabled && values != null) {
             for (int i = 0; i < values.length; i++) {
                 entries[i].setValue(values[i]);
             }
+        }
     }
 
     @NonNull
@@ -106,7 +109,7 @@ public class LiveData extends Page implements UITester.TestUI {
 
     @Override
     public void testUI(float percent) {
-        if (enabled && values != null)
+        if (enabled && values != null) {
             if (percent == 0) {
                 reset();
             } else {
@@ -116,5 +119,6 @@ public class LiveData extends Page implements UITester.TestUI {
                     }
                 }
             }
+        }
     }
 }

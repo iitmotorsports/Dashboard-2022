@@ -8,12 +8,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.iit.dashboard2022.R;
@@ -110,8 +108,9 @@ public class ListedFile extends FrameLayout {
     }
 
     public static ListedFile getInstance(@NonNull Context context, @NonNull LogFileIO.LogFile file) {
-        if (inactiveEntries.size() == 0)
+        if (inactiveEntries.size() == 0) {
             new ListedFile(context);
+        }
 
         ListedFile entry = inactiveEntries.get(0);
         entry.setFile(file);
@@ -124,8 +123,9 @@ public class ListedFile extends FrameLayout {
     }
 
     public static void deselectActive() {
-        if (lastSelected != null)
+        if (lastSelected != null) {
             lastSelected.deselect();
+        }
     }
 
     public void destroy() {
@@ -134,8 +134,9 @@ public class ListedFile extends FrameLayout {
     }
 
     public void recycle() {
-        if (lastSelected == this)
+        if (lastSelected == this) {
             lastSelected = null;
+        }
         if (animViewShow == this) {
             animatorShow.cancel();
             animViewShow = null;
@@ -159,10 +160,12 @@ public class ListedFile extends FrameLayout {
     }
 
     public void select() {
-        if (lastSelected == this)
+        if (lastSelected == this) {
             return;
-        if (lastSelected != null)
+        }
+        if (lastSelected != null) {
             lastSelected.deselect();
+        }
         lastSelected = this;
         animateVisibility(true);
     }
@@ -184,8 +187,9 @@ public class ListedFile extends FrameLayout {
     }
 
     public void setFile(LogFileIO.LogFile file) {
-        if (!inactiveEntries.contains(this))
+        if (!inactiveEntries.contains(this)) {
             return;
+        }
         inactiveEntries.remove(this);
         setVisibility(VISIBLE);
         this.file = file;
@@ -193,8 +197,9 @@ public class ListedFile extends FrameLayout {
     }
 
     private void notifyListener(ListedFileAction listedFileAction) {
-        if (file != null && globalFileListListener != null)
+        if (file != null && globalFileListListener != null) {
             globalFileListListener.onListedFileAction(this, listedFileAction);
+        }
     }
 
     private void onShowPressed(View v) {
@@ -211,10 +216,11 @@ public class ListedFile extends FrameLayout {
 
     @SuppressWarnings("SameReturnValue")
     private boolean onDeleteLongPressed(View v) {
-        if (file.isActiveFile())
+        if (file.isActiveFile()) {
             Toaster.showToast("Cannot delete active file", Toaster.Status.WARNING);
-        else
+        } else {
             notifyListener(ListedFileAction.DELETE);
+        }
         return true;
     }
 
@@ -224,13 +230,15 @@ public class ListedFile extends FrameLayout {
 
     private void animateVisibility(boolean visible) {
         if (visible) {
-            if (animViewShow != null)
+            if (animViewShow != null) {
                 animatorShow.cancel();
+            }
             animViewShow = this;
             animatorShow.start();
         } else {
-            if (animViewHide != null)
+            if (animViewHide != null) {
                 animatorHide.cancel();
+            }
             animViewHide = this;
             animatorHide.reverse();
         }

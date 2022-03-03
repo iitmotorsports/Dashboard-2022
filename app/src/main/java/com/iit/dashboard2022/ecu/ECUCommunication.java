@@ -1,10 +1,8 @@
 package com.iit.dashboard2022.ecu;
 
 import android.app.Activity;
-
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.NearbySerial;
-import com.iit.dashboard2022.util.SerialCom;
 import com.iit.dashboard2022.util.USBSerial;
 
 import java.util.function.Consumer;
@@ -32,7 +30,9 @@ public class ECUCommunication {
     public void setConnectionListener(Consumer<Integer> statusListener) {
         USBMethod.setStatusListener(statusListener);
         nearbyMethod.setStatusListener(flags -> {
-            if (!USBMethod.isAttached()) statusListener.accept(flags);
+            if (!USBMethod.isAttached()) {
+                statusListener.accept(flags);
+            }
         });
     }
 

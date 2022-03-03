@@ -9,10 +9,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
-
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 
@@ -60,8 +58,9 @@ public class SideSwitch extends RelativeLayout implements ActionableCheck {
                 widget_switch.setLayoutParams(params);
             }
 
-            if (t != null)
+            if (t != null) {
                 tv.setText(t);
+            }
         }
     }
 
@@ -90,8 +89,9 @@ public class SideSwitch extends RelativeLayout implements ActionableCheck {
 
     @Override
     public void setActionedCheck(boolean checked) {
-        if (isChecked() == checked)
+        if (isChecked() == checked) {
             return;
+        }
         performClick();
     }
 }

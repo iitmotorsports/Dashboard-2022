@@ -45,20 +45,23 @@ public class ECUMsg {
                 this.value = val;
         }
 
-        for(Map.Entry<Consumer<Long>, UpdateMethod> entry : messageListeners.entrySet()) {
+        for (Map.Entry<Consumer<Long>, UpdateMethod> entry : messageListeners.entrySet()) {
             Consumer<Long> consumer = entry.getKey();
-            switch(entry.getValue()) {
+            switch (entry.getValue()) {
                 case ON_VALUE_CHANGE:
-                    if (prevValue != value)
+                    if (prevValue != value) {
                         consumer.accept(val);
+                    }
                     break;
                 case ON_VALUE_DECREASE:
-                    if (prevValue > value)
+                    if (prevValue > value) {
                         consumer.accept(val);
+                    }
                     break;
                 case ON_VALUE_INCREASE:
-                    if (prevValue < value)
+                    if (prevValue < value) {
                         consumer.accept(val);
+                    }
                 case ON_RECEIVE:
                     consumer.accept(val);
                     break;
@@ -79,10 +82,10 @@ public class ECUMsg {
      * Adds a message listener
      *
      * @param messageListener The listener to be consumed
-     * @param updateMethod {@link UpdateMethod}
+     * @param updateMethod    {@link UpdateMethod}
      */
     public void addMessageListener(Consumer<Long> messageListener, UpdateMethod updateMethod) {
-       messageListeners.put(messageListener, updateMethod);
+        messageListeners.put(messageListener, updateMethod);
     }
 
     public void clear() {

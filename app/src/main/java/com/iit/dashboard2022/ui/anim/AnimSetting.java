@@ -1,7 +1,6 @@
 package com.iit.dashboard2022.ui.anim;
 
 import android.view.animation.Interpolator;
-
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 public class AnimSetting {

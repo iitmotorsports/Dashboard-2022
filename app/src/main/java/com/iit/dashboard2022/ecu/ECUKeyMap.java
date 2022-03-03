@@ -1,14 +1,11 @@
 package com.iit.dashboard2022.ecu;
 
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.iit.dashboard2022.util.JSONLoader;
 import com.iit.dashboard2022.util.Toaster;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -127,8 +124,9 @@ public class ECUKeyMap {
 
     public boolean loadJSONFromSystem() {
         String JSON_INPUT = jsonLoader.loadFromSystem();
-        if (JSON_INPUT != null)
+        if (JSON_INPUT != null) {
             return update(JSON_INPUT);
+        }
         return false;
     }
 
@@ -157,8 +155,9 @@ public class ECUKeyMap {
 
     private boolean interpretJSON(String rawJSON) {
         if (rawJSON == null) {
-            if (pseudoMode)
+            if (pseudoMode) {
                 return false;
+            }
             if (loaded()) {
                 Toaster.showToast("JSON map unchanged", Toaster.Status.INFO);
                 return true;
@@ -197,10 +196,11 @@ public class ECUKeyMap {
         }
 
         if (!pseudoMode) {
-            if (loaded())
+            if (loaded()) {
                 Toaster.showToast("JSON map updated", Toaster.Status.SUCCESS);
-            else
+            } else {
                 Toaster.showToast("Loaded JSON map", Toaster.Status.INFO, Toast.LENGTH_SHORT);
+            }
             jsonLoader.saveToSystem(rawJSON);
         }
 

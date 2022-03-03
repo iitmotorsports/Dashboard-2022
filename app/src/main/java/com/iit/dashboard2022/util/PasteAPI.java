@@ -4,11 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +16,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class PasteAPI {
 
@@ -109,8 +107,9 @@ public class PasteAPI {
                 e.printStackTrace();
                 Toaster.showToast("Failed to communicate with API", Toaster.Status.ERROR);
             } finally {
-                if (listConn != null)
+                if (listConn != null) {
                     listConn.disconnect();
+                }
             }
         });
     }
@@ -131,8 +130,9 @@ public class PasteAPI {
 
                 JSONObject jObject = new JSONObject(getResponse(listConn));
                 JSONArray jData = jObject.getJSONArray("data");
-                if (jData.length() == 0)
+                if (jData.length() == 0) {
                     throw new NoPastesUploadedException();
+                }
                 JSONObject jPaste = (JSONObject) jData.get(0);
                 String ID = jPaste.getString("id");
 
@@ -160,10 +160,12 @@ public class PasteAPI {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (listConn != null)
+                if (listConn != null) {
                     listConn.disconnect();
-                if (getConn != null)
+                }
+                if (getConn != null) {
                     getConn.disconnect();
+                }
             }
         });
     }

@@ -1,36 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/indicatorLayout"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:orientation="vertical">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/indicatorLayout"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:clipChildren="false"
+              android:clipToPadding="false"
+              android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:clipToPadding="false">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
         <TextView
-            android:id="@+id/lagTimer"
-            style="@style/SideLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="-2dp"
-            android:layout_marginTop="2dp"
-            android:layout_toEndOf="@+id/lagRadio"
-            android:maxLines="2"
-            android:minLines="1"
-            android:text="@string/indicators_lag_ms_format"
-            android:textColor="@color/foregroundSecondary"
-            android:textSize="11sp" />
+                android:id="@+id/lagTimer"
+                style="@style/SideLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="-2dp"
+                android:layout_marginTop="2dp"
+                android:layout_toEndOf="@+id/lagRadio"
+                android:maxLines="2"
+                android:minLines="1"
+                android:text="@string/indicators_lag_ms_format"
+                android:textColor="@color/foregroundSecondary"
+                android:textSize="11sp"/>
 
         <RadioButton
-            android:id="@+id/lagRadio"
+                android:id="@+id/lagRadio"
+                style="@style/SideRadioButton"
+                android:layout_width="wrap_content"
+                android:buttonTint="@color/yellow"
+                android:checked="true"
+                android:clickable="false"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="@string/lag"
+                android:textAlignment="viewStart"
+                android:textColor="@color/foregroundSecondary"
+                android:textSize="14sp"
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
+    </RelativeLayout>
+
+    <RadioButton
+            android:id="@+id/faultRadio"
+            style="@style/SideRadioButton"
+            android:layout_width="wrap_content"
+            android:buttonTint="@color/red"
+            android:checked="true"
+            android:clickable="false"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="8dp"
+            android:text="@string/fault"
+            android:textAlignment="viewStart"
+            android:textColor="@color/foregroundSecondary"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
+
+    <RadioButton
+            android:id="@+id/waitRadio"
             style="@style/SideRadioButton"
             android:layout_width="wrap_content"
             android:buttonTint="@color/yellow"
@@ -39,63 +74,28 @@
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:paddingStart="0dp"
-            android:paddingEnd="0dp"
-            android:text="@string/lag"
+            android:paddingEnd="8dp"
+            android:text="@string/waiting"
             android:textAlignment="viewStart"
             android:textColor="@color/foregroundSecondary"
             android:textSize="14sp"
-            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
-    </RelativeLayout>
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
 
     <RadioButton
-        android:id="@+id/faultRadio"
-        style="@style/SideRadioButton"
-        android:layout_width="wrap_content"
-        android:buttonTint="@color/red"
-        android:checked="true"
-        android:clickable="false"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="8dp"
-        android:text="@string/fault"
-        android:textAlignment="viewStart"
-        android:textColor="@color/foregroundSecondary"
-        android:textSize="14sp"
-        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
-
-    <RadioButton
-        android:id="@+id/waitRadio"
-        style="@style/SideRadioButton"
-        android:layout_width="wrap_content"
-        android:buttonTint="@color/yellow"
-        android:checked="true"
-        android:clickable="false"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="8dp"
-        android:text="@string/waiting"
-        android:textAlignment="viewStart"
-        android:textColor="@color/foregroundSecondary"
-        android:textSize="14sp"
-        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
-
-    <RadioButton
-        android:id="@+id/chargeRadio"
-        style="@style/SideRadioButton"
-        android:layout_width="wrap_content"
-        android:buttonTint="@color/green"
-        android:checked="true"
-        android:clickable="false"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="8dp"
-        android:text="@string/charging"
-        android:textAlignment="viewStart"
-        android:textColor="@color/foregroundSecondary"
-        android:textSize="14sp"
-        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+            android:id="@+id/chargeRadio"
+            style="@style/SideRadioButton"
+            android:layout_width="wrap_content"
+            android:buttonTint="@color/green"
+            android:checked="true"
+            android:clickable="false"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="8dp"
+            android:text="@string/charging"
+            android:textAlignment="viewStart"
+            android:textColor="@color/foregroundSecondary"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
 
 </LinearLayout>

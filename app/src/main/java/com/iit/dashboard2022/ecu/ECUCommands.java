@@ -9,7 +9,7 @@ public final class ECUCommands {
     /**
      * Commands that can be sent through the `write` function
      */
-    public static final byte[][] COMMANDS = {{123}, {111}, {45}, {127}, {90}, {-1}, {84}, {25}, {101}, {61}};
+    public static final byte[][] COMMANDS = { { 123 }, { 111 }, { 45 }, { 127 }, { 90 }, { -1 }, { 84 }, { 25 }, { 101 }, { 61 } };
     public static final int CHARGE = 0;
     public static final int SEND_CAN_BUS_MESSAGE = 1;
     public static final int CLEAR_FAULT = 2;
@@ -22,7 +22,7 @@ public final class ECUCommands {
     public static final int SET_SERIAL_VAR = 9;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({CHARGE,
+    @IntDef({ CHARGE,
             SEND_CAN_BUS_MESSAGE,
             CLEAR_FAULT,
             TOGGLE_CAN_BUS_SNIFF,

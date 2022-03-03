@@ -5,11 +5,9 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-
 import com.iit.dashboard2022.R;
 
 import java.io.BufferedReader;

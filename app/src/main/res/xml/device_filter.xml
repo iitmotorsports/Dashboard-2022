@@ -2,78 +2,78 @@
 <resources>
     <!-- 0x0403 / 0x60??: FTDI -->
     <usb-device
-        product-id="24577"
-        vendor-id="1027" /> <!-- 0x6001: FT232R -->
+            product-id="24577"
+            vendor-id="1027"/> <!-- 0x6001: FT232R -->
     <usb-device
-        product-id="24592"
-        vendor-id="1027" /> <!-- 0x6010: FT2232H -->
+            product-id="24592"
+            vendor-id="1027"/> <!-- 0x6010: FT2232H -->
     <usb-device
-        product-id="24593"
-        vendor-id="1027" /> <!-- 0x6011: FT4232H -->
+            product-id="24593"
+            vendor-id="1027"/> <!-- 0x6011: FT4232H -->
     <usb-device
-        product-id="24596"
-        vendor-id="1027" /> <!-- 0x6014: FT232H -->
+            product-id="24596"
+            vendor-id="1027"/> <!-- 0x6014: FT232H -->
     <usb-device
-        product-id="24597"
-        vendor-id="1027" /> <!-- 0x6015: FT230X, FT231X, FT234XD -->
+            product-id="24597"
+            vendor-id="1027"/> <!-- 0x6015: FT230X, FT231X, FT234XD -->
 
     <!-- 0x10C4 / 0xEA??: Silabs CP210x -->
     <usb-device
-        product-id="60000"
-        vendor-id="4292" /> <!-- 0xea60: CP2102 and other CP210x single port devices -->
+            product-id="60000"
+            vendor-id="4292"/> <!-- 0xea60: CP2102 and other CP210x single port devices -->
     <usb-device
-        product-id="60016"
-        vendor-id="4292" /> <!-- 0xea70: CP2105 -->
+            product-id="60016"
+            vendor-id="4292"/> <!-- 0xea70: CP2105 -->
     <usb-device
-        product-id="60017"
-        vendor-id="4292" /> <!-- 0xea71: CP2108 -->
+            product-id="60017"
+            vendor-id="4292"/> <!-- 0xea71: CP2108 -->
 
     <!-- 0x067B / 0x23?3: Prolific PL2303x -->
     <usb-device
-        product-id="8963"
-        vendor-id="1659" /> <!-- 0x2303: PL2303HX, HXD, TA, ... -->
+            product-id="8963"
+            vendor-id="1659"/> <!-- 0x2303: PL2303HX, HXD, TA, ... -->
     <usb-device
-        product-id="9123"
-        vendor-id="1659" /> <!-- 0x23a3: PL2303GC -->
+            product-id="9123"
+            vendor-id="1659"/> <!-- 0x23a3: PL2303GC -->
     <usb-device
-        product-id="9139"
-        vendor-id="1659" /> <!-- 0x23b3: PL2303GB -->
+            product-id="9139"
+            vendor-id="1659"/> <!-- 0x23b3: PL2303GB -->
     <usb-device
-        product-id="9155"
-        vendor-id="1659" /> <!-- 0x23c3: PL2303GT -->
+            product-id="9155"
+            vendor-id="1659"/> <!-- 0x23c3: PL2303GT -->
     <usb-device
-        product-id="9171"
-        vendor-id="1659" /> <!-- 0x23d3: PL2303GL -->
+            product-id="9171"
+            vendor-id="1659"/> <!-- 0x23d3: PL2303GL -->
     <usb-device
-        product-id="9187"
-        vendor-id="1659" /> <!-- 0x23e3: PL2303GE -->
+            product-id="9187"
+            vendor-id="1659"/> <!-- 0x23e3: PL2303GE -->
     <usb-device
-        product-id="9203"
-        vendor-id="1659" /> <!-- 0x23f3: PL2303GS -->
+            product-id="9203"
+            vendor-id="1659"/> <!-- 0x23f3: PL2303GS -->
 
     <!-- 0x1a86 / 0x?523: Qinheng CH34x -->
     <usb-device
-        product-id="21795"
-        vendor-id="6790" /> <!-- 0x5523: CH341A -->
+            product-id="21795"
+            vendor-id="6790"/> <!-- 0x5523: CH341A -->
     <usb-device
-        product-id="29987"
-        vendor-id="6790" /> <!-- 0x7523: CH340 -->
+            product-id="29987"
+            vendor-id="6790"/> <!-- 0x7523: CH340 -->
 
     <!-- CDC driver -->
-    <usb-device vendor-id="9025" />                   <!-- 0x2341 / ......: Arduino -->
+    <usb-device vendor-id="9025"/>                   <!-- 0x2341 / ......: Arduino -->
     <usb-device
-        product-id="1155"
-        vendor-id="5824" /> <!-- 0x16C0 / 0x0483: Teensyduino  -->
+            product-id="1155"
+            vendor-id="5824"/> <!-- 0x16C0 / 0x0483: Teensyduino  -->
     <usb-device
-        product-id="8260"
-        vendor-id="1003" /> <!-- 0x03EB / 0x2044: Atmel Lufa -->
+            product-id="8260"
+            vendor-id="1003"/> <!-- 0x03EB / 0x2044: Atmel Lufa -->
     <usb-device
-        product-id="4"
-        vendor-id="7855" /> <!-- 0x1eaf / 0x0004: Leaflabs Maple -->
+            product-id="4"
+            vendor-id="7855"/> <!-- 0x1eaf / 0x0004: Leaflabs Maple -->
     <usb-device
-        product-id="516"
-        vendor-id="3368" /> <!-- 0x0d28 / 0x0204: ARM mbed -->
+            product-id="516"
+            vendor-id="3368"/> <!-- 0x0d28 / 0x0204: ARM mbed -->
     <usb-device
-        product-id="22336"
-        vendor-id="1155" /><!-- 0x0483 / 0x5740: ST CDC -->
+            product-id="22336"
+            vendor-id="1155"/><!-- 0x0483 / 0x5740: ST CDC -->
 </resources>

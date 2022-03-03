@@ -1,7 +1,6 @@
 package com.iit.dashboard2022.ecu;
 
 import android.os.SystemClock;
-
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.Toaster;
 
@@ -36,11 +35,13 @@ public class ECUJUSB {
         for (int i = 0; i < data.length; i += 8) {
             int j;
             for (j = i; j < i + 8; j++) {
-                if (data[j] != 0)
+                if (data[j] != 0) {
                     break;
+                }
             }
-            if (j - i == 8)
+            if (j - i == 8) {
                 return i + 8;
+            }
         }
         return -1;
     }
@@ -54,20 +55,23 @@ public class ECUJUSB {
         int cutoff;
         if (!JUSB_flagReceived && (cutoff = matchJUSBFlag(data)) != -1) {
             JUSB_flagReceived = true;
-            if (data.length == cutoff)
+            if (data.length == cutoff) {
                 return true;
+            }
             data = Arrays.copyOfRange(data, cutoff, data.length);
         }
         if (JUSB_flagReceived && JUSB_size == -1) {
             JUSB_size = (int) ByteSplit.getUnsignedInt(data);
-            if (data.length == 8)
+            if (data.length == 8) {
                 return true;
+            }
             data = Arrays.copyOfRange(data, 8, data.length);
         }
         if (JUSB_flagReceived && JUSB_size != -1 && JUSB_uncompressed_size == -1) {
             JUSB_uncompressed_size = (int) ByteSplit.getUnsignedInt(data);
-            if (data.length == 8)
+            if (data.length == 8) {
                 return true;
+            }
             data = Arrays.copyOfRange(data, 8, data.length);
         }
         if (JUSB_size != -1) {

@@ -6,14 +6,12 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import androidx.annotation.IntDef;
+import es.dmoral.toasty.Toasty;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import es.dmoral.toasty.Toasty;
 
 public class Toaster {
     private static final ConcurrentLinkedQueue<ToastMessage> queue = new ConcurrentLinkedQueue<>();
@@ -26,8 +24,9 @@ public class Toaster {
         newToast = () -> {
             Toast toast;
             ToastMessage tm = queue.poll();
-            if (tm == null)
+            if (tm == null) {
                 return;
+            }
             switch (tm.status) {
                 case NORMAL:
                     toast = Toasty.normal(context, tm.msg, tm.duration);
@@ -66,8 +65,9 @@ public class Toaster {
 
     public static void showToast(String msg, Status status, @ToasterDuration int duration, @ToasterGravity int gravity) {
         Log.i("Toast", msg);
-        if (!enable || newToast == null)
+        if (!enable || newToast == null) {
             return;
+        }
 
         int xOffset = 0;
         if (gravity == Gravity.START || gravity == Gravity.END) {
@@ -83,12 +83,12 @@ public class Toaster {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Toast.LENGTH_LONG, Toast.LENGTH_SHORT})
+    @IntDef({ Toast.LENGTH_LONG, Toast.LENGTH_SHORT })
     @interface ToasterDuration {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Gravity.START, Gravity.CENTER, Gravity.END})
+    @IntDef({ Gravity.START, Gravity.CENTER, Gravity.END })
     @interface ToasterGravity {
     }
 

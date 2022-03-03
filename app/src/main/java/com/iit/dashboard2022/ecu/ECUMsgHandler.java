@@ -3,13 +3,12 @@ package com.iit.dashboard2022.ecu;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import com.iit.dashboard2022.ecu.ECUMsg.DataType;
 import com.iit.dashboard2022.util.Toaster;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
-import com.iit.dashboard2022.ecu.ECUMsg.DataType;
 
 public class ECUMsgHandler {
 
@@ -68,8 +67,9 @@ public class ECUMsgHandler {
         messages[StartLight] = new ECUMsg("[Front Teensy]", "[ LOG ] Start Light", DataType.UNSIGNED);
         messages[State] = new ECUMsg("[Front Teensy]", "[ LOG ] Current State", DataType.UNSIGNED);
         messages[State].addMessageListener(val -> {
-            if (stateListener != null)
+            if (stateListener != null) {
                 stateListener.onStateChanged(stateMap.get(val));
+            }
         });
         messages[SerialVarResponse] = new ECUMsg("[SerialVar]", "[INFO]  Approximate Float value:", DataType.UNSIGNED);
     }
@@ -78,8 +78,9 @@ public class ECUMsgHandler {
         faultMap.clear();
         for (String fMsg : ECUFaults.FAULTS) {
             Integer i = keyMap.getStrID(fMsg);
-            if (i != null)
+            if (i != null) {
                 faultMap.put(i.longValue(), fMsg);
+            }
         }
     }
 
@@ -116,8 +117,9 @@ public class ECUMsgHandler {
     @Nullable
     public ECUMsg updateMessage(long msgKey, long value) {
         ECUMsg msg = messageMap.get(msgKey);
-        if (msg != null)
+        if (msg != null) {
             msg.update(value);
+        }
         return msg;
     }
 

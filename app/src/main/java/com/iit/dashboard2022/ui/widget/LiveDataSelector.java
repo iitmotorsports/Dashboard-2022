@@ -1,7 +1,6 @@
 package com.iit.dashboard2022.ui.widget;
 
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.collection.ArraySet;
 
@@ -19,8 +18,9 @@ public class LiveDataSelector {
         }
         lastSelected = current;
         current.setActive(true);
-        if (selectionChangedListener != null)
+        if (selectionChangedListener != null) {
             selectionChangedListener.onSelectionChanged(current);
+        }
         WidgetUpdater.post();
     }
 

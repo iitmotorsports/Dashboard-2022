@@ -7,9 +7,7 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
 import androidx.appcompat.app.AlertDialog;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
@@ -41,7 +39,7 @@ public class JSONDialog {
             dialog.dismiss();
         });
 
-//        scanBtn.setOnClickListener(v -> stream.updateQRJson());
+        //        scanBtn.setOnClickListener(v -> stream.updateQRJson());
         findBtn.setOnClickListener(v -> {
             frontECU.requestJSONFile();
             dialog.dismiss();
@@ -60,11 +58,11 @@ public class JSONDialog {
             dialog.getWindow().getInsetsController().hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
         } else {
             dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                                                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     }
 

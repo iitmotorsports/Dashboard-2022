@@ -7,10 +7,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
@@ -112,10 +110,11 @@ public class SidePanel extends ConstraintLayout {
         frontECU.addStatusListener((jsonLoaded, raw) -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
         frontECU.setLogListener(console::post);
         frontECU.setErrorListener((tag, msg) -> {
-            if (tag.equals(ECU.LOG_TAG))
+            if (tag.equals(ECU.LOG_TAG)) {
                 errorsPage.postWarning(tag, msg);
-            else
+            } else {
                 errorsPage.postError(tag, msg);
+            }
             console.systemPost(tag, msg);
             console.newError();
         });

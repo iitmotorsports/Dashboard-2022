@@ -19,19 +19,22 @@ public abstract class SerialCom {
     protected Consumer<Exception> errorListener;
 
     protected void newConnData(byte[] buffer) {
-        if (dataListener != null)
+        if (dataListener != null) {
             dataListener.accept(buffer);
+        }
     }
 
     protected void newConnError(Exception exception) {
-        if (errorListener != null)
+        if (errorListener != null) {
             errorListener.accept(exception);
+        }
     }
 
     protected void setConnStatus(int flags) {
         status = flags;
-        if (statusListener != null)
+        if (statusListener != null) {
             statusListener.accept(flags);
+        }
     }
 
     public boolean checkStatus(int flags) {
@@ -65,7 +68,7 @@ public abstract class SerialCom {
     public abstract void write(byte[] buffer);
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Attached, Detached, Opened, Closed})
+    @IntDef({ Attached, Detached, Opened, Closed })
     @interface Status {
     }
 }

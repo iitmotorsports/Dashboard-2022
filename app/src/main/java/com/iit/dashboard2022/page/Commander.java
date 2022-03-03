@@ -8,11 +8,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -79,7 +77,7 @@ public class Commander extends Page {
             ByteBuffer bb = ByteBuffer.allocate(8);
             bb.order(ByteOrder.LITTLE_ENDIAN);
             bb.putFloat(currentValue);
-            frontECU.write(ByteSplit.joinArray(new byte[]{ID}, bb.array()));
+            frontECU.write(ByteSplit.joinArray(new byte[]{ ID }, bb.array()));
         });
 
         slider.addOnChangeListener((slider1, value, fromUser) -> {
@@ -101,7 +99,7 @@ public class Commander extends Page {
         });
 
         valueEdit.setOnFocusChangeListener((view, b) -> {
-            if (!b)
+            if (!b) {
                 try {
                     currentValue = Float.parseFloat(valueEdit.getText().toString());
                     currentValue = Math.max(Math.min(currentValue, setMax), setMin);
@@ -110,6 +108,7 @@ public class Commander extends Page {
                     currentValue = 0;
                     updateValues(valueEdit);
                 }
+            }
         });
 
         newSetup("No selected value", ID, currentValue, setMin, setMax);
@@ -138,10 +137,11 @@ public class Commander extends Page {
     @UiThread
     public void updateValues(@Nullable View activeView) {
         if (!toggle.equals(activeView)) {
-            if (currentValue == setMax)
+            if (currentValue == setMax) {
                 toggle.setChecked(true);
-            else if (currentValue == setMin)
+            } else if (currentValue == setMin) {
                 toggle.setChecked(false);
+            }
         }
         if (!slider.equals(activeView)) {
             slider.setValue(currentValue);

@@ -9,10 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECUColor;
 import com.iit.dashboard2022.ecu.ECULogger;
@@ -68,8 +66,9 @@ public class Logs extends Page {
     }
 
     public void displayFiles(LogFileIO.LogFile[] files) {
-        if (files.length == 0)
+        if (files.length == 0) {
             return;
+        }
 
         worker.post(new Runnable() {
             final HashSet<LogFileIO.LogFile> fileHash = new HashSet<>(getCurrentFiles().keySet());
@@ -138,8 +137,9 @@ public class Logs extends Page {
                 ListedFile view = views.get(0);
                 views.remove(view);
                 LogFileIO.LogFile file = view.getFile();
-                if (file != null && file.delete())
+                if (file != null && file.delete()) {
                     rootView.post(() -> removeEntry(view));
+                }
                 if (views.size() == 0) {
                     Toaster.showToast("Done deleting", Toaster.Status.INFO);
                     return;
@@ -181,10 +181,12 @@ public class Logs extends Page {
                         @Override
                         public void run() {
                             Spannable span = msgBlocks[c++];
-                            if (span != null)
+                            if (span != null) {
                                 console.systemPost("Log", TextUtils.concat(file.getTitle(), " - " + c + "/" + msgBlocks.length + "\n", span));
-                            if (c != msgBlocks.length)
+                            }
+                            if (c != msgBlocks.length) {
                                 worker.postDelayed(this, 64);
+                            }
                         }
                     });
                 });

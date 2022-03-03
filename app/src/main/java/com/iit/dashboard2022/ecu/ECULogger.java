@@ -1,10 +1,8 @@
 package com.iit.dashboard2022.ecu;
 
 import android.app.Activity;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-
 import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
 
@@ -29,8 +27,9 @@ public class ECULogger {
 
     @WorkerThread
     public static String stringifyLogFile(File file) {
-        if (file == null)
+        if (file == null) {
             return null;
+        }
         byte[] bytes = LogFileIO.getBytes(file);
         String jsonStr = LogFileIO.getString(file, LOG_MAP_END);
         int logStart = jsonStr.getBytes().length;
