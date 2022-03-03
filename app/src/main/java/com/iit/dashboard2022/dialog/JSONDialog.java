@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.iit.dashboard2022.R;
@@ -24,12 +23,11 @@ public class JSONDialog {
         Button scanBtn = mView.findViewById(R.id.scanBtn);
         Button findBtn = mView.findViewById(R.id.findBtn);
         Button delBtn = mView.findViewById(R.id.delBtn);
-        LinearLayout jsonDialogMainLayout = mView.findViewById(R.id.jsonDialogMainLayout);
 
         mBuilder.setView(mView);
         dialog = mBuilder.create();
 
-        downloadBtn.setEnabled(PasteAPI.checkInternetConnection(activity));
+        downloadBtn.setEnabled(HawkUtil.checkInternetConnection(activity));
         downloadBtn.setOnClickListener(v -> {
             PasteAPI.getLastJSONPaste(response -> {
                 boolean pasteAPILoad = frontECU.loadJSONString(response);

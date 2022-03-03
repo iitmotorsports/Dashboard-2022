@@ -1,8 +1,5 @@
 package com.iit.dashboard2022.util;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,15 +28,6 @@ public class PasteAPI {
 
     private static String getLOG_APIKey() {
         return new String(android.util.Base64.decode(Constants.LOG_API_BASE64, android.util.Base64.DEFAULT));
-    }
-
-    public static boolean checkInternetConnection(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm != null) {
-            NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
-            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN));
-        }
-        return false;
     }
 
     private static void checkConn(HttpsURLConnection conn) throws IOException {

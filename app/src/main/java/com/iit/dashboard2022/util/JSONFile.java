@@ -12,12 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class JSONFile {
     final ActivityResultLauncher<String> mGetContent;
     private final AppCompatActivity activity;
 
-    public JSONFile(AppCompatActivity activity, @NonNull JSONListener jsonListener) {
+    public JSONFile(AppCompatActivity activity, @NonNull Consumer<String> jsonCallback) {
         this.activity = activity;
         mGetContent = activity.registerForActivityResult(new ActivityResultContracts.GetContent(),
                 uri -> {
@@ -26,7 +27,7 @@ public class JSONFile {
                         return;
                     }
                     try {
-                        jsonListener.newJSON(readTextFromUri(uri));
+                        jsonCallback.accept(readTextFromUri(uri));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -55,7 +56,4 @@ public class JSONFile {
         }
     }
 
-    public interface JSONListener {
-        void newJSON(String jsonString);
-    }
 }

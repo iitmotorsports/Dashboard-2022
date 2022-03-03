@@ -11,6 +11,7 @@ ext {
     gmsVersion = "18.0.1"
     grpcVersion = "1.44.1"
     tomcatVersion = "6.0.53"
+    gsonVersion = "2.9.0"
 }
 
 allprojects {
@@ -67,5 +68,6 @@ dependencies {
     implementation "com.husbylabs:warptables:$warptablesVersion"
     implementation "io.grpc:grpc-okhttp:$grpcVersion"
     implementation "io.grpc:grpc-stub:$grpcVersion"
+    implementation "com.google.code.gson:gson:2.9.0"
     compileOnly "org.apache.tomcat:annotations-api:$tomcatVersion"
 }

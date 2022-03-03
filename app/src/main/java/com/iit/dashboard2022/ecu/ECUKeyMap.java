@@ -189,7 +189,6 @@ public class ECUKeyMap {
             }
 
         } catch (JSONException e) {
-
             e.printStackTrace();
             Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
             return loaded();

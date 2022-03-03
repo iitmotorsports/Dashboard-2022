@@ -10,16 +10,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.function.Consumer;
 
 public class JSONLoader {
     private final String fileName;
     private final JSONFile jsonFile;
     private final AppCompatActivity activity;
 
-    public JSONLoader(@NonNull AppCompatActivity activity, @NonNull String fileName, @NonNull JSONFile.JSONListener jsonListener) {
+    public JSONLoader(@NonNull AppCompatActivity activity, @NonNull String fileName, @NonNull Consumer<String> jsonCallback) {
         this.activity = activity;
         this.fileName = fileName;
-        jsonFile = new JSONFile(activity, jsonListener);
+        jsonFile = new JSONFile(activity, jsonCallback);
     }
 
     public void requestJSONFile() {
