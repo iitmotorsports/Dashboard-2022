@@ -47,12 +47,15 @@ public class MainActivity extends AppCompatActivity {
         frontECU = new ECU(this);
         mainPager = new Pager(this);
         Toaster.setContext(this);
+        /*
         new Thread(() -> {
 
             Toaster.showToast("Starting");
             //192.168.137.1
             TelemetryHandler.getInstance().start(new InetSocketAddress("192.168.137.1", 50051));
         }).start();
+
+         */
     }
 
     @Override
