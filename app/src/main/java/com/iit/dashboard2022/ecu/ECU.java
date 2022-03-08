@@ -37,10 +37,13 @@ public class ECU extends ECUCommunication {
     private MODE interpreterMode = MODE.DISABLED;
     private int errorCount = 0;
 
+    public static ECU instance;
+
     public ECU(AppCompatActivity activity) {
+        ECU.instance = this;
         J_USB = new ECUJUSB(this);
         ecuLogger = new ECULogger(activity);
-        ecuKeyMap = new ECUKeyMap(activity);
+        ecuKeyMap = new ECUKeyMap();
         ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
 
         ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
@@ -116,30 +119,12 @@ public class ECU extends ECUCommunication {
         }
     }
 
-    public void requestJSONFromUSBSerial() {// Request ZLib compressed JSON map if we are connected directly
-        if (isOpen()) {
-            J_USB.request();
-        }
-    }
-
     public void issueCommand(Command command) {
         write(command.getData());
     }
 
     public void clear() {
         ecuKeyMap.clear();
-    }
-
-    public void requestJSONFile() {
-        ecuKeyMap.requestJSONFile();
-    }
-
-    public boolean loadJSONFromSystem() {
-        return ecuKeyMap.loadJSONFromSystem();
-    }
-
-    public boolean loadJSONString(String jsonString) {
-        return ecuKeyMap.loadJSONString(jsonString);
     }
 
     public void setJSONLoadListener(Runnable listener) {
@@ -315,6 +300,14 @@ public class ECU extends ECUCommunication {
             consumeData(epoch, raw_data); // attempt to process data
             return new String(raw_data);
         }
+    }
+
+    public ECUKeyMap getMap() {
+        return ecuKeyMap;
+    }
+
+    public ECUJUSB getUsb() {
+        return J_USB;
     }
 
     public enum MODE {

@@ -4,8 +4,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.iit.dashboard2022.util.JSONLoader;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.iit.dashboard2022.util.Constants;
+import com.iit.dashboard2022.util.HawkUtil;
 import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.util.mapping.JsonFileHandler;
+import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
+import com.iit.dashboard2022.util.mapping.JsonHandler;
+import com.iit.dashboard2022.util.mapping.JsonPasteHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,23 +25,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 
 public class ECUKeyMap {
     private final List<BiConsumer<Boolean, String>> statusListeners = new ArrayList<>();
-    private JSONLoader jsonLoader;
     private boolean pseudoMode = false;
 
     private HashMap<Integer, String> tagLookUp;
     private HashMap<Integer, String> stringLookUp;
 
-    public ECUKeyMap(String jsonStr) {
+    public ECUKeyMap(JsonElement element) {
         pseudoMode = true;
-        update(jsonStr);
+        update(element);
     }
 
-    public ECUKeyMap(@NonNull AppCompatActivity activity) {
-        this.jsonLoader = new JSONLoader(activity, "ECU_JSON_MAP.json", this::update);
+    public ECUKeyMap() {
     }
 
     /**
@@ -106,7 +113,7 @@ public class ECUKeyMap {
 
         if (tagID != null && strID != null) {
             ByteBuffer mapping = ByteBuffer.allocate(4);
-            mapping.order(ByteOrder.LITTLE_ENDIAN);
+                mapping.order(ByteOrder.LITTLE_ENDIAN);
             mapping.putShort(tagID.shortValue());
             mapping.putShort(strID.shortValue());
             return mapping.getInt(0);
@@ -117,43 +124,49 @@ public class ECUKeyMap {
         return -1;
     }
 
-    public void requestJSONFile() {
-        jsonLoader.requestJSONFile();
+    /**
+     * Loads a json map from the local cache
+     */
+    public CompletableFuture<Boolean> load() {
+        return load(MapHandler.CACHE);
     }
 
-    public boolean loadJSONFromSystem() {
-        String JSON_INPUT = jsonLoader.loadFromSystem();
-        if (JSON_INPUT != null) {
-            return update(JSON_INPUT);
-        }
-        return false;
-    }
-
-    public boolean loadJSONString(String jsonString) {
-        return update(jsonString);
+    /**
+     * Loads a json map using the selected handler
+     *
+     * @param handler {@link MapHandler}
+     */
+    public CompletableFuture<Boolean> load(MapHandler handler) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        handler.get().read().thenAccept(element -> future.complete(update(element)));
+        return future;
     }
 
     public void clear() {
         boolean status = loaded();
-        if (jsonLoader.clear()) {
-            tagLookUp = null;
-            stringLookUp = null;
-            Toaster.showToast("JSON map deleted", Toaster.Status.INFO);
-            status = false;
-        } else {
-            Toaster.showToast("Failed to delete JSON map", Toaster.Status.ERROR);
+        try {
+            if (MapHandler.CACHE.get().delete().get()) {
+                tagLookUp = null;
+                stringLookUp = null;
+                Toaster.showToast("JSON map deleted", Toaster.Status.INFO);
+                status = false;
+            } else {
+                Toaster.showToast("Failed to delete JSON map", Toaster.Status.ERROR);
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
         notifyStatusListeners(status, null);
     }
 
-    public boolean update(String raw) {
-        boolean status = interpretJSON(raw);
-        notifyStatusListeners(status, raw);
+    public boolean update(JsonElement element) {
+        boolean status = interpretJSON(element);
+        notifyStatusListeners(status, Constants.GSON.toJson(element));
         return status;
     }
 
-    private boolean interpretJSON(String rawJSON) {
-        if (rawJSON == null) {
+    private boolean interpretJSON(JsonElement element) {
+        if (element == null || element.isJsonNull()) {
             if (pseudoMode) {
                 return false;
             }
@@ -165,30 +178,19 @@ public class ECUKeyMap {
             return false;
         }
 
-        JSONArray json;
         HashMap<Integer, String> newTagLookup = new HashMap<>();
         HashMap<Integer, String> newStringLookup = new HashMap<>();
 
         try {
-            json = new JSONArray(rawJSON);
-
-            JSONObject entry = json.getJSONObject(0);
-            Iterator<String> keys = entry.keys();
-
-            while (keys.hasNext()) {
-                String key = keys.next();
-                newTagLookup.put(entry.getInt(key), key);
+            JsonArray array = element.getAsJsonArray();
+            for (Map.Entry<String, JsonElement> entry : array.get(0).getAsJsonObject().entrySet()) {
+                newTagLookup.put(entry.getValue().getAsInt(), entry.getKey());
             }
 
-            entry = json.getJSONObject(1);
-            keys = entry.keys();
-
-            while (keys.hasNext()) {
-                String key = keys.next();
-                newStringLookup.put(entry.getInt(key), key);
+            for (Map.Entry<String, JsonElement> entry : array.get(1).getAsJsonObject().entrySet()) {
+                newStringLookup.put(entry.getValue().getAsInt(), entry.getKey());
             }
-
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
             return loaded();
@@ -200,11 +202,31 @@ public class ECUKeyMap {
             } else {
                 Toaster.showToast("Loaded JSON map", Toaster.Status.INFO, Toast.LENGTH_SHORT);
             }
-            jsonLoader.saveToSystem(rawJSON);
+            MapHandler.CACHE.get().write(element);
         }
 
         tagLookUp = newTagLookup;
         stringLookUp = newStringLookup;
         return true;
+    }
+
+    public enum MapHandler {
+        CACHE(new JsonFileHandler(Constants.JSON_FILE)),
+
+        SELECTOR(new JsonFileSelectorHandler()),
+
+        PASTE(new JsonPasteHandler()),
+
+        ECU(com.iit.dashboard2022.ecu.ECU.instance.getUsb());
+
+        private final JsonHandler handler;
+
+        MapHandler(JsonHandler handler) {
+            this.handler = handler;
+        }
+
+        public JsonHandler get() {
+            return handler;
+        }
     }
 }

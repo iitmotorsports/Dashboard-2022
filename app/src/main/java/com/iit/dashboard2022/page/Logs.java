@@ -18,7 +18,6 @@ import com.iit.dashboard2022.ui.widget.ListedFile;
 import com.iit.dashboard2022.ui.widget.SideButton;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.PasteAPI;
 import com.iit.dashboard2022.util.Toaster;
 
 import java.util.ArrayList;
@@ -193,7 +192,8 @@ public class Logs extends Page {
                 break;
             case UPLOAD:
                 Toaster.showToast("Uploading File", Toaster.Status.INFO);
-                worker.post(() -> PasteAPI.uploadPaste(ECULogger.stringifyLogFile(listedFile.getFile())));
+                //TODO: Figure this stuff out
+                //worker.post(() -> PasteAPI.uploadPaste(ECULogger.stringifyLogFile(listedFile.getFile())));
                 break;
             case DELETE:
                 Toaster.showToast("Deleting File", Toaster.Status.INFO);

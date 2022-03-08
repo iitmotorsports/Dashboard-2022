@@ -8,7 +8,11 @@ import android.os.Looper;
 import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.iit.dashboard2022.ecu.ECU;
+import com.iit.dashboard2022.ecu.ECUKeyMap;
 import com.iit.dashboard2022.ecu.ECUUpdater;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
@@ -23,16 +27,21 @@ import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.HawkUtil;
 import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
+
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static AppCompatActivity GLOBAL_CONTEXT = null;
+
     SidePanel sidePanel;
     Pager mainPager;
-
     ECU frontECU;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GLOBAL_CONTEXT = this;
         startActivity(new Intent(this, SplashActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
         Toaster.setEnabled(false);
 
@@ -44,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         frontECU = new ECU(this);
         mainPager = new Pager(this);
         Toaster.setContext(this);
+
+        ((JsonFileSelectorHandler) ECUKeyMap.MapHandler.SELECTOR.get()).init(this);
         /*
         new Thread(() -> {
 
@@ -95,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
 
         new Handler(Looper.myLooper()).postDelayed(() -> {
             /* FINAL CALLS */
-            // TODO: INSTANCE?
             ECUUpdater ecuUpdater = new ECUUpdater(cdPage, ldPage, sidePanel, frontECU);
             frontECU.setJSONLoadListener(() -> logPage.displayFiles(frontECU.getLocalLogs()));
 
@@ -110,15 +120,18 @@ public class MainActivity extends AppCompatActivity {
             }));
             WidgetUpdater.start();
 
-            if (!frontECU.loadJSONFromSystem()) {
-                Toaster.showToast("No JSON is currently loaded", Toaster.Status.WARNING);
-                logPage.displayFiles(frontECU.getLocalLogs());
-            } else {
-                frontECU.open();
-            }
-
             Toaster.setEnabled(true);
-        }, 500);
+            try {
+                if (!frontECU.getMap().load().get()) {
+                    Toaster.showToast("No JSON is currently loaded", Toaster.Status.WARNING);
+                    logPage.displayFiles(frontECU.getLocalLogs());
+                } else {
+                    frontECU.open();
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            }, 500);
         super.onPostCreate(savedInstanceState);
     }
 

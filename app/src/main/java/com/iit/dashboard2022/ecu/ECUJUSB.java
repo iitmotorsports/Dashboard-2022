@@ -1,23 +1,28 @@
 package com.iit.dashboard2022.ecu;
 
 import android.os.SystemClock;
+import com.google.gson.JsonElement;
 import com.iit.dashboard2022.util.ByteSplit;
+import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.util.mapping.JsonHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
-public class ECUJUSB {
+public class ECUJUSB implements JsonHandler {
     private final ByteArrayOutputStream JUSB_data = new ByteArrayOutputStream();
     private final ECU mainECU;
     long JUSB_requesting = 0;
     private boolean JUSB_flagReceived = false;
     private int JUSB_size = -1;
     private int JUSB_uncompressed_size = -1;
+    private CompletableFuture<JsonElement> future;
 
     public ECUJUSB(ECU mainECU) {
         this.mainECU = mainECU;
@@ -83,12 +88,9 @@ public class ECUJUSB {
                     byte[] result = new byte[JUSB_uncompressed_size + 1];
                     int resultLength = decompressor.inflate(result);
                     decompressor.end();
-
                     String outputString = new String(result, 0, resultLength, StandardCharsets.UTF_8);
-
                     resetJUSB();
-
-                    mainECU.loadJSONString(outputString);
+                    future.complete(Constants.GSON.fromJson(outputString, JsonElement.class));
                 }
                 mainECU.issueCommand(ECU.Command.PRINT_LOOKUP);
             } catch (DataFormatException e) {
@@ -100,11 +102,29 @@ public class ECUJUSB {
         return false;
     }
 
-    public void request() {
+    @Override
+    public CompletableFuture<JsonElement> read() {
+        if(future != null && !future.isDone()) {
+            future.complete(null);
+        }
+        if(!mainECU.isOpen()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        future = new CompletableFuture<>();
         resetJUSB();
         Toaster.showToast("Requesting JSON over USB", Toaster.Status.INFO);
         JUSB_requesting = SystemClock.elapsedRealtime();
         mainECU.issueCommand(ECU.Command.PRINT_LOOKUP);
+        return future;
     }
 
+    @Override
+    public void write(JsonElement element) {
+
+    }
+
+    @Override
+    public CompletableFuture<Boolean> delete() {
+        return null;
+    }
 }

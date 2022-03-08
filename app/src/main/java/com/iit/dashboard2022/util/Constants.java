@@ -1,5 +1,8 @@
 package com.iit.dashboard2022.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
  * Utility class containing constants for the dashboard
  *
@@ -10,6 +13,14 @@ public class Constants {
     public static final String PASTE_API = "https://api.paste.ee/v1/pastes";
     public static final String JSON_API_BASE64 = "dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=";
     public static final String LOG_API_BASE64 = "dTBXUXZabUNsdVFkZWJycUlUNjZSRHJoR1paTlVXaXE3U09LTVlPUE8=";
+
+    //JSON
+    public static final String JSON_FILE = "ECU_JSON_MAP.json";
+    public static final Gson GSON;
+
+    static {
+        GSON = new GsonBuilder().setPrettyPrinting().create();
+    }
 
     // ECU
     // TODO: Replace FAULTS

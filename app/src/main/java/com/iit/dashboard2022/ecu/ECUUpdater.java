@@ -22,9 +22,7 @@ public class ECUUpdater {
             lastSpeed = val;
         });
 
-        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> {
-            dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f);
-        });
+        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f));
         ecuMsgHandler.getMessage(ECUMsgHandler.PowerGauge).addMessageListener(val -> { // NOTE: Actual MC power not being used
             long avgMCVolt = (ecuMsgHandler.requestValue(ECUMsgHandler.MC0Voltage) + ecuMsgHandler.requestValue(ECUMsgHandler.MC1Voltage)) / 2;
             float limit = ecuMsgHandler.requestValue(ECUMsgHandler.BMSVolt) * ecuMsgHandler.requestValue(ECUMsgHandler.BMSAmp);

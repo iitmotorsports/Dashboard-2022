@@ -1,0 +1,33 @@
+{
+    "subsystems": {
+        "AeroServo": 1,
+        "FaultLights": 2,
+        "Mirror": 3,
+        "FrontTeensy": 4,
+        "RearTeensy": 5,
+        "MotorControl": 6
+    },
+    "states": {
+        "INITIALIZE": 1,
+        "PRECHARGE": 2,
+        "IDLE": 3,
+        "CHARGING": 4,
+        "BUTTON": 5,
+        "DRIVING": 6,
+        "FAULT": 7
+    },
+    "messages": {
+        "Initializing Aero servo pins": 1,
+        "MC{} Fault: 5V Sense Voltage Low": 2
+    },
+    "fields": {
+        "speed": {
+            "tag": 1,
+            "name": "Speed"
+        },
+        "voltage": {
+            "tag": 2,
+            "name": "Battery Voltage"
+        }
+    }
+}
