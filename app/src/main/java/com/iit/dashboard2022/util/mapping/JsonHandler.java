@@ -10,19 +10,19 @@ public interface JsonHandler {
      *
      * @return {@link JsonElement} if exists, null if not
      */
-    public CompletableFuture<JsonElement> read();
+    CompletableFuture<JsonElement> read();
 
     /**
      * Writes json mapping to output
      *
      * @param element {@link JsonElement}
      */
-    public void write(JsonElement element);
+    void write(JsonElement element);
 
     /**
      * Deletes json entry
      *
      * @return True if success, false if not
      */
-    public CompletableFuture<Boolean> delete();
+    CompletableFuture<Boolean> delete();
 }
