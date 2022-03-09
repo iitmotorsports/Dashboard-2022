@@ -20,8 +20,8 @@ public class ECULogger {
     private static final String LOG_MAP_END = "---[ LOG MAP END ]---\n";
     final LogFileIO logFile;
 
-    public ECULogger(Activity activity) {
-        this.logFile = new LogFileIO(activity);
+    public ECULogger() {
+        this.logFile = new LogFileIO();
         LogFileIO.setGlobalLogFileSanitizer(file -> {
             String jsonStr = LogFileIO.getString(file, LOG_MAP_END);
             int logStart = jsonStr.getBytes().length;

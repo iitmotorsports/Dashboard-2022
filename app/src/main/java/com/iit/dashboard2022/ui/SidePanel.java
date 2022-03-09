@@ -124,7 +124,8 @@ public class SidePanel extends ConstraintLayout {
             frontECU.debugUpdate(raw);
         });
 
-        nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> frontECU.enableNearbyAPI(isChecked));
+        // TODO: New nearby API?
+        //nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> frontECU.enableNearbyAPI(isChecked));
 
         frontECU.setConnectionListener(status -> {
             boolean opened = (status & SerialCom.Opened) == SerialCom.Opened;

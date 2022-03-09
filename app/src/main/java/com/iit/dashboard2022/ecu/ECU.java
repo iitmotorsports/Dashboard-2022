@@ -1,13 +1,17 @@
 package com.iit.dashboard2022.ecu;
 
+import android.app.Activity;
 import android.os.SystemClock;
 import android.view.Gravity;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.LogFileIO;
+import com.iit.dashboard2022.util.NearbySerial;
 import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.util.USBSerial;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,9 +20,10 @@ import java.util.Date;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class ECU extends ECUCommunication {
+public class ECU {
     public static final String LOG_TAG = "ECU";
 
+    private final USBSerial usbMethod;
     private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
     private static final int iBuf_CallerID = 0;
     private static final int iBuf_StringID = 1;
@@ -42,7 +47,7 @@ public class ECU extends ECUCommunication {
     public ECU(AppCompatActivity activity) {
         ECU.instance = this;
         J_USB = new ECUJUSB(this);
-        ecuLogger = new ECULogger(activity);
+        ecuLogger = new ECULogger();
         ecuKeyMap = new ECUKeyMap();
         ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
 
@@ -58,7 +63,10 @@ public class ECU extends ECUCommunication {
             }
         });
 
-        startSerial(activity, this::receiveData);
+        // Start Serial
+        usbMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
+        usbMethod.setDataListener(this::receiveData);
+        usbMethod.autoConnect(true);
         open();
     }
 
@@ -120,7 +128,7 @@ public class ECU extends ECUCommunication {
     }
 
     public void issueCommand(Command command) {
-        write(command.getData());
+        usbMethod.write(command.getData());
     }
 
     public void clear() {
@@ -133,7 +141,7 @@ public class ECU extends ECUCommunication {
 
     public void setErrorListener(BiConsumer<String, String> errorListener) {
         this.errorListener = errorListener;
-        super.setErrorListener(exception -> errorListener.accept(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
+        usbMethod.setErrorListener(exception -> errorListener.accept(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
     }
 
     public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
@@ -308,6 +316,30 @@ public class ECU extends ECUCommunication {
 
     public ECUJUSB getUsb() {
         return J_USB;
+    }
+
+    public void write(byte[] data) {
+        usbMethod.write(data);
+    }
+
+    public void setConnectionListener(Consumer<Integer> statusListener) {
+        usbMethod.setStatusListener(statusListener);
+    }
+
+    public boolean open() {
+        return usbMethod.open();
+    }
+
+    public void close() {
+        usbMethod.close();
+    }
+
+    public boolean isOpen() {
+        return usbMethod.isOpen();
+    }
+
+    public boolean isAttached() {
+        return usbMethod.isAttached();
     }
 
     public enum MODE {

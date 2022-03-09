@@ -28,13 +28,11 @@ public class LogFileIO {
     private static final String SUFFIX = ".log";
     private static final String simpleDataFormatString = "yyyy-MM-dd-HH-mm-ss";
     private static LogFileSanitizer logFileSanitizer;
-    private final Activity activity;
     private File activeFile;
     private FileOutputStream activeFileStream;
     private boolean opened = false;
 
-    public LogFileIO(Activity activity) {
-        this.activity = activity;
+    public LogFileIO() {
     }
 
     public static void setGlobalLogFileSanitizer(LogFileSanitizer logFileSanitizer) {
@@ -92,7 +90,7 @@ public class LogFileIO {
 
     public void newLog() {
         try {
-            File path = activity.getFilesDir();
+            File path = HawkUtil.getFilesDir();
             String FILENAME_LOG = PREFIX + "%s" + SUFFIX;
             Calendar calendar = Calendar.getInstance();
             String date = new SimpleDateFormat(simpleDataFormatString, Locale.US).format(calendar.getTime());
@@ -116,7 +114,7 @@ public class LogFileIO {
     }
 
     public List<LogFile> listFiles() {
-        String path = activity.getFilesDir().toString();
+        String path = HawkUtil.getFilesDir().toString();
         LogFile directory = new LogFile(path);
         LogFile[] files = directory.listFiles();
         List<LogFile> fileList = new ArrayList<>();
