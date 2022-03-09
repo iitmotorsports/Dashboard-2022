@@ -14,8 +14,8 @@ import java.lang.annotation.RetentionPolicy;
 public class PageManager extends FragmentStateAdapter {
     public static final int DASHBOARD = 0;
     public static final int LIVEDATA = 1;
-    public static final int LOGS = 2;
-    public static final int STATISTICS = 3;
+    public static final int STATISTICS = 2;
+    public static final int LOGS = 3;
     public static final int ERRORS = 4;
     public static final int COMMANDER = 5;
     public static final int ABOUT = 6;
@@ -41,8 +41,8 @@ public class PageManager extends FragmentStateAdapter {
         /* ADD NEW PAGES HERE */
         pages[DASHBOARD] = new CarDashboard();
         pages[LIVEDATA] = new LiveData();
-        pages[LOGS] = new Logs();
         pages[STATISTICS] = new Statistics();
+        pages[LOGS] = new Logs();
         pages[ERRORS] = new Errors();
         pages[COMMANDER] = new Commander();
         pages[ABOUT] = new About();
@@ -77,8 +77,8 @@ public class PageManager extends FragmentStateAdapter {
     @IntDef({
             DASHBOARD,
             LIVEDATA,
-            LOGS,
             STATISTICS,
+            LOGS,
             ERRORS,
             COMMANDER,
             ABOUT
