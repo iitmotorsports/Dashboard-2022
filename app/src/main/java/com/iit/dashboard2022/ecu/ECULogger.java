@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.ecu;
 
-import android.app.Activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import com.google.gson.JsonParser;
@@ -9,7 +8,6 @@ import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
 
 import java.io.File;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

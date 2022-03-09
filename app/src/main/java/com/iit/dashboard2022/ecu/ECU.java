@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.NearbySerial;
 import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.USBSerial;
 
@@ -180,6 +179,7 @@ public class ECU {
         if (fileLogging != enabled) {
             fileLogging = enabled;
         }
+
     }
 
     /**

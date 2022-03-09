@@ -63,7 +63,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidXVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "com.github.mik3y:usb-serial-for-android:$usbSerialVersion"
-    implementation "com.google.android.gms:play-services-nearby:$gmsVersion"
     //noinspection GradleDynamicVersion
     implementation "com.husbylabs:warptables:$warptablesVersion"
     implementation "io.grpc:grpc-okhttp:$grpcVersion"
