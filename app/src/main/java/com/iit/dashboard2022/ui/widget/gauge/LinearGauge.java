@@ -23,7 +23,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     private final Paint paint, bgPaint, topTextPaint, bottomTextPaint, valueTextPaint;
     private final Rect mainBar;
     private final String topText;
-    private final boolean flipped;
+    private final boolean flipped, vertical;
     private final int[] colors;
     private RectF dst;
     private String bottomText;
@@ -55,6 +55,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
                 R.attr.colorMid,
                 R.attr.flipped,
                 R.attr.unit,
+                R.attr.vertical,
                 android.R.attr.textSize,
                 android.R.attr.textColor,
                 android.R.attr.text,
@@ -71,6 +72,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
         int colorMid = a.getColor(i++, 0);
         flipped = a.getBoolean(i++, false);
         unit = (String) a.getText(i++);
+        vertical = a.getBoolean(i++, false);
         int textSize = a.getDimensionPixelSize(i++, 14);
         int textColor = a.getColor(i++, Color.WHITE);
 
@@ -128,8 +130,14 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     }
 
     private void setSize(int x, int y) {
-        width = x;
-        height = y;
+        if (vertical) {
+            width = y;
+            height = x;
+        } else {
+            width = x;
+            height = y;
+        }
+
         textOffset = (int) (height - height * 0.125f);
         if (topText != null) {
             topTextY = (int) (topTextPaint.getTextSize() + height * 0.125f / 2);
@@ -152,6 +160,10 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
 
     protected void onDraw(Canvas canvas) {
         canvas.drawRect(dst, bgPaint);
+        if (vertical) {
+            canvas.rotate(-90);
+            canvas.translate(-width, 0);
+        }
         canvas.drawRect(mainBar, paint);
         if (topText != null) {
             canvas.drawText(topText, altX, topTextY, topTextPaint);

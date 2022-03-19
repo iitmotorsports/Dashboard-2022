@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
@@ -43,16 +44,16 @@
 
     <LinearLayout
         android:id="@+id/speedGauges"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rTempGauge"
+        app:layout_constraintStart_toEndOf="@+id/lTempGauge"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.68">
 
@@ -89,15 +90,16 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="64dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rTempGauge"
+        app:layout_constraintStart_toEndOf="@+id/lTempGauge"
         app:layout_constraintTop_toBottomOf="@+id/speedGauges">
 
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
@@ -135,5 +137,41 @@
             app:unit="%%" />
 
     </LinearLayout>
+
+    <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
+        android:id="@+id/rTempGauge"
+        android:layout_width="32dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="@color/midground"
+        android:textColor="@color/background"
+        android:textSize="12sp"
+        android:title="@string/right_temp_title"
+        app:colorHigh="@color/red"
+        app:colorLow="@color/midground"
+        app:colorMid="@color/yellow"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speedometer"
+        app:unit="°"
+        app:vertical="true" />
+
+    <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
+        android:id="@+id/lTempGauge"
+        android:layout_width="32dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:backgroundTint="@color/midground"
+        android:textColor="@color/background"
+        android:textSize="12sp"
+        android:title="@string/left_temp_title"
+        app:colorHigh="@color/red"
+        app:colorLow="@color/midground"
+        app:colorMid="@color/yellow"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speedometer"
+        app:unit="°"
+        app:vertical="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

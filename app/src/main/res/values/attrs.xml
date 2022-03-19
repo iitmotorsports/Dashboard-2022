@@ -34,6 +34,7 @@
         <attr name="colorMid" />
         <attr name="colorHigh" />
         <attr name="flipped" format="boolean" />
+        <attr name="vertical" format="boolean" />
         <attr name="android:textColor" />
         <attr name="android:textSize" />
         <attr name="android:text" />
