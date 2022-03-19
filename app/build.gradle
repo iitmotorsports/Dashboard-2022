@@ -8,7 +8,6 @@ ext {
     androidXVersion = "1.4.0"
     materialVersion = "1.4.0"
     usbSerialVersion = "v3.4.2"
-    gmsVersion = "18.0.1"
     grpcVersion = "1.44.1"
     tomcatVersion = "6.0.53"
     gsonVersion = "2.9.0"
@@ -54,7 +53,6 @@ android {
     packagingOptions {
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/io.netty.versions.properties'
-        exclude 'META-INF/DEPENDENCIES'
     }
 }
 

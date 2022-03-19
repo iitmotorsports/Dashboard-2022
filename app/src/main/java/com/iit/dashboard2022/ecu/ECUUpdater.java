@@ -1,6 +1,9 @@
 package com.iit.dashboard2022.ecu;
 
 import androidx.annotation.NonNull;
+import com.husbylabs.warptables.WTClient;
+import com.husbylabs.warptables.WarpTableInstance;
+import com.husbylabs.warptables.WarpTablesAPI;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.SidePanel;

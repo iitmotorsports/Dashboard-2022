@@ -4,6 +4,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.iit.dashboard2022.util.Constants;
@@ -35,6 +37,10 @@ public class ECUKeyMap {
 
     private HashMap<Integer, String> tagLookUp;
     private HashMap<Integer, String> stringLookUp;
+
+    private Map<Integer, String> subsystems = Maps.newHashMap();
+    private Map<Integer, String> stats = Maps.newHashMap();
+    private Map<Integer, String> messages = Maps.newHashMap();
 
     public ECUKeyMap(JsonElement element) {
         pseudoMode = true;
@@ -113,7 +119,7 @@ public class ECUKeyMap {
 
         if (tagID != null && strID != null) {
             ByteBuffer mapping = ByteBuffer.allocate(4);
-                mapping.order(ByteOrder.LITTLE_ENDIAN);
+            mapping.order(ByteOrder.LITTLE_ENDIAN);
             mapping.putShort(tagID.shortValue());
             mapping.putShort(strID.shortValue());
             return mapping.getInt(0);
@@ -160,12 +166,12 @@ public class ECUKeyMap {
     }
 
     public boolean update(JsonElement element) {
-        boolean status = interpretJSON(element);
+        boolean status = parseMap(element);
         notifyStatusListeners(status, Constants.GSON.toJson(element));
         return status;
     }
 
-    private boolean interpretJSON(JsonElement element) {
+    private boolean parseMap(JsonElement element) {
         if (element == null || element.isJsonNull()) {
             if (pseudoMode) {
                 return false;
@@ -178,22 +184,32 @@ public class ECUKeyMap {
             return false;
         }
 
-        HashMap<Integer, String> newTagLookup = new HashMap<>();
-        HashMap<Integer, String> newStringLookup = new HashMap<>();
+        Map<Integer, String> tempSubsystems = Maps.newHashMap();
+        Map<Integer, String> tempStats = Maps.newHashMap();
+        Map<Integer, String> tempMessages = Maps.newHashMap();
 
-        try {
-            JsonArray array = element.getAsJsonArray();
-            for (Map.Entry<String, JsonElement> entry : array.get(0).getAsJsonObject().entrySet()) {
-                newTagLookup.put(entry.getValue().getAsInt(), entry.getKey());
-            }
+        if (element.isJsonObject() && element.getAsJsonObject().has("version")) {
+            // TODO: V2 parsing
+        } else {
+            try {
+                JsonArray array = element.getAsJsonArray();
+                for (Map.Entry<String, JsonElement> entry : array.get(0).getAsJsonObject().entrySet()) {
+                    int tag = entry.getValue().getAsInt();
+                    if(tag < Constants.v1MappingCutoff) {
+                        tempSubsystems.put(tag, entry.getKey());
+                    } else {
+                        tempStats.put(tag, entry.getKey());
+                    }
+                }
 
-            for (Map.Entry<String, JsonElement> entry : array.get(1).getAsJsonObject().entrySet()) {
-                newStringLookup.put(entry.getValue().getAsInt(), entry.getKey());
+                for (Map.Entry<String, JsonElement> entry : array.get(1).getAsJsonObject().entrySet()) {
+                    tempMessages.put(entry.getValue().getAsInt(), entry.getKey());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
+                return loaded();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
-            return loaded();
         }
 
         if (!pseudoMode) {
@@ -205,8 +221,9 @@ public class ECUKeyMap {
             MapHandler.CACHE.get().write(element);
         }
 
-        tagLookUp = newTagLookup;
-        stringLookUp = newStringLookup;
+        subsystems = ImmutableMap.copyOf(tempSubsystems);
+        stats = ImmutableMap.copyOf(tempStats);
+        messages = ImmutableMap.copyOf(tempMessages);
         return true;
     }
 
