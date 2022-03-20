@@ -5,8 +5,10 @@ import android.view.Gravity;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.common.collect.Lists;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.util.ByteSplit;
+import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.LogFileIO;
 import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.USBSerial;
@@ -15,6 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -28,17 +31,18 @@ public class ECU {
     private static final int iBuf_Value = 2;
     private static final int iBuf_MsgID = 3;
     private static final Date d = new Date();
-    private final ECUMsgHandler_old ecuMsgHandler;
-    private final ECUKeyMap ecuKeyMap;
+    private final ECUMessageHandler ecuMessageHandler;
     private final ECULogger ecuLogger;
     private final ECUJUSB J_USB;
     private final long[] iBuffer = new long[4];
     boolean fileLogging = true;
     private BiConsumer<String, String> errorListener;
+    private final List<Consumer<State>> stateListener = Lists.newArrayList();
     private Runnable jsonLoadListener;
     private Consumer<String> interpretListener;
     private MODE interpreterMode = MODE.DISABLED;
     private int errorCount = 0;
+    private State state = State.INITIALIZING;
 
     public static ECU instance;
 
@@ -46,12 +50,10 @@ public class ECU {
         ECU.instance = this;
         J_USB = new ECUJUSB(this);
         ecuLogger = new ECULogger();
-        ecuKeyMap = new ECUKeyMap();
-        ecuMsgHandler = new ECUMsgHandler_old(ecuKeyMap);
+        ecuMessageHandler = new ECUMessageHandler();
 
-        ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
+        ecuMessageHandler.addStatusListener((jsonLoaded, rawJson) -> {
             if (jsonLoaded) {
-                ecuMsgHandler.loadMessageKeys();
                 if (rawJson != null) {
                     ecuLogger.newLog(rawJson);
                 }
@@ -60,6 +62,16 @@ public class ECU {
                 }
             }
         });
+
+        ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(val -> {
+            State state = State.getStateById(val.intValue());
+            if(state == null) {
+                //TODO: How the fuck
+                return;
+            }
+            this.state = state;
+            stateListener.forEach(consumer -> consumer.accept(state));
+        }, ECUStat.UpdateMethod.ON_VALUE_CHANGE);
 
         // Start Serial
         usbMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
@@ -107,7 +119,7 @@ public class ECU {
 
         long epoch = SystemClock.elapsedRealtime();
 
-        if (!ecuKeyMap.loaded()) {
+        if (!ecuMessageHandler.loaded()) {
             if (errorCount == 0) {
                 Toaster.showToast("No JSON map Loaded", Toaster.Status.WARNING, Toast.LENGTH_SHORT, Gravity.START);
             }
@@ -130,7 +142,7 @@ public class ECU {
     }
 
     public void clear() {
-        ecuKeyMap.clear();
+        ecuMessageHandler.clear();
     }
 
     public void setJSONLoadListener(Runnable listener) {
@@ -142,13 +154,17 @@ public class ECU {
         usbMethod.setErrorListener(exception -> errorListener.accept(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
     }
 
+    public void onStateChangeEvent(Consumer<State> consumer) {
+        this.stateListener.add(consumer);
+    }
+
     public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
-        ecuKeyMap.addStatusListener(statusListener);
+        ecuMessageHandler.addStatusListener(statusListener);
     }
 
     public long requestMsgID(String stringTag, String stringMsg) {
-        if (ecuKeyMap != null) {
-            return ecuKeyMap.requestMsgID(stringTag, stringMsg);
+        if (ecuMessageHandler != null) {
+            return ecuMessageHandler.requestMsgID(stringTag, stringMsg);
         }
         return -1;
     }
@@ -159,10 +175,6 @@ public class ECU {
 
     public void setLogListener(Consumer<String> interpretListener) {
         this.interpretListener = interpretListener;
-    }
-
-    public ECUMsgHandler_old getEcuMsgHandler() {
-        return ecuMsgHandler;
     }
 
     public LogFileIO.LogFile[] getLocalLogs() {
@@ -207,13 +219,17 @@ public class ECU {
      */
     private void updateData(byte[] data_block) {
         interpretMsg(iBuffer, data_block);
+        //TODO: Faults
+        /*
         String fault = ecuMsgHandler.checkFaults(iBuffer[iBuf_StringID]);
         if (fault != null && errorListener != null) {
             errorListener.accept("CAN Fault", fault);
             return;
         }
 
-        ecuKeyMap.updateStatistic((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_StringID], iBuffer[iBuf_Value]);
+         */
+
+        ecuMessageHandler.updateStatistic((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_StringID], iBuffer[iBuf_Value]);
     }
 
     /**
@@ -233,7 +249,7 @@ public class ECU {
             return formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value);
         }
          */
-        return formatMsg(epoch, ecuKeyMap.getTag((int) iBuffer[iBuf_CallerID]), ecuKeyMap.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
+        return formatMsg(epoch, ecuMessageHandler.getTag((int) iBuffer[iBuf_CallerID]), ecuMessageHandler.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
     }
 
     /**
@@ -314,8 +330,8 @@ public class ECU {
         }
     }
 
-    public ECUKeyMap getMap() {
-        return ecuKeyMap;
+    public ECUMessageHandler getMessageHandler() {
+        return ecuMessageHandler;
     }
 
     public ECUJUSB getUsb() {
@@ -346,6 +362,15 @@ public class ECU {
         return usbMethod.isAttached();
     }
 
+    /**
+     * Gets current state of the vehicle
+     *
+     * @return the current state of the vehicle
+     */
+    public State getState() {
+        return state;
+    }
+
     public enum MODE {
         DISABLED,
         ASCII,
@@ -373,6 +398,53 @@ public class ECU {
 
         public byte[] getData() {
             return data;
+        }
+    }
+
+    public enum State { // Use actual name, brackets are added on when matching to actual state name
+        INITIALIZING("Teensy Initialize"),
+        PRE_CHARGE("PreCharge State"),
+        IDLE("Idle State"),
+        CHARGING("Charging State"),
+        BUTTON("Button State"),
+        DRIVING("Driving Mode State"),
+        FAULT("Fault State");
+
+        private final String name;
+        private int id = -1;
+
+        State(String title) {
+            this.name = title;
+        }
+
+        public void setTagId(int id) {
+            this.id = id;
+        }
+
+        public int getTagId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static State getStateById(int id) {
+            for(State state : State.values()) {
+                if(state.getTagId() == id) {
+                    return state;
+                }
+            }
+            return null;
+        }
+
+        public static State getStateByName(String name) {
+            for(State state : State.values()) {
+                if(state.getName().equalsIgnoreCase(name)) {
+                    return state;
+                }
+            }
+            return null;
         }
     }
 }

@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 
-public class ECUKeyMap {
+public class ECUMessageHandler {
     private final List<BiConsumer<Boolean, String>> statusListeners = new ArrayList<>();
     private boolean pseudoMode = false;
 
@@ -41,12 +41,12 @@ public class ECUKeyMap {
 
     private final Map<String, ECUStat> ecuStats = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
 
-    public ECUKeyMap(JsonElement element) {
+    public ECUMessageHandler(JsonElement element) {
         pseudoMode = true;
         update(element);
     }
 
-    public ECUKeyMap() {
+    public ECUMessageHandler() {
     }
 
     /**
@@ -222,6 +222,10 @@ public class ECUKeyMap {
                 for (Map.Entry<String, JsonElement> entry : array.get(0).getAsJsonObject().entrySet()) {
                     int tag = entry.getValue().getAsInt();
                     if(tag < Constants.v1MappingCutoff) {
+                        ECU.State state = ECU.State.getStateByName(entry.getKey());
+                        if (state != null) {
+                            state.setTagId(tag);
+                        }
                         tempSubsystems.put(tag, entry.getKey());
                     } else {
                         tempStats.put(tag, entry.getKey());

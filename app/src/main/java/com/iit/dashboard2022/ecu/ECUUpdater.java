@@ -1,14 +1,10 @@
 package com.iit.dashboard2022.ecu;
 
 import androidx.annotation.NonNull;
-import com.husbylabs.warptables.WTClient;
-import com.husbylabs.warptables.WarpTableInstance;
-import com.husbylabs.warptables.WarpTablesAPI;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.SidePanel;
-import com.iit.dashboard2022.ui.widget.Indicators;
-import com.iit.dashboard2022.util.Constants;
+
 import static com.iit.dashboard2022.util.Constants.Statistics.*;
 
 public class ECUUpdater {
@@ -19,7 +15,7 @@ public class ECUUpdater {
         /*
          *  DASHBOARD
          */
-        ECUKeyMap ecuMsgHandler = frontECU.getMap();
+        ECUMessageHandler ecuMsgHandler = frontECU.getMessageHandler();
 
         /* GAUGES */
         ecuMsgHandler.getStatistic(Speedometer).addMessageListener(val -> {

@@ -8,11 +8,8 @@ import android.os.Looper;
 import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUKeyMap;
+import com.iit.dashboard2022.ecu.ECUMessageHandler;
 import com.iit.dashboard2022.ecu.ECUUpdater;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         mainPager = new Pager(this);
         Toaster.setContext(this);
 
-        ((JsonFileSelectorHandler) ECUKeyMap.MapHandler.SELECTOR.get()).init(this);
+        ((JsonFileSelectorHandler) ECUMessageHandler.MapHandler.SELECTOR.get()).init(this);
         /*
         new Thread(() -> {
 
@@ -122,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
             Toaster.setEnabled(true);
             try {
-                if (!frontECU.getMap().load().get()) {
+                if (!frontECU.getMessageHandler().load().get()) {
                     Toaster.showToast("No JSON is currently loaded", Toaster.Status.WARNING);
                     logPage.displayFiles(frontECU.getLocalLogs());
                 } else {

@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUKeyMap;
+import com.iit.dashboard2022.ecu.ECUMessageHandler;
 import com.iit.dashboard2022.util.HawkUtil;
 import com.iit.dashboard2022.util.Toaster;
 
@@ -29,17 +29,17 @@ public class JSONDialog {
 
         downloadBtn.setEnabled(HawkUtil.checkInternetConnection(activity));
         downloadBtn.setOnClickListener(v -> {
-            frontECU.getMap().load(ECUKeyMap.MapHandler.PASTE).thenAccept(b -> Toaster.showToast(b ? "Loaded JSON from Paste API" : "Failed to load JSON from Paste API", b ? Toaster.Status.SUCCESS : Toaster.Status.ERROR));
+            frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.PASTE).thenAccept(b -> Toaster.showToast(b ? "Loaded JSON from Paste API" : "Failed to load JSON from Paste API", b ? Toaster.Status.SUCCESS : Toaster.Status.ERROR));
             dialog.dismiss();
         });
 
         //        scanBtn.setOnClickListener(v -> stream.updateQRJson());
         findBtn.setOnClickListener(v -> {
-            frontECU.getMap().load(ECUKeyMap.MapHandler.SELECTOR);
+            frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.SELECTOR);
             dialog.dismiss();
         });
         delBtn.setOnClickListener(v -> frontECU.clear());
-        scanBtn.setOnClickListener(v -> frontECU.getMap().load(ECUKeyMap.MapHandler.ECU));
+        scanBtn.setOnClickListener(v -> frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.ECU));
         scanBtn.setText(R.string.USB);
 
         // TODO: Figure out this whole dialog sizing thing

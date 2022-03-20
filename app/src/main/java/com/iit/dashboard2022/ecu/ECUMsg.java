@@ -20,7 +20,7 @@ public class ECUMsg {
         this.dataType = dataType;
     }
 
-    void load(HashMap<Long, ECUMsg> messageMap, ECUKeyMap keyMap) {
+    void load(HashMap<Long, ECUMsg> messageMap, ECUMessageHandler keyMap) {
         messageMap.put(keyMap.requestMsgID(stringTag, stringMsg), this);
     }
 

@@ -17,6 +17,7 @@ public class ECULogger {
     private static final String LOG_MAP_START = "---[ LOG MAP START ]---\n";
     private static final String LOG_MAP_END = "---[ LOG MAP END ]---\n";
     final LogFileIO logFile;
+    //TODO: Separate all errors into error page
 
     public ECULogger() {
         this.logFile = new LogFileIO();
@@ -73,7 +74,7 @@ public class ECULogger {
         //TODO: Check this string
         JsonReader reader = new JsonReader(new StringReader(jsonStr));
         reader.setLenient(true);
-        ECUKeyMap localEcuKeyMap = new ECUKeyMap(JsonParser.parseReader(reader));
+        ECUMessageHandler localEcuKeyMap = new ECUMessageHandler(JsonParser.parseReader(reader));
         StringBuilder output = new StringBuilder(raw_data.length);
 
         if (localEcuKeyMap.loaded()) {
