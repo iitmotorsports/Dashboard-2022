@@ -206,14 +206,15 @@ public class ECU {
      * @param data_block 8 byte data block
      * @return ECUMsg that was updated, null in none
      */
-    private ECUMsg updateData(byte[] data_block) {
+    private void updateData(byte[] data_block) {
         interpretMsg(iBuffer, data_block);
         String fault = ecuMsgHandler.checkFaults(iBuffer[iBuf_StringID]);
         if (fault != null && errorListener != null) {
             errorListener.accept("CAN Fault", fault);
-            return null;
+            return;
         }
-        return ecuMsgHandler.updateMessage(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
+
+        ecuKeyMap.updateStatistic((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_StringID], iBuffer[iBuf_Value]);
     }
 
     /**
@@ -224,12 +225,16 @@ public class ECU {
      * @return the formatted message that was received
      */
     private String updateFormattedData(long epoch, byte[] data_block) {
+        //TODO: Log stats?
+        /*
         ECUMsg msg = updateData(data_block);
         if (msg == null) {
             return formatMsg(epoch, ecuKeyMap.getTag((int) iBuffer[iBuf_CallerID]), ecuKeyMap.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
         } else {
             return formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value);
         }
+         */
+        return formatMsg(epoch, ecuKeyMap.getTag((int) iBuffer[iBuf_CallerID]), ecuKeyMap.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
     }
 
     /**

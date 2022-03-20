@@ -42,12 +42,40 @@ public class ECUKeyMap {
     private Map<Integer, String> stats = Maps.newHashMap();
     private Map<Integer, String> messages = Maps.newHashMap();
 
+    private final Map<String, ECUStat> ecuStats = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+
     public ECUKeyMap(JsonElement element) {
         pseudoMode = true;
         update(element);
     }
 
     public ECUKeyMap() {
+    }
+
+    /**
+     * Gets {@link ECUStat} if its exists, creates it otherwise
+     *
+     * @param identifier Short name of stat
+     * @return {@link ECUStat}
+     */
+    public ECUStat getStatistic(String identifier) {
+        ECUStat stat = ecuStats.get(identifier);
+        if(stat == null) {
+            stat = new ECUStat(identifier);
+            ecuStats.put(identifier, stat);
+        }
+        return stat;
+    }
+
+    protected void updateStatistic(int statId, int messageId, long data) {
+        String identifier = stats.get(statId);
+        if (identifier == null) {
+            // TODO: Map does not contain key for statistic!
+            return;
+        }
+        ECUStat stat = getStatistic(identifier);
+        stat.initialize(statId, messages.get(messageId));
+        stat.update(data);
     }
 
     /**
@@ -199,6 +227,8 @@ public class ECUKeyMap {
                         tempSubsystems.put(tag, entry.getKey());
                     } else {
                         tempStats.put(tag, entry.getKey());
+                        // TODO: Pretty name not shipped with v1
+                        getStatistic(entry.getKey()).initialize(tag, null);
                     }
                 }
 

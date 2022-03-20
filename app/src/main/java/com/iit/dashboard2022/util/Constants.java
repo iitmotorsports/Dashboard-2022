@@ -18,7 +18,7 @@ public class Constants {
     public static final String JSON_FILE = "ECU_JSON_MAP.json";
     public static final Gson GSON;
 
-    public static final int v1MappingCutoff = 50;
+    public static final int v1MappingCutoff = 256;
 
     static {
         GSON = new GsonBuilder().setPrettyPrinting().create();

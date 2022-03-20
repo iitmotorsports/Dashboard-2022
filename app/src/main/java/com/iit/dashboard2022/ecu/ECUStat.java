@@ -7,40 +7,65 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ECUField {
+public class ECUStat {
 
     private final String identifier;
-    private final int tag;
-    private final DataType dataType;
+    private int id = -1;
+    private String prettyName;
     public final Map<Consumer<Long>, UpdateMethod> messageListeners = Maps.newHashMap();
     public long value = 0;
 
-    public ECUField(String identifier, int tag, DataType dataType) {
+    public ECUStat(String identifier) {
         this.identifier = identifier;
-        this.tag = tag;
-        this.dataType = dataType;
+    }
+
+    /**
+     * Gets the identifier for the statistic
+     *
+     * @return Identifier of statistic
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * Gets the pretty name of the statistic
+     *
+     * @return the pretty name
+     */
+    public String getPrettyName() {
+        return prettyName;
+    }
+
+    /**
+     * Gets the id of the statistic
+     *
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Initializes the statistic with proper information
+     *
+     * @param id Mapping id of statistic
+     * @param prettyName Pretty name of statistic
+     */
+    public void initialize(int id, String prettyName) {
+        this.id = id;
+        this.prettyName = prettyName;
     }
 
     /**
      * Update the message from the ECU
      *
+     * @implNote This should only be called internal to {@link ECU}
      * @param val The value of the field
      */
     public void update(long val) {
         long prevValue = this.value;
-        switch (this.dataType) {
-            case SIGNED_BYTE:
-                this.value = ByteSplit.toSignedByte(val);
-                break;
-            case SIGNED_SHORT:
-                this.value = ByteSplit.toSignedShort(val);
-                break;
-            case SIGNED_INT:
-                this.value = ByteSplit.toSignedInt(val);
-                break;
-            case UNSIGNED:
-                this.value = val;
-        }
+        this.value = val;
 
         for (Map.Entry<Consumer<Long>, UpdateMethod> entry : messageListeners.entrySet()) {
             Consumer<Long> consumer = entry.getKey();
@@ -89,6 +114,42 @@ public class ECUField {
         this.value = 0;
     }
 
+    /**
+     * Gets the current value as a signed byte
+     *
+     * @return The current value as a signed byte
+     */
+    public byte getAsByte() {
+        return ByteSplit.toSignedByte(value);
+    }
+
+    /**
+     * Gets the current value as a signed short
+     *
+     * @return The current value as a signed short
+     */
+    public short getAsShort() {
+        return ByteSplit.toSignedShort(value);
+    }
+
+    /**
+     * Gets the current value as a signed integer
+     *
+     * @return The current value as a signed integer
+     */
+    public int getAsInt() {
+        return ByteSplit.toSignedInt(value);
+    }
+
+    /**
+     * Gets the current value
+     *
+     * @return The current value
+     */
+    public long get() {
+        return value;
+    }
+
     public enum UpdateMethod {
         /**
          * Fire the event each time a value is received
@@ -109,12 +170,5 @@ public class ECUField {
          * Fire the event each time the value increases
          */
         ON_VALUE_INCREASE
-    }
-
-    public enum DataType {
-        SIGNED_BYTE,
-        SIGNED_SHORT,
-        SIGNED_INT,
-        UNSIGNED
     }
 }
