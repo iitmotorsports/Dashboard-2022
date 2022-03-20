@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMessageHandler;
 import com.iit.dashboard2022.ecu.ECUUpdater;
+import com.iit.dashboard2022.logging.ErrorPageAppender;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
 import com.iit.dashboard2022.page.Errors;
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         ConsoleWidget console = findViewById(R.id.console);
-
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
         LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         commandPage.setECU(frontECU);
         cdPage.setECU(frontECU);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
+
+        ErrorPageAppender.logger = errorsPage;
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);

@@ -1,0 +1,10 @@
+<configuration>
+    <appender name="ERROR_PAGE" class="com.iit.dashboard2022.logging.ErrorPageAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.iit.dashboard2022.logging.ErrorPageLayout"/>
+        </encoder>
+    </appender>
+    <root level="warn">
+        <appender-ref ref="ERROR_PAGE"/>
+    </root>
+</configuration>

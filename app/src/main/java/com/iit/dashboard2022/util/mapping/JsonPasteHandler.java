@@ -41,9 +41,7 @@ public class JsonPasteHandler implements JsonHandler {
                 }
                 JsonObject lastPaste = responseData.get(0).getAsJsonObject();
                 String lastId = lastPaste.get("id").getAsString();
-                System.out.println(Constants.GSON.toJson(responseData));
                 conn.disconnect();
-                System.out.println(lastId);
                 future.complete(fetchPasteById(lastId));
             } catch (IOException e) {
                 Toaster.showToast("Failed to communicate with API", Toaster.Status.ERROR);
