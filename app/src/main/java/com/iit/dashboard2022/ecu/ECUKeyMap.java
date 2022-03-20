@@ -35,9 +35,6 @@ public class ECUKeyMap {
     private final List<BiConsumer<Boolean, String>> statusListeners = new ArrayList<>();
     private boolean pseudoMode = false;
 
-    private HashMap<Integer, String> tagLookUp;
-    private HashMap<Integer, String> stringLookUp;
-
     private Map<Integer, String> subsystems = Maps.newHashMap();
     private Map<Integer, String> stats = Maps.newHashMap();
     private Map<Integer, String> messages = Maps.newHashMap();
@@ -107,27 +104,27 @@ public class ECUKeyMap {
     }
 
     public boolean loaded() {
-        return tagLookUp != null && stringLookUp != null;
+        return subsystems != null && stats != null && messages != null;
     }
 
     @Nullable
     public Integer getTagID(String stringTag) {
-        return getKeyByValue(tagLookUp, stringTag);
+        return getKeyByValue(subsystems, stringTag);
     }
 
     @Nullable
     public Integer getStrID(String stringMsg) {
-        return getKeyByValue(stringLookUp, stringMsg);
+        return getKeyByValue(messages, stringMsg);
     }
 
     @Nullable
     public String getTag(Integer tagID) {
-        return tagLookUp.get(tagID);
+        return subsystems.get(tagID);
     }
 
     @Nullable
     public String getStr(Integer strID) {
-        return stringLookUp.get(strID);
+        return messages.get(strID);
     }
 
     /**
@@ -180,8 +177,9 @@ public class ECUKeyMap {
         boolean status = loaded();
         try {
             if (MapHandler.CACHE.get().delete().get()) {
-                tagLookUp = null;
-                stringLookUp = null;
+                subsystems = null;
+                stats = null;
+                messages = null;
                 Toaster.showToast("JSON map deleted", Toaster.Status.INFO);
                 status = false;
             } else {

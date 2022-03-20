@@ -8,6 +8,8 @@ import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.Indicators;
+import com.iit.dashboard2022.util.Constants;
+import static com.iit.dashboard2022.util.Constants.Statistics.*;
 
 public class ECUUpdater {
 
@@ -17,19 +19,20 @@ public class ECUUpdater {
         /*
          *  DASHBOARD
          */
-        ECUMsgHandler ecuMsgHandler = frontECU.getEcuMsgHandler();
+        ECUKeyMap ecuMsgHandler = frontECU.getMap();
+
         /* GAUGES */
-        ecuMsgHandler.getMessage(ECUMsgHandler.Speedometer).addMessageListener(val -> {
+        ecuMsgHandler.getStatistic(Speedometer).addMessageListener(val -> {
             dashboardPage.setSpeedValue(val);
             dashboardPage.setSpeedPercentage(Math.abs(val - lastSpeed) * 0.32f);
             lastSpeed = val;
         });
 
-        ecuMsgHandler.getMessage(ECUMsgHandler.BatteryLife).addMessageListener(val -> dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f));
-        ecuMsgHandler.getMessage(ECUMsgHandler.PowerGauge).addMessageListener(val -> { // NOTE: Actual MC power not being used
-            long avgMCVolt = (ecuMsgHandler.requestValue(ECUMsgHandler.MC0Voltage) + ecuMsgHandler.requestValue(ECUMsgHandler.MC1Voltage)) / 2;
-            float limit = ecuMsgHandler.requestValue(ECUMsgHandler.BMSVolt) * ecuMsgHandler.requestValue(ECUMsgHandler.BMSAmp);
-            int usage = (int) (avgMCVolt * ecuMsgHandler.requestValue(ECUMsgHandler.BMSDischargeLim));
+        ecuMsgHandler.getStatistic(BatteryLife).addMessageListener(val -> dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f));
+        ecuMsgHandler.getStatistic(PowerGauge).addMessageListener(val -> { // NOTE: Actual MC power not being used
+            long avgMCVolt = (ecuMsgHandler.getStatistic(MC0Voltage).get() + ecuMsgHandler.getStatistic(MC1Voltage).get()) / 2;
+            float limit = ecuMsgHandler.getStatistic(BMSVolt).get() * ecuMsgHandler.getStatistic(BMSAmp).get();
+            int usage = (int) (avgMCVolt * ecuMsgHandler.getStatistic(BMSDischargeLim).get());
 
             dashboardPage.setPowerLimit((int) limit);
             if (limit == 0) {
@@ -41,6 +44,9 @@ public class ECUUpdater {
             dashboardPage.setPowerValue(usage);
         });
         /* INDICATORS */
+
+        //TODO: CRY
+        /*
         ecuMsgHandler.getMessage(ECUMsgHandler.Beat).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Lag, false), ECUMsg.UpdateMethod.ON_RECEIVE);
         ecuMsgHandler.getMessage(ECUMsgHandler.Lag).addMessageListener(val -> {
             dashboardPage.setIndicator(Indicators.Indicator.Lag, true);
@@ -48,8 +54,10 @@ public class ECUUpdater {
         }, ECUMsg.UpdateMethod.ON_RECEIVE);
         ecuMsgHandler.getMessage(ECUMsgHandler.Fault).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Fault, val > 0));
         ecuMsgHandler.getMessage(ECUMsgHandler.StartLight).addMessageListener(val -> dashboardPage.setStartLight(val == 1));
+         */
 
         /* State Listener */
+        /*
         ecuMsgHandler.setGlobalStateListener(state -> {
             if (state == null) {
                 return;
@@ -60,10 +68,14 @@ public class ECUUpdater {
             sidePanel.chargeToggle.post(() -> sidePanel.chargeToggle.setChecked(state == ECUMsgHandler.STATE.Charging));
         });
 
+         */
+
         /*
          *  LIVE DATA
          */
 
+        //TODO: CRY
+        /*
         ECUMsg[] messages = ecuMsgHandler.getMessageArray();
         String[] titles = new String[messages.length];
 
@@ -80,6 +92,8 @@ public class ECUUpdater {
                 liveDataPage.updateValue(finalI);
             }, ECUMsg.UpdateMethod.ON_RECEIVE);
         }
+
+         */
     }
 
     @NonNull

@@ -13,7 +13,7 @@ public class ECUStat {
     private int id = -1;
     private String prettyName;
     public final Map<Consumer<Long>, UpdateMethod> messageListeners = Maps.newHashMap();
-    public long value = 0;
+    private long value = 0;
 
     public ECUStat(String identifier) {
         this.identifier = identifier;

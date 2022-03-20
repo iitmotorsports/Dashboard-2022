@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.ecu;
 
-import android.app.Activity;
 import android.os.SystemClock;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -29,7 +28,7 @@ public class ECU {
     private static final int iBuf_Value = 2;
     private static final int iBuf_MsgID = 3;
     private static final Date d = new Date();
-    private final ECUMsgHandler ecuMsgHandler;
+    private final ECUMsgHandler_old ecuMsgHandler;
     private final ECUKeyMap ecuKeyMap;
     private final ECULogger ecuLogger;
     private final ECUJUSB J_USB;
@@ -48,7 +47,7 @@ public class ECU {
         J_USB = new ECUJUSB(this);
         ecuLogger = new ECULogger();
         ecuKeyMap = new ECUKeyMap();
-        ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
+        ecuMsgHandler = new ECUMsgHandler_old(ecuKeyMap);
 
         ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
             if (jsonLoaded) {
@@ -162,7 +161,7 @@ public class ECU {
         this.interpretListener = interpretListener;
     }
 
-    public ECUMsgHandler getEcuMsgHandler() {
+    public ECUMsgHandler_old getEcuMsgHandler() {
         return ecuMsgHandler;
     }
 
