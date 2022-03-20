@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
-            }, 500);
+        }, 500);
         super.onPostCreate(savedInstanceState);
     }
 

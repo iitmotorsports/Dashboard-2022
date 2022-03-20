@@ -7,17 +7,13 @@ import android.os.Build;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.iit.dashboard2022.MainActivity;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Utility class with general helpers for the dashboard
@@ -72,12 +68,11 @@ public class HawkUtil {
     /**
      * Creates a new {@link HttpsURLConnection} instance
      *
-     * @param url URL of request
-     * @param method Method of request (GET, POST, PUT, DELETE)
-     * @param accept Accept
+     * @param url         URL of request
+     * @param method      Method of request (GET, POST, PUT, DELETE)
+     * @param accept      Accept
      * @param contentType Content-Type
-     * @param authToken X-Auth-Token
-     *
+     * @param authToken   X-Auth-Token
      * @return {@link HttpsURLConnection}
      * @throws IOException if a connection cannot be formed
      */
@@ -88,12 +83,11 @@ public class HawkUtil {
     /**
      * Creates a new {@link HttpsURLConnection} instance
      *
-     * @param url URL of request
-     * @param method Method of request (GET, POST, PUT, DELETE)
-     * @param accept Accept
+     * @param url         URL of request
+     * @param method      Method of request (GET, POST, PUT, DELETE)
+     * @param accept      Accept
      * @param contentType Content-Type
-     * @param authToken X-Auth-Token
-     *
+     * @param authToken   X-Auth-Token
      * @return {@link HttpsURLConnection}
      * @throws IOException if a connection cannot be formed
      */
@@ -101,10 +95,10 @@ public class HawkUtil {
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod(method);
-        if(accept != null) {
+        if (accept != null) {
             conn.setRequestProperty("Accept", accept);
         }
-        if(contentType != null) {
+        if (contentType != null) {
             conn.setRequestProperty("Content-Type", contentType);
         }
         conn.setRequestProperty("X-Auth-Token", authToken);

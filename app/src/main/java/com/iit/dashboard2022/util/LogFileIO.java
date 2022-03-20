@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.util;
 
-import android.app.Activity;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

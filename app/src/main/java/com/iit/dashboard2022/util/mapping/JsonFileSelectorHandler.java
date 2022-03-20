@@ -1,30 +1,21 @@
 package com.iit.dashboard2022.util.mapping;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.iit.dashboard2022.MainActivity;
-import com.iit.dashboard2022.util.Constants;
-import com.iit.dashboard2022.util.HawkUtil;
 import com.iit.dashboard2022.util.Toaster;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 public class JsonFileSelectorHandler implements JsonHandler {
 
@@ -47,7 +38,7 @@ public class JsonFileSelectorHandler implements JsonHandler {
     }
 
     private void handle(Uri uri) {
-        if(future == null) {
+        if (future == null) {
             return;
         }
         if (uri == null) {

@@ -3,7 +3,6 @@ package com.iit.dashboard2022.ecu;
 import com.google.common.collect.Maps;
 import com.iit.dashboard2022.util.ByteSplit;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -49,7 +48,7 @@ public class ECUStat {
     /**
      * Initializes the statistic with proper information
      *
-     * @param id Mapping id of statistic
+     * @param id         Mapping id of statistic
      * @param prettyName Pretty name of statistic
      */
     public void initialize(int id, String prettyName) {
@@ -60,8 +59,8 @@ public class ECUStat {
     /**
      * Update the message from the ECU
      *
-     * @implNote This should only be called internal to {@link ECU}
      * @param val The value of the field
+     * @implNote This should only be called internal to {@link ECU}
      */
     public void update(long val) {
         long prevValue = this.value;

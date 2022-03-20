@@ -3,27 +3,20 @@ package com.iit.dashboard2022.ecu;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.iit.dashboard2022.util.Constants;
-import com.iit.dashboard2022.util.HawkUtil;
 import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.mapping.JsonFileHandler;
 import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
 import com.iit.dashboard2022.util.mapping.JsonHandler;
 import com.iit.dashboard2022.util.mapping.JsonPasteHandler;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -57,7 +50,7 @@ public class ECUMessageHandler {
      */
     public ECUStat getStatistic(String identifier) {
         ECUStat stat = ecuStats.get(identifier);
-        if(stat == null) {
+        if (stat == null) {
             stat = new ECUStat(identifier);
             ecuStats.put(identifier, stat);
         }
@@ -221,7 +214,7 @@ public class ECUMessageHandler {
                 JsonArray array = element.getAsJsonArray();
                 for (Map.Entry<String, JsonElement> entry : array.get(0).getAsJsonObject().entrySet()) {
                     int tag = entry.getValue().getAsInt();
-                    if(tag < Constants.v1MappingCutoff) {
+                    if (tag < Constants.v1MappingCutoff) {
                         ECU.State state = ECU.State.getStateByName(entry.getKey());
                         if (state != null) {
                             state.setTagId(tag);

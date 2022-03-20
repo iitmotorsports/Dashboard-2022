@@ -65,7 +65,7 @@ public class ECU {
 
         ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(val -> {
             State state = State.getStateById(val.intValue());
-            if(state == null) {
+            if (state == null) {
                 //TODO: How the fuck
                 return;
             }
@@ -430,8 +430,8 @@ public class ECU {
         }
 
         public static State getStateById(int id) {
-            for(State state : State.values()) {
-                if(state.getTagId() == id) {
+            for (State state : State.values()) {
+                if (state.getTagId() == id) {
                     return state;
                 }
             }
@@ -439,8 +439,8 @@ public class ECU {
         }
 
         public static State getStateByName(String name) {
-            for(State state : State.values()) {
-                if(state.getName().equalsIgnoreCase(name)) {
+            for (State state : State.values()) {
+                if (state.getName().equalsIgnoreCase(name)) {
                     return state;
                 }
             }

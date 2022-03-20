@@ -2,6 +2,7 @@
 <img src="https://raw.githubusercontent.com/Illinois-Tech-Motorsports/Dashboard-2022/feature/telemetry/raw-assets/round_dash_icon.png" alt="Logo" width="250" height="250">
 
 # IIT Dashboard
+
 <p>
   <b>Dashboard app for the 2021-2022 IIT SAE car.</b>
   <br/>
@@ -19,4 +20,5 @@
 <img src="https://github.com/Illinois-Tech-Motorsports/Dashboard-2022/blob/feature/telemetry/raw-assets/uitest.gif?raw=true" width=100%/>
 
 ## License
+
 Distributed under the GNU General Public License v3. See `LICENSE`

@@ -104,10 +104,10 @@ public class ECUJUSB implements JsonHandler {
 
     @Override
     public CompletableFuture<JsonElement> read() {
-        if(future != null && !future.isDone()) {
+        if (future != null && !future.isDone()) {
             future.complete(null);
         }
-        if(!mainECU.isOpen()) {
+        if (!mainECU.isOpen()) {
             return CompletableFuture.completedFuture(null);
         }
         future = new CompletableFuture<>();

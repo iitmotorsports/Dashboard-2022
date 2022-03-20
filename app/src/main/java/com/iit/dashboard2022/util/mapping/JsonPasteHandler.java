@@ -8,6 +8,7 @@ import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
 import com.iit.dashboard2022.util.Toaster;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.net.ssl.HttpsURLConnection;
 
 public class JsonPasteHandler implements JsonHandler {
 
@@ -138,6 +138,7 @@ public class JsonPasteHandler implements JsonHandler {
 
     /**
      * Fetches a paste's data by ID
+     *
      * @param id ID of paste
      * @return {@link JsonObject} if exists, null if not
      */
