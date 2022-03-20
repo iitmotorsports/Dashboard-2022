@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Don't use this variable. It will have unintended consequences and will likely end up in the app crashing
     public static AppCompatActivity GLOBAL_CONTEXT = null;
 
     SidePanel sidePanel;
