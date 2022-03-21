@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.logging;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
@@ -16,6 +17,9 @@ public class ErrorPageAppender extends AbstractStringAppender {
 
     @Override
     protected void append(ILoggingEvent event) {
+        if(event.getLevel() != Level.ERROR && event.getLevel() != Level.WARN) {
+            return;
+        }
         logger.onLoggingEvent(event, encoder);
     }
 }

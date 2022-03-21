@@ -12,6 +12,7 @@ import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMessageHandler;
 import com.iit.dashboard2022.ecu.ECUUpdater;
 import com.iit.dashboard2022.logging.ErrorPageAppender;
+import com.iit.dashboard2022.logging.Logging;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
 import com.iit.dashboard2022.page.Errors;
@@ -78,6 +79,24 @@ public class MainActivity extends AppCompatActivity {
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
         ErrorPageAppender.logger = errorsPage;
+        /*
+        new Thread(() -> {
+            int i = 0;
+            while(true) {
+                Logging.getLogger().info(String.valueOf(i));
+                if (i % 100 == 0) {
+                    Logging.getLogger().warn(String.valueOf(i));
+                }
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                i++;
+            }
+        }).start();
+
+         */
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
