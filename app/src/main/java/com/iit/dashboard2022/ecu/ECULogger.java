@@ -1,17 +1,11 @@
 package com.iit.dashboard2022.ecu;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.iit.dashboard2022.logging.Log;
-import com.iit.dashboard2022.logging.ToastLevel;
 
 import java.io.File;
 import java.io.StringReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.List;
 
 public class ECULogger {
     //TODO: Separate all errors into error page

@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.Gravity;
-import android.widget.Toast;
-
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.ToastLevel;
 

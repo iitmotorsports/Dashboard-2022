@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.ecu;
 
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
@@ -13,7 +12,6 @@ import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.mapping.JsonFileHandler;
 import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
 import com.iit.dashboard2022.util.mapping.JsonHandler;
-import com.iit.dashboard2022.util.mapping.JsonPasteHandler;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -255,7 +253,7 @@ public class ECUMessageHandler {
 
     public Map<String, String> getStatsAsMap() {
         Map<String, String> temp = Maps.newHashMap();
-        for(Map.Entry<Integer, String> e : stats.entrySet()) {
+        for (Map.Entry<Integer, String> e : stats.entrySet()) {
             temp.put(String.valueOf(e.getKey()), e.getValue());
         }
         return temp;
@@ -265,8 +263,6 @@ public class ECUMessageHandler {
         CACHE(new JsonFileHandler(Constants.JSON_FILE)),
 
         SELECTOR(new JsonFileSelectorHandler()),
-
-        PASTE(new JsonPasteHandler()),
 
         ECU(com.iit.dashboard2022.ecu.ECU.instance.getUsb());
 

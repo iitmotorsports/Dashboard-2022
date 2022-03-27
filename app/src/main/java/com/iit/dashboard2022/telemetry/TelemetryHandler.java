@@ -5,7 +5,6 @@ import com.husbylabs.warptables.Status;
 import com.husbylabs.warptables.WTClient;
 import com.husbylabs.warptables.WarpTablesAPI;
 import com.iit.dashboard2022.logging.Log;
-import com.iit.dashboard2022.logging.ToastLevel;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

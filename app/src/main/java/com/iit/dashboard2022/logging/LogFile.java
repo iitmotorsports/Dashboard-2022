@@ -1,15 +1,11 @@
 package com.iit.dashboard2022.logging;
 
 import android.os.Build;
-import androidx.annotation.RequiresApi;
-
-import com.google.common.collect.Maps;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class LogFile implements Closeable {
@@ -45,11 +40,12 @@ public class LogFile implements Closeable {
         logFile = new File(dir, "log.txt");
         statsFile = new File(dir, "log.stats");
         statsMapFile = new File(dir, "log.map.stats");
-        if(statsMap != null) {
+        if (statsMap != null) {
             try {
                 FileWriter writer = new FileWriter(statsMapFile);
                 Constants.GSON.toJson(statsMap, writer);
                 writer.close();
+                statsFile.createNewFile();
             } catch (IOException e) {
                 Log.getLogger().error("Failed to write statistics map file for: " + getFileSize(), e);
             }
@@ -57,13 +53,17 @@ public class LogFile implements Closeable {
     }
 
     public boolean delete() {
+        logFile.delete();
+        statsFile.delete();
+        statsMapFile.delete();
+        Log.getInstance().getLogs().remove(date);
         return dir.delete();
     }
 
     public String getFormattedName() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime time = Instant.ofEpochSecond(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            return time.format(Constants.DATE_FORMAT);
+            return time.format(Constants.DATE_FORMAT) + " - " + getFileSize();
         }
         return "Error";
     }
@@ -78,9 +78,9 @@ public class LogFile implements Closeable {
     }
 
     public void toLog(String message) {
-        if(outputStream == null) {
+        if (outputStream == null) {
             try {
-                if(!logFile.exists()) {
+                if (!logFile.exists()) {
                     logFile.createNewFile();
                 }
                 outputStream = new FileOutputStream(logFile);
@@ -97,12 +97,24 @@ public class LogFile implements Closeable {
 
     @Override
     public void close() {
-        if(outputStream != null) {
+        if (outputStream != null) {
             try {
                 outputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public File getLogFile() {
+        return logFile;
+    }
+
+    public File getStatsFile() {
+        return statsFile;
+    }
+
+    public File getStatsMapFile() {
+        return statsMapFile;
     }
 }

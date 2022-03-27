@@ -12,8 +12,12 @@ import com.iit.dashboard2022.MainActivity;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.Locale;
@@ -132,4 +136,41 @@ public class HawkUtil {
         value *= Long.signum(bytes);
         return String.format(Locale.ENGLISH, "%.1f %ciB", value / 1024.0, ci.current());
     }
+
+    /**
+     * Adds a upload file section to the request
+     *
+     * @param fieldName  name attribute in <input type="file" name="..." />
+     * @param uploadFile a File to be uploaded
+     * @throws IOException
+     */
+    public static void addFilePart(PrintWriter writer, OutputStream outputStream, String boundary, String fieldName, File uploadFile)
+            throws IOException {
+        String fileName = uploadFile.getName();
+        writer.append("--" + boundary).append(Constants.LINE_FEED);
+        writer.append(
+                "Content-Disposition: form-data; name=\"" + fieldName
+                + "\"; filename=\"" + fileName + "\"")
+                .append(Constants.LINE_FEED);
+        writer.append(
+                "Content-Type: "
+                + URLConnection.guessContentTypeFromName(fileName))
+                .append(Constants.LINE_FEED);
+        writer.append("Content-Transfer-Encoding: binary").append(Constants.LINE_FEED);
+        writer.append(Constants.LINE_FEED);
+        writer.flush();
+
+        FileInputStream inputStream = new FileInputStream(uploadFile);
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(Constants.LINE_FEED);
+        writer.flush();
+    }
+
 }

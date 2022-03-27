@@ -9,42 +9,44 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.CheckResult;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
 public class Log implements StringLogger {
     private final static Logger LOGGER = LoggerFactory.getLogger("Dashboard");
@@ -285,7 +287,7 @@ public class Log implements StringLogger {
                 tempLogs.put(date, new LogFile(date));
             }
         }
-        getLogger().info(String.format(Locale.ENGLISH, "Loaded %d logs", logs.size()));
+        getLogger().info(String.format(Locale.ENGLISH, "Loaded %d logs", tempLogs.size()));
         logs = tempLogs;
     }
 
@@ -295,12 +297,12 @@ public class Log implements StringLogger {
      * @param statisticsMap Map of statistics names. Ex: {"1": "Steering"}
      */
     public void newLog(Map<String, String> statisticsMap) {
-        if(LogFileAppender.logger == null) {
+        if (LogFileAppender.logger == null) {
             LogFileAppender.logger = this;
         }
         LogFile logFile = new LogFile(statisticsMap);
         logs.put(logFile.getEpoch(), logFile);
-        if(activeLogFile != null) {
+        if (activeLogFile != null) {
             getLogger().info("Stopping log: " + activeLogFile.getFormattedName());
             activeLogFile.close();
         }
@@ -318,8 +320,57 @@ public class Log implements StringLogger {
 
     @Override
     public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
-        if(activeLogFile != null) {
+        if (activeLogFile != null) {
             activeLogFile.toLog(encoder.getLayout().doLayout(event));
+        }
+    }
+
+    public void postToCabinet(LogFile log) {
+        String boundary = "===" + System.currentTimeMillis() + "===";
+        PrintWriter writer;
+
+        try {
+            URL url = new URL(Constants.CABINET_API + "/logs?date=" + log.getEpoch());
+            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+            httpConn.setUseCaches(false);
+            httpConn.setDoOutput(true);
+            httpConn.setDoInput(true);
+            httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+            httpConn.setRequestProperty("User-Agent", "CodeJava Agent");
+            httpConn.setRequestProperty("Test", "Bonjour");
+            OutputStream outputStream = httpConn.getOutputStream();
+            writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true);
+            HawkUtil.addFilePart(writer, outputStream, boundary, "log", log.getLogFile());
+            if (log.getStatsFile().length() != 0) {
+                HawkUtil.addFilePart(writer, outputStream, boundary, "stats", log.getStatsFile());
+                HawkUtil.addFilePart(writer, outputStream, boundary, "stats_map", log.getStatsMapFile());
+            }
+            StringBuilder s = new StringBuilder();
+
+            writer.append(Constants.LINE_FEED).flush();
+            writer.append("--" + boundary + "--").append(Constants.LINE_FEED);
+            writer.close();
+
+            try {
+                int status = httpConn.getResponseCode();
+                if (status == HttpURLConnection.HTTP_OK) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        s.append(line);
+                    }
+                    reader.close();
+                    httpConn.disconnect();
+                } else {
+                }
+            } catch (IOException ignored) {
+            }
+
+            JsonObject jsonObject = Constants.GSON.fromJson(s.toString(), JsonObject.class);
+            toast("Log #" + jsonObject.get("id").getAsInt(), ToastLevel.SUCCESS);
+        } catch (IOException e) {
+            com.iit.dashboard2022.logging.Log.toast(e.toString(), ToastLevel.ERROR);
+            e.printStackTrace();
         }
     }
 }

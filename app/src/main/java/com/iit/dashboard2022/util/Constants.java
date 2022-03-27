@@ -5,9 +5,7 @@ import android.os.Build;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 /**
  * Utility class containing constants for the dashboard
@@ -19,6 +17,8 @@ public class Constants {
     public static final String PASTE_API = "https://api.paste.ee/v1/pastes";
     public static final String JSON_API_BASE64 = "dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=";
     public static final String LOG_API_BASE64 = "dTBXUXZabUNsdVFkZWJycUlUNjZSRHJoR1paTlVXaXE3U09LTVlPUE8=";
+    public static final String CABINET_API = "https://logs.noahhusby.com/api/v1";
+    public static final String LINE_FEED = "\r\n";
 
     // JSON
     public static final String JSON_FILE = "ECU_JSON_MAP.json";
@@ -38,7 +38,7 @@ public class Constants {
         } else {
             DATE_FORMAT = null;
         }
-        GSON = new GsonBuilder().setPrettyPrinting().create();
+        GSON = new GsonBuilder().setPrettyPrinting().setLenient().create();
     }
 
     public static class Statistics {

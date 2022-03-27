@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.logging;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
@@ -16,7 +15,7 @@ public class LogFileAppender extends AbstractStringAppender {
 
     @Override
     protected void append(ILoggingEvent event) {
-        if(logger != null) {
+        if (logger != null) {
             logger.onLoggingEvent(event, encoder);
         }
     }

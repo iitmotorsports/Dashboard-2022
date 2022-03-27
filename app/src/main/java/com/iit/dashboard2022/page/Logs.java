@@ -3,8 +3,6 @@ package com.iit.dashboard2022.page;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.text.Spannable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +10,8 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ecu.ECUColor;
-import com.iit.dashboard2022.ecu.ECULogger;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.LogFile;
-import com.iit.dashboard2022.logging.LogFileAppender;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.widget.ListedFile;
 import com.iit.dashboard2022.ui.widget.SideButton;
@@ -73,9 +68,9 @@ public class Logs extends Page {
         }
 
         final HashSet<LogFile> fileHash = new HashSet<>(getCurrentFiles().keySet());
-        for(LogFile f : files) {
+        for (LogFile f : files) {
             worker.post(() -> {
-                if(fileHash.contains(f)) {
+                if (!fileHash.contains(f)) {
                     rootView.post(() -> displayListedFile(ListedFile.getInstance(rootView.getContext(), f)));
                 }
             });
@@ -190,8 +185,7 @@ public class Logs extends Page {
                  */
             case UPLOAD:
                 Log.toast("Uploading File", ToastLevel.INFO);
-                //TODO: Figure this stuff out
-                //worker.post(() -> PasteAPI.uploadPaste(ECULogger.stringifyLogFile(listedFile.getFile())));
+                worker.post(() -> Log.getInstance().postToCabinet(listedFile.getFile()));
                 break;
             case DELETE:
                 Log.toast("Deleting File", ToastLevel.INFO);

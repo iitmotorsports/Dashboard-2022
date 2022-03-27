@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.util.mapping;
 
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

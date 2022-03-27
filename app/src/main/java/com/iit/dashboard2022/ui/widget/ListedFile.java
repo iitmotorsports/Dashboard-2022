@@ -18,7 +18,6 @@ import com.google.android.material.textview.MaterialTextView;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.LogFile;
-import com.iit.dashboard2022.logging.LogFileAppender;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 
@@ -265,7 +264,9 @@ public class ListedFile extends FrameLayout {
     }
 
     public boolean isActive() {
-        if(Log.getInstance().getActiveLogFile() == null) return false;
+        if (Log.getInstance().getActiveLogFile() == null) {
+            return false;
+        }
         return Log.getInstance().getActiveLogFile().getEpoch() == file.getEpoch();
     }
 }

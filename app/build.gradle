@@ -11,6 +11,7 @@ ext {
     grpcVersion = "1.44.1"
     tomcatVersion = "6.0.53"
     gsonVersion = "2.9.0"
+    httpVersion = "4.5.13"
 }
 
 allprojects {
@@ -51,6 +52,7 @@ android {
     }
 
     packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/io.netty.versions.properties'
     }
@@ -66,5 +68,7 @@ dependencies {
     implementation "io.grpc:grpc-okhttp:$grpcVersion"
     implementation "io.grpc:grpc-stub:$grpcVersion"
     implementation "com.google.code.gson:gson:2.9.0"
+    implementation 'org.apache.httpcomponents:httpmime:4.3.4'
+    implementation 'org.apache.httpcomponents:httpcore:4.3.2'
     compileOnly "org.apache.tomcat:annotations-api:$tomcatVersion"
 }
