@@ -77,46 +77,6 @@ public class HawkUtil {
     }
 
     /**
-     * Creates a new {@link HttpsURLConnection} instance
-     *
-     * @param url         URL of request
-     * @param method      Method of request (GET, POST, PUT, DELETE)
-     * @param accept      Accept
-     * @param contentType Content-Type
-     * @param authToken   X-Auth-Token
-     * @return {@link HttpsURLConnection}
-     * @throws IOException if a connection cannot be formed
-     */
-    public static HttpsURLConnection createHttpConnection(String url, String method, String accept, String contentType, String authToken) throws IOException {
-        return createHttpConnection(new URL(url), method, accept, contentType, authToken);
-    }
-
-    /**
-     * Creates a new {@link HttpsURLConnection} instance
-     *
-     * @param url         URL of request
-     * @param method      Method of request (GET, POST, PUT, DELETE)
-     * @param accept      Accept
-     * @param contentType Content-Type
-     * @param authToken   X-Auth-Token
-     * @return {@link HttpsURLConnection}
-     * @throws IOException if a connection cannot be formed
-     */
-    public static HttpsURLConnection createHttpConnection(URL url, String method, String accept, String contentType, String authToken) throws IOException {
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod(method);
-        if (accept != null) {
-            conn.setRequestProperty("Accept", accept);
-        }
-        if (contentType != null) {
-            conn.setRequestProperty("Content-Type", contentType);
-        }
-        conn.setRequestProperty("X-Auth-Token", authToken);
-        return conn;
-    }
-
-    /**
      * Converts amount of bytes to human-readable format
      *
      * @param bytes Size of file
@@ -147,14 +107,10 @@ public class HawkUtil {
     public static void addFilePart(PrintWriter writer, OutputStream outputStream, String boundary, String fieldName, File uploadFile)
             throws IOException {
         String fileName = uploadFile.getName();
-        writer.append("--" + boundary).append(Constants.LINE_FEED);
-        writer.append(
-                "Content-Disposition: form-data; name=\"" + fieldName
-                + "\"; filename=\"" + fileName + "\"")
+        writer.append("--").append(boundary).append(Constants.LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"").append(fieldName).append("\"; filename=\"").append(fileName).append("\"")
                 .append(Constants.LINE_FEED);
-        writer.append(
-                "Content-Type: "
-                + URLConnection.guessContentTypeFromName(fileName))
+        writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(fileName))
                 .append(Constants.LINE_FEED);
         writer.append("Content-Transfer-Encoding: binary").append(Constants.LINE_FEED);
         writer.append(Constants.LINE_FEED);
