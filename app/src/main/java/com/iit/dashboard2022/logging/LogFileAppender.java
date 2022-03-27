@@ -10,16 +10,14 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  *
  * @author Noah Husby
  */
-public class ErrorPageAppender extends AbstractStringAppender {
+public class LogFileAppender extends AbstractStringAppender {
 
     public static StringLogger logger;
 
-
     @Override
     protected void append(ILoggingEvent event) {
-        if (event.getLevel() != Level.ERROR && event.getLevel() != Level.WARN) {
-            return;
+        if(logger != null) {
+            logger.onLoggingEvent(event, encoder);
         }
-        logger.onLoggingEvent(event, encoder);
     }
 }

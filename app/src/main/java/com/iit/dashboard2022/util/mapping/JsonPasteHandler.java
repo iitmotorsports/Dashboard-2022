@@ -4,9 +4,10 @@ import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
-import com.iit.dashboard2022.util.Toaster;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -24,7 +25,7 @@ public class JsonPasteHandler implements JsonHandler {
     @Override
     public CompletableFuture<JsonElement> read() {
         CompletableFuture<JsonElement> future = new CompletableFuture<>();
-        Toaster.showToast("Downloading JSON");
+        Log.toast("Downloading JSON");
         Thread fetch = new Thread(() -> {
             HttpsURLConnection conn = null;
             try {
@@ -44,7 +45,7 @@ public class JsonPasteHandler implements JsonHandler {
                 conn.disconnect();
                 future.complete(fetchPasteById(lastId));
             } catch (IOException e) {
-                Toaster.showToast("Failed to communicate with API", Toaster.Status.ERROR);
+                Log.toast("Failed to communicate with API", ToastLevel.ERROR);
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -62,7 +63,7 @@ public class JsonPasteHandler implements JsonHandler {
     @Override
     public void write(JsonElement data) {
         if (data.isJsonNull()) {
-            Toaster.showToast("No data to upload", Toaster.Status.ERROR);
+            Log.toast("No data to upload", ToastLevel.ERROR);
             return;
         }
 
@@ -72,7 +73,7 @@ public class JsonPasteHandler implements JsonHandler {
             try {
                 conn = HawkUtil.createHttpConnection(Constants.PASTE_API, "POST", "application/json", "application/json", getLOG_APIKey());
                 OutputStream wr = conn.getOutputStream();
-                Toaster.showToast("Uploading", Toaster.Status.INFO);
+                Log.toast("Uploading", ToastLevel.INFO);
 
                 JsonObject payload = new JsonObject();
                 JsonArray sections = new JsonArray();
@@ -85,11 +86,11 @@ public class JsonPasteHandler implements JsonHandler {
                 wr.close();
 
                 JsonObject response = getResponse(conn);
-                Toaster.showToast("ID: " + response.get("id").getAsString(), Toaster.Status.SUCCESS, Toast.LENGTH_LONG);
+                Log.toast("ID: " + response.get("id").getAsString(), ToastLevel.SUCCESS, true);
                 conn.disconnect();
             } catch (IOException e) {
                 e.printStackTrace();
-                Toaster.showToast("Failed to communicate with API", Toaster.Status.ERROR);
+                Log.toast("Failed to communicate with API", ToastLevel.ERROR);
             } finally {
                 if (conn != null) {
                     conn.disconnect();
@@ -119,8 +120,8 @@ public class JsonPasteHandler implements JsonHandler {
             while ((_line = _reader.readLine()) != null) {
                 response.append(_line);
             }
-            Toaster.showToast(String.valueOf(conn.getResponseCode()));
-            Toaster.showToast(response.toString());
+            Log.toast(String.valueOf(conn.getResponseCode()));
+            Log.toast(response.toString());
             throw new IOException("Non 2XX response code");
         }
     }
@@ -130,7 +131,7 @@ public class JsonPasteHandler implements JsonHandler {
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         JsonObject response = Constants.GSON.fromJson(reader, JsonObject.class);
         reader.close();
-        Toaster.showToast(conn.getResponseCode() + " " + conn.getResponseMessage());
+        Log.toast(conn.getResponseCode() + " " + conn.getResponseMessage());
         return response;
     }
 
@@ -155,7 +156,7 @@ public class JsonPasteHandler implements JsonHandler {
             JsonObject section = sections.get(0).getAsJsonObject();
             return section.get("contents");
         } catch (IOException e) {
-            Toaster.showToast("Failed to communicate with API", Toaster.Status.ERROR);
+            Log.toast("Failed to communicate with API", ToastLevel.ERROR);
             e.printStackTrace();
         } finally {
             if (conn != null) {

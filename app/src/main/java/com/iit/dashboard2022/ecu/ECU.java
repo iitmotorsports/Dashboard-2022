@@ -2,15 +2,14 @@ package com.iit.dashboard2022.ecu;
 
 import android.os.SystemClock;
 import android.view.Gravity;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.common.collect.Lists;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.Constants;
-import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.USBSerial;
 
 import java.nio.ByteBuffer;
@@ -55,7 +54,7 @@ public class ECU {
         ecuMessageHandler.addStatusListener((jsonLoaded, rawJson) -> {
             if (jsonLoaded) {
                 if (rawJson != null) {
-                    ecuLogger.newLog(rawJson);
+                    Log.getInstance().newLog(ecuMessageHandler.getStatsAsMap());
                 }
                 if (jsonLoadListener != null) {
                     jsonLoadListener.run();
@@ -121,7 +120,7 @@ public class ECU {
 
         if (!ecuMessageHandler.loaded()) {
             if (errorCount == 0) {
-                Toaster.showToast("No JSON map Loaded", Toaster.Status.WARNING, Toast.LENGTH_SHORT, Gravity.START);
+                Log.toast("No JSON map Loaded", ToastLevel.WARNING, false, Gravity.START);
             }
             errorCount = ++errorCount % 8;
             return;
@@ -175,10 +174,6 @@ public class ECU {
 
     public void setLogListener(Consumer<String> interpretListener) {
         this.interpretListener = interpretListener;
-    }
-
-    public LogFileIO.LogFile[] getLocalLogs() {
-        return ecuLogger.getLocalLogs().toArray(new LogFileIO.LogFile[0]);
     }
 
     /**

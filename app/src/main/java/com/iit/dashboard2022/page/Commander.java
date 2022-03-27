@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
@@ -17,11 +18,12 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUStat;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
 import com.iit.dashboard2022.ui.widget.LiveDataSelector;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.Constants;
-import com.iit.dashboard2022.util.Toaster;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -48,15 +50,15 @@ public class Commander extends Page {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.tab_commander_layout, container, false);
-        slider = (Slider) rootView.findViewById(R.id.ValueSlider);
-        valueEdit = (EditText) rootView.findViewById(R.id.ValueEdit);
-        toggle = (SwitchMaterial) rootView.findViewById(R.id.OnOffSwitch);
-        maxValueText = (TextView) rootView.findViewById(R.id.maxValueText);
-        minValueText = (TextView) rootView.findViewById(R.id.minValueText);
-        valueActiveText = (TextView) rootView.findViewById(R.id.valueActiveText);
-        IDTextView = (TextView) rootView.findViewById(R.id.IDTextView);
-        submitBtn = (MaterialButton) rootView.findViewById(R.id.submitBtn);
-        valueListLayout = (LinearLayout) rootView.findViewById(R.id.valueListLayout);
+        slider = rootView.findViewById(R.id.ValueSlider);
+        valueEdit = rootView.findViewById(R.id.ValueEdit);
+        toggle = rootView.findViewById(R.id.OnOffSwitch);
+        maxValueText = rootView.findViewById(R.id.maxValueText);
+        minValueText = rootView.findViewById(R.id.minValueText);
+        valueActiveText = rootView.findViewById(R.id.valueActiveText);
+        IDTextView = rootView.findViewById(R.id.IDTextView);
+        submitBtn = rootView.findViewById(R.id.submitBtn);
+        valueListLayout = rootView.findViewById(R.id.valueListLayout);
 
         selector.setSelectionChangedListener(newSelection -> {
             currentSelection = newSelection;
@@ -66,11 +68,11 @@ public class Commander extends Page {
 
         submitBtn.setOnClickListener(view -> {
             if (frontECU == null || !frontECU.isOpen()) {
-                Toaster.showToast("Unable to submit, not connected to device", Toaster.Status.ERROR);
+                Log.toast("Unable to submit, not connected to device", ToastLevel.ERROR);
                 return;
             }
             valueEdit.clearFocus();
-            Toaster.showToast("Submitting Value", Toaster.Status.INFO);
+            Log.toast("Submitting Value", ToastLevel.INFO);
             frontECU.issueCommand(ECU.Command.SET_SERIAL_VAR);
 
             ByteBuffer bb = ByteBuffer.allocate(8);
@@ -130,7 +132,7 @@ public class Commander extends Page {
 
     public void setECU(ECU frontECU) {
         this.frontECU = frontECU;
-        frontECU.getMessageHandler().getStatistic(Constants.Statistics.SerialVarResponse).addMessageListener(val -> Toaster.showToast("Value received (truncated): " + val, Toaster.Status.SUCCESS), ECUStat.UpdateMethod.ON_RECEIVE);
+        frontECU.getMessageHandler().getStatistic(Constants.Statistics.SerialVarResponse).addMessageListener(val -> Log.toast("Value received (truncated): " + val, ToastLevel.SUCCESS), ECUStat.UpdateMethod.ON_RECEIVE);
     }
 
     @UiThread

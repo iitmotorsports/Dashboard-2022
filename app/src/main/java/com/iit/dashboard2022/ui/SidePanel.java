@@ -6,12 +6,13 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Errors;
 import com.iit.dashboard2022.page.LiveData;
@@ -22,7 +23,6 @@ import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.SerialCom;
-import com.iit.dashboard2022.util.Toaster;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -150,7 +150,7 @@ public class SidePanel extends ConstraintLayout {
                 msg.append("closed");
             }
 
-            Toaster.showToast(msg.toString(), Toaster.Status.INFO, Toast.LENGTH_SHORT, Gravity.END);
+            Log.toast(msg.toString(), ToastLevel.INFO, false, Gravity.END);
 
             connToggle.post(() -> connToggle.setChecked(opened));
             console.setStatus(opened ? ConsoleWidget.Status.Connected : (attached ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));

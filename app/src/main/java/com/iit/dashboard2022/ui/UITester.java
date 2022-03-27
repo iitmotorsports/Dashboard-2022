@@ -5,7 +5,9 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.Gravity;
 import android.widget.Toast;
-import com.iit.dashboard2022.util.Toaster;
+
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -69,11 +71,11 @@ public class UITester {
             rndTest = false;
             testVal = 0;
             worker.post(UITester::uiTest);
-            Toaster.showToast("UI Test Started", Toaster.Status.INFO, Toast.LENGTH_SHORT, Gravity.END);
+            Log.toast("UI Test Started", ToastLevel.INFO, false, Gravity.END);
         } else {
             worker.removeCallbacksAndMessages(null);
             runTest(0);
-            Toaster.showToast("UI Test Stopped", Toaster.Status.INFO, Toast.LENGTH_SHORT, Gravity.END);
+            Log.toast("UI Test Stopped", ToastLevel.INFO, false, Gravity.END);
         }
     }
 

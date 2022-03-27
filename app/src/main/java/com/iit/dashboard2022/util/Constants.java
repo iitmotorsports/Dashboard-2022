@@ -1,7 +1,13 @@
 package com.iit.dashboard2022.util;
 
+import android.graphics.Typeface;
+import android.os.Build;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Utility class containing constants for the dashboard
@@ -14,13 +20,24 @@ public class Constants {
     public static final String JSON_API_BASE64 = "dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=";
     public static final String LOG_API_BASE64 = "dTBXUXZabUNsdVFkZWJycUlUNjZSRHJoR1paTlVXaXE3U09LTVlPUE8=";
 
-    //JSON
+    // JSON
     public static final String JSON_FILE = "ECU_JSON_MAP.json";
     public static final Gson GSON;
 
     public static final int v1MappingCutoff = 256;
 
+    // Toast
+    public static final int TOAST_TEXT_SIZE = 14;
+    public static final Typeface TOAST_TYPEFACE = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
+
+    public static final DateTimeFormatter DATE_FORMAT;
+
     static {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DATE_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
+        } else {
+            DATE_FORMAT = null;
+        }
         GSON = new GsonBuilder().setPrettyPrinting().create();
     }
 

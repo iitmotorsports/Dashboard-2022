@@ -14,6 +14,9 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+import java.util.Locale;
 
 /**
  * Utility class with general helpers for the dashboard
@@ -65,6 +68,10 @@ public class HawkUtil {
         return context == null ? null : context.getFilesDir();
     }
 
+    public static File getLogFilesDir() {
+        return new File(getFilesDir(), "logs");
+    }
+
     /**
      * Creates a new {@link HttpsURLConnection} instance
      *
@@ -103,5 +110,26 @@ public class HawkUtil {
         }
         conn.setRequestProperty("X-Auth-Token", authToken);
         return conn;
+    }
+
+    /**
+     * Converts amount of bytes to human-readable format
+     *
+     * @param bytes Size of file
+     * @return Size of file formatted as a String
+     */
+    public static String humanReadableBytes(long bytes) {
+        long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+        if (absB < 1024) {
+            return bytes + " B";
+        }
+        long value = absB;
+        CharacterIterator ci = new StringCharacterIterator("KMGTPE");
+        for (int i = 40; i >= 0 && absB > 0xfffccccccccccccL >> i; i -= 10) {
+            value >>= 10;
+            ci.next();
+        }
+        value *= Long.signum(bytes);
+        return String.format(Locale.ENGLISH, "%.1f %ciB", value / 1024.0, ci.current());
     }
 }

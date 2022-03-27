@@ -86,7 +86,7 @@ public class Errors extends Page implements UITester.TestUI, StringLogger {
     public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
         SpannableStringBuilder spannable = new SpannableStringBuilder(encoder.getLayout().doLayout(event) + "\n");
         spannable.setSpan(new ForegroundColorSpan(event.getLevel() == Level.ERROR ? ErrorColor : WarnColor), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if(errorText != null) {
+        if (errorText != null) {
             errorText.post(() -> {
                 errorText.append(spannable);
                 errorScroller.fullScroll(ScrollView.FOCUS_DOWN);

@@ -7,8 +7,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.Constants;
-import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.mapping.JsonFileHandler;
 import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
 import com.iit.dashboard2022.util.mapping.JsonHandler;
@@ -129,7 +130,7 @@ public class ECUMessageHandler {
      */
     public long requestMsgID(String stringTag, String stringMsg) {
         if (!loaded()) {
-            Toaster.showToast("JSON map has not been loaded, unable to process request", Toaster.Status.WARNING);
+            Log.toast("JSON map has not been loaded, unable to process request", ToastLevel.WARNING);
             return -1;
         }
         Integer tagID = getTagID(stringTag);
@@ -142,7 +143,7 @@ public class ECUMessageHandler {
             mapping.putShort(strID.shortValue());
             return mapping.getInt(0);
         } else {
-            Toaster.showToast("Unable to match string " + stringTag + " " + stringMsg, Toaster.Status.WARNING);
+            Log.toast("Unable to match string " + stringTag + " " + stringMsg, ToastLevel.WARNING);
         }
 
         return -1;
@@ -173,10 +174,10 @@ public class ECUMessageHandler {
                 subsystems = null;
                 stats = null;
                 messages = null;
-                Toaster.showToast("JSON map deleted", Toaster.Status.INFO);
+                Log.toast("JSON map deleted", ToastLevel.INFO);
                 status = false;
             } else {
-                Toaster.showToast("Failed to delete JSON map", Toaster.Status.ERROR);
+                Log.toast("Failed to delete JSON map", ToastLevel.ERROR);
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -196,10 +197,10 @@ public class ECUMessageHandler {
                 return false;
             }
             if (loaded()) {
-                Toaster.showToast("JSON map unchanged", Toaster.Status.INFO);
+                Log.toast("JSON map unchanged", ToastLevel.INFO);
                 return true;
             }
-            Toaster.showToast("No JSON map has been loaded", Toaster.Status.WARNING, Toast.LENGTH_LONG);
+            Log.toast("No JSON map has been loaded", ToastLevel.WARNING, true);
             return false;
         }
 
@@ -232,16 +233,16 @@ public class ECUMessageHandler {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
+                Log.toast("JSON does not match correct format", ToastLevel.ERROR, true);
                 return loaded();
             }
         }
 
         if (!pseudoMode) {
             if (loaded()) {
-                Toaster.showToast("JSON map updated", Toaster.Status.SUCCESS);
+                Log.toast("JSON map updated", ToastLevel.SUCCESS);
             } else {
-                Toaster.showToast("Loaded JSON map", Toaster.Status.INFO, Toast.LENGTH_SHORT);
+                Log.toast("Loaded JSON map", ToastLevel.INFO, true);
             }
             MapHandler.CACHE.get().write(element);
         }
@@ -250,6 +251,14 @@ public class ECUMessageHandler {
         stats = ImmutableMap.copyOf(tempStats);
         messages = ImmutableMap.copyOf(tempMessages);
         return true;
+    }
+
+    public Map<String, String> getStatsAsMap() {
+        Map<String, String> temp = Maps.newHashMap();
+        for(Map.Entry<Integer, String> e : stats.entrySet()) {
+            temp.put(String.valueOf(e.getKey()), e.getValue());
+        }
+        return temp;
     }
 
     public enum MapHandler {

@@ -8,7 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.iit.dashboard2022.MainActivity;
-import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class JsonFileSelectorHandler implements JsonHandler {
             return;
         }
         if (uri == null) {
-            Toaster.showToast("Failed to load file", Toaster.Status.ERROR, Toast.LENGTH_LONG);
+            Log.toast("Failed to load file", ToastLevel.ERROR, true);
             return;
         }
         try {
@@ -60,7 +61,7 @@ public class JsonFileSelectorHandler implements JsonHandler {
 
     @Override
     public void write(JsonElement element) {
-        Toaster.showToast("Cannot write json using this method.", Toaster.Status.ERROR, Toast.LENGTH_LONG);
+        Log.toast("Cannot write json using this method.", ToastLevel.ERROR, true);
     }
 
     @Override
