@@ -13,10 +13,7 @@ import java.time.format.DateTimeFormatter;
  * @author Noah Husby
  */
 public class Constants {
-    // PasteAPI
-    public static final String PASTE_API = "https://api.paste.ee/v1/pastes";
-    public static final String JSON_API_BASE64 = "dVE4NWZCOVVLanRhSnFBazlKVEExaGVVc3J2QURnZVBIejc5RXhKMlo=";
-    public static final String LOG_API_BASE64 = "dTBXUXZabUNsdVFkZWJycUlUNjZSRHJoR1paTlVXaXE3U09LTVlPUE8=";
+    // Cabinet
     public static final String CABINET_API = "https://logs.noahhusby.com/api/v1";
     public static final String LINE_FEED = "\r\n";
 
