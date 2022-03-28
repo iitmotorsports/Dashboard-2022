@@ -140,6 +140,7 @@ public class Logs extends Page {
     private void onListedFileAction(@NonNull ListedFile listedFile, @NonNull ListedFile.ListedFileAction action) {
         switch (action) {
             case SHOW:
+                android.util.Log.e("Dash", listedFile.getFile().getEpoch() + ", " + Log.getInstance().getActiveLogFile().getEpoch());
                 // TODO: SHOW
                 /*
                 if (console == null) {
@@ -180,9 +181,11 @@ public class Logs extends Page {
                         }
                     });
                 });
+
                 break;
 
                  */
+                break;
             case UPLOAD:
                 Log.toast("Uploading File", ToastLevel.INFO);
                 worker.post(() -> Log.getInstance().postToCabinet(listedFile.getFile()));

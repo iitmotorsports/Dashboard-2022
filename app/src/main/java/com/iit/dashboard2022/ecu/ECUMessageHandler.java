@@ -182,10 +182,10 @@ public class ECUMessageHandler {
 
     public boolean update(JsonElement element) {
         boolean status = parseMap(element);
-        jsonLoadedListeners.forEach(c -> c.accept(status));
         if (status) {
             Log.getInstance().newLog(getStatsAsMap());
         }
+        jsonLoadedListeners.forEach(c -> c.accept(status));
         return status;
     }
 

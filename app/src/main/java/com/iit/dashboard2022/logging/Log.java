@@ -42,6 +42,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
@@ -348,7 +349,7 @@ public class Log implements StringLogger {
             StringBuilder s = new StringBuilder();
 
             writer.append(Constants.LINE_FEED).flush();
-            writer.append("--" + boundary + "--").append(Constants.LINE_FEED);
+            writer.append("--").append(boundary).append("--").append(Constants.LINE_FEED);
             writer.close();
 
             try {
@@ -368,9 +369,10 @@ public class Log implements StringLogger {
 
             JsonObject jsonObject = Constants.GSON.fromJson(s.toString(), JsonObject.class);
             toast("Log #" + jsonObject.get("id").getAsInt(), ToastLevel.SUCCESS);
+        } catch(UnknownHostException ignored) {
+            toast("No Connection", ToastLevel.WARNING);
         } catch (IOException e) {
-            com.iit.dashboard2022.logging.Log.toast(e.toString(), ToastLevel.ERROR);
-            e.printStackTrace();
+            toast(e.toString(), ToastLevel.ERROR);
         }
     }
 }

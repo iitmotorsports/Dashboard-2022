@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.logging;
 
+import android.util.Log;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
@@ -15,6 +16,7 @@ public class LogFileAppender extends AbstractStringAppender {
 
     @Override
     protected void append(ILoggingEvent event) {
+        Log.e("Dash", encoder.getLayout().doLayout(event));
         if (logger != null) {
             logger.onLoggingEvent(event, encoder);
         }
