@@ -1,8 +1,8 @@
 package com.iit.dashboard2022.ecu;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,22 +15,21 @@ import com.iit.dashboard2022.util.mapping.JsonHandler;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ECUMessageHandler {
-    private final List<BiConsumer<Boolean, String>> statusListeners = new ArrayList<>();
     private boolean pseudoMode = false;
 
     private Map<Integer, String> subsystems = Maps.newHashMap();
     private Map<Integer, String> stats = Maps.newHashMap();
     private Map<Integer, String> messages = Maps.newHashMap();
 
+    private final List<Consumer<Boolean>> jsonLoadedListeners = Lists.newArrayList();
     private final Map<String, ECUStat> ecuStats = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
 
     public ECUMessageHandler(JsonElement element) {
@@ -39,6 +38,10 @@ public class ECUMessageHandler {
     }
 
     public ECUMessageHandler() {
+    }
+
+    public void onLoadEvent(Consumer<Boolean> consumer) {
+        jsonLoadedListeners.add(consumer);
     }
 
     /**
@@ -85,14 +88,6 @@ public class ECUMessageHandler {
             }
         }
         return null;
-    }
-
-    public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
-        statusListeners.add(statusListener);
-    }
-
-    private void notifyStatusListeners(boolean jsonLoaded, String rawJson) {
-        statusListeners.forEach(b -> b.accept(jsonLoaded, rawJson));
     }
 
     public boolean loaded() {
@@ -174,18 +169,23 @@ public class ECUMessageHandler {
                 messages = null;
                 Log.toast("JSON map deleted", ToastLevel.INFO);
                 status = false;
+                // TODO: End log?
             } else {
                 Log.toast("Failed to delete JSON map", ToastLevel.ERROR);
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        notifyStatusListeners(status, null);
+        boolean finalStatus = status;
+        jsonLoadedListeners.forEach(c -> c.accept(finalStatus));
     }
 
     public boolean update(JsonElement element) {
         boolean status = parseMap(element);
-        notifyStatusListeners(status, Constants.GSON.toJson(element));
+        jsonLoadedListeners.forEach(c -> c.accept(status));
+        if (status) {
+            Log.getInstance().newLog(getStatsAsMap());
+        }
         return status;
     }
 

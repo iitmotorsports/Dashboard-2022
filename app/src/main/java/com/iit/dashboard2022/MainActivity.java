@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         new Handler(Looper.myLooper()).postDelayed(() -> {
             /* FINAL CALLS */
             ECUUpdater ecuUpdater = new ECUUpdater(cdPage, ldPage, sidePanel, frontECU);
-            frontECU.setJSONLoadListener(() -> logPage.displayFiles(Log.getInstance().getLogs().values()));
+            frontECU.getMessageHandler().onLoadEvent(b -> logPage.displayFiles(Log.getInstance().getLogs().values()));
 
             cdPage.reset();
 

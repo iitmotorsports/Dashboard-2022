@@ -10,13 +10,11 @@ import android.view.WindowInsets;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.MainActivity;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.net.URLConnection;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;

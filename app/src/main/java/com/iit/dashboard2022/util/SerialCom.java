@@ -1,6 +1,7 @@
 package com.iit.dashboard2022.util;
 
 import androidx.annotation.Nullable;
+import com.iit.dashboard2022.logging.Log;
 
 import java.util.function.Consumer;
 
@@ -13,7 +14,6 @@ public abstract class SerialCom {
     protected int status = 0;
     protected Consumer<Integer> statusListener;
     protected Consumer<byte[]> dataListener;
-    protected Consumer<Exception> errorListener;
 
     protected void newConnData(byte[] buffer) {
         if (dataListener != null) {
@@ -22,9 +22,7 @@ public abstract class SerialCom {
     }
 
     protected void newConnError(Exception exception) {
-        if (errorListener != null) {
-            errorListener.accept(exception);
-        }
+        Log.getLogger().error("Serial error: ", exception);
     }
 
     protected void setConnStatus(int flags) {
@@ -44,10 +42,6 @@ public abstract class SerialCom {
 
     public void setStatusListener(@Nullable Consumer<Integer> flags) {
         this.statusListener = flags;
-    }
-
-    public void setErrorListener(@Nullable Consumer<Exception> exception) {
-        this.errorListener = exception;
     }
 
     public abstract boolean open();

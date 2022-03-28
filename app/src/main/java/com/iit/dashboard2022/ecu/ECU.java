@@ -2,7 +2,6 @@ package com.iit.dashboard2022.ecu;
 
 import android.os.SystemClock;
 import android.view.Gravity;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.common.collect.Lists;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -17,7 +16,6 @@ import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ECU {
@@ -35,9 +33,7 @@ public class ECU {
     private final ECUJUSB J_USB;
     private final long[] iBuffer = new long[4];
     boolean fileLogging = true;
-    private BiConsumer<String, String> errorListener;
     private final List<Consumer<State>> stateListener = Lists.newArrayList();
-    private Runnable jsonLoadListener;
     private Consumer<String> interpretListener;
     private MODE interpreterMode = MODE.DISABLED;
     private int errorCount = 0;
@@ -50,17 +46,6 @@ public class ECU {
         J_USB = new ECUJUSB(this);
         ecuLogger = new ECULogger();
         ecuMessageHandler = new ECUMessageHandler();
-
-        ecuMessageHandler.addStatusListener((jsonLoaded, rawJson) -> {
-            if (jsonLoaded) {
-                if (rawJson != null) {
-                    Log.getInstance().newLog(ecuMessageHandler.getStatsAsMap());
-                }
-                if (jsonLoadListener != null) {
-                    jsonLoadListener.run();
-                }
-            }
-        });
 
         ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(val -> {
             State state = State.getStateById(val.intValue());
@@ -144,21 +129,8 @@ public class ECU {
         ecuMessageHandler.clear();
     }
 
-    public void setJSONLoadListener(Runnable listener) {
-        this.jsonLoadListener = listener;
-    }
-
-    public void setErrorListener(BiConsumer<String, String> errorListener) {
-        this.errorListener = errorListener;
-        usbMethod.setErrorListener(exception -> errorListener.accept(LOG_TAG, "Serial Thread Error: " + exception.getMessage()));
-    }
-
     public void onStateChangeEvent(Consumer<State> consumer) {
         this.stateListener.add(consumer);
-    }
-
-    public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
-        ecuMessageHandler.addStatusListener(statusListener);
     }
 
     public long requestMsgID(String stringTag, String stringMsg) {
@@ -174,18 +146,6 @@ public class ECU {
 
     public void setLogListener(Consumer<String> interpretListener) {
         this.interpretListener = interpretListener;
-    }
-
-    /**
-     * Set whether logging to a local file is enabled
-     *
-     * @param enabled Whether logging is enabled
-     */
-    public void enableFileLogging(boolean enabled) {
-        if (fileLogging != enabled) {
-            fileLogging = enabled;
-        }
-
     }
 
     /**
@@ -261,9 +221,7 @@ public class ECU {
             try {
                 System.arraycopy(raw_data, i, data_block, 0, 8);
             } catch (ArrayIndexOutOfBoundsException e) {
-                if (errorListener != null) {
-                    errorListener.accept(LOG_TAG, "Received cutoff array");
-                }
+                Log.getLogger().error("Received cutoff array.");
                 continue;
             }
             updateData(data_block);
@@ -287,9 +245,7 @@ public class ECU {
                 try {
                     System.arraycopy(raw_data, i, data_block, 0, 8);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    if (errorListener != null) {
-                        errorListener.accept(LOG_TAG, "Received cutoff array");
-                    }
+                    Log.getLogger().error("Received cutoff array.");
                     continue;
                 }
                 updateData(data_block);
@@ -313,9 +269,7 @@ public class ECU {
                 output.append(updateFormattedData(epoch, data_block));
             }
             if (output.length() == 0) {
-                if (errorListener != null) {
-                    errorListener.accept(LOG_TAG, "USB serial might be overwhelmed!");
-                }
+                Log.getLogger().error("USB serial might be overwhelmed!");
                 return output.toString();
             }
             return output.substring(0, output.length() - 1);

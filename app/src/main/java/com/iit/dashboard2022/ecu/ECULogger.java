@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.StringReader;
 
 public class ECULogger {
-    //TODO: Separate all errors into error page
 
     public ECULogger() {
     }
