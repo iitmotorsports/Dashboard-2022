@@ -264,8 +264,8 @@ public class ECU {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     continue;
                 }
-
-                logRawData(epoch, data_block);
+                updateData(data_block);
+                //logRawData(epoch, data_block);
                 output.append(updateFormattedData(epoch, data_block));
             }
             if (output.length() == 0) {
