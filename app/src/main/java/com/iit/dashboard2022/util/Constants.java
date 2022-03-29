@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class Constants {
     // Cabinet
-    public static final String CABINET_API = "https://logs.noahhusby.com/api/v1";
+    public static final String CABINET_API = "https://logs.iitmotorsports.org/api/v1";
     public static final String LINE_FEED = "\r\n";
 
     // JSON
