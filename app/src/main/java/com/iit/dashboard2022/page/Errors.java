@@ -5,6 +5,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,9 @@ public class Errors extends Page implements UITester.TestUI, StringLogger {
 
     @Override
     public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
+        if (event.getLevel() != Level.ERROR && event.getLevel() != Level.WARN) {
+            return;
+        }
         SpannableStringBuilder spannable = new SpannableStringBuilder(encoder.getLayout().doLayout(event) + "\n");
         spannable.setSpan(new ForegroundColorSpan(event.getLevel() == Level.ERROR ? ErrorColor : WarnColor), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (errorText != null) {

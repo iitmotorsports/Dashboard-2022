@@ -140,7 +140,6 @@ public class Logs extends Page {
     private void onListedFileAction(@NonNull ListedFile listedFile, @NonNull ListedFile.ListedFileAction action) {
         switch (action) {
             case SHOW:
-                android.util.Log.e("Dash", listedFile.getFile().getEpoch() + ", " + Log.getInstance().getActiveLogFile().getEpoch());
                 // TODO: SHOW
                 /*
                 if (console == null) {

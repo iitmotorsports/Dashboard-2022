@@ -1,17 +1,10 @@
 <configuration debug="true">
-    <timestamp key="timestamp" datePattern="yyyy-MM-dd.HH:mm:ss"/>
-    <appender name="ERROR_PAGE" class="com.iit.dashboard2022.logging.ErrorPageAppender">
-        <encoder>
-            <pattern>[%d{HH:mm:ss.SSS} %level] [%logger{36}]: %message%n</pattern>
-        </encoder>
-    </appender>
-    <appender name="FILE" class="com.iit.dashboard2022.logging.LogFileAppender">
+    <appender name="DASH_APP" class="com.iit.dashboard2022.logging.StringAppender">
         <encoder>
             <pattern>[%d{HH:mm:ss.SSS} %level] [%logger{36}]: %message%n</pattern>
         </encoder>
     </appender>
     <root level="debug">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="ERROR_PAGE"/>
+        <appender-ref ref="DASH_APP"/>
     </root>
 </configuration>

@@ -260,7 +260,7 @@ public class ECUMessageHandler {
     }
 
     public enum MapHandler {
-        CACHE(new JsonFileHandler(Constants.JSON_FILE)),
+        CACHE(new JsonFileHandler(Constants.JSON_CACHE_FILE)),
 
         SELECTOR(new JsonFileSelectorHandler()),
 

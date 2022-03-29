@@ -298,8 +298,8 @@ public class Log implements StringLogger {
      * @param statisticsMap Map of statistics names. Ex: {"1": "Steering"}
      */
     public void newLog(Map<String, String> statisticsMap) {
-        if (LogFileAppender.logger == null) {
-            LogFileAppender.logger = this;
+        if (!StringAppender.isRegistered(this)) {
+            StringAppender.register(this);
         }
         LogFile logFile = new LogFile(statisticsMap);
         logs.put(logFile.getEpoch(), logFile);

@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMessageHandler;
 import com.iit.dashboard2022.ecu.ECUUpdater;
-import com.iit.dashboard2022.logging.ErrorPageAppender;
 import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.StringAppender;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
@@ -79,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
         cdPage.setECU(frontECU);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
-
-        ErrorPageAppender.logger = errorsPage;
+        StringAppender.register(errorsPage);
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);

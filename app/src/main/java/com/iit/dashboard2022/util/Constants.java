@@ -18,7 +18,7 @@ public class Constants {
     public static final String LINE_FEED = "\r\n";
 
     // JSON
-    public static final String JSON_FILE = "ECU_JSON_MAP.json";
+    public static final String JSON_CACHE_FILE = "ECU_JSON_MAP.json";
     public static final Gson GSON;
 
     public static final int v1MappingCutoff = 256;
