@@ -302,7 +302,7 @@ public class Log implements StringLogger {
             StringAppender.register(this);
         }
         LogFile logFile = new LogFile(statisticsMap);
-        logs.put(logFile.getEpoch(), logFile);
+        logs.put(logFile.getEpochSeconds(), logFile);
         if (activeLogFile != null) {
             getLogger().info("Stopping log: " + activeLogFile.getFormattedName());
             activeLogFile.close();
@@ -331,7 +331,7 @@ public class Log implements StringLogger {
         PrintWriter writer;
 
         try {
-            URL url = new URL(Constants.CABINET_API + "/logs?date=" + log.getEpoch());
+            URL url = new URL(Constants.CABINET_API + "/logs?date=" + log.getEpochSeconds());
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setUseCaches(false);
             httpConn.setDoOutput(true);
@@ -369,7 +369,7 @@ public class Log implements StringLogger {
 
             JsonObject jsonObject = Constants.GSON.fromJson(s.toString(), JsonObject.class);
             toast("Log #" + jsonObject.get("id").getAsInt(), ToastLevel.SUCCESS);
-        } catch(UnknownHostException ignored) {
+        } catch (UnknownHostException ignored) {
             toast("No Connection", ToastLevel.WARNING);
         } catch (IOException e) {
             toast(e.toString(), ToastLevel.ERROR);

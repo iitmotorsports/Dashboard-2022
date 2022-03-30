@@ -1,13 +1,11 @@
 package com.iit.dashboard2022.logging;
 
-import android.util.Log;
-import com.google.common.collect.Lists;
-
-import java.util.List;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class StringAppender extends AppenderBase<ILoggingEvent> {
 

@@ -28,7 +28,7 @@ public class LogFile implements Closeable {
     private FileOutputStream binaryStream = null;
 
     public LogFile(Map<String, String> statsMap) {
-        this(System.currentTimeMillis() / 1000, statsMap);
+        this(System.currentTimeMillis(), statsMap);
     }
 
     public LogFile(long date) {
@@ -64,7 +64,7 @@ public class LogFile implements Closeable {
 
     public String getFormattedName() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime time = Instant.ofEpochSecond(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime time = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
             return time.format(Constants.DATE_FORMAT) + " - " + getFileSize();
         }
         return "Error";
@@ -75,8 +75,8 @@ public class LogFile implements Closeable {
         return HawkUtil.humanReadableBytes(totalBytes);
     }
 
-    public long getEpoch() {
-        return date;
+    public long getEpochSeconds() {
+        return date / 1000;
     }
 
     public void toLog(String message) {

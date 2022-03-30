@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.ecu;
 
-import android.os.SystemClock;
 import android.view.Gravity;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.common.collect.Lists;
@@ -11,22 +10,16 @@ import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.USBSerial;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
 public class ECU {
-    public static final String LOG_TAG = "ECU";
-
     private final USBSerial usbMethod;
     private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
     private static final int iBuf_CallerID = 0;
@@ -116,7 +109,7 @@ public class ECU {
      */
     private void logRawData(long[] iBuffer) {
         LogFile activeLogFile = Log.getInstance().getActiveLogFile();
-        if(activeLogFile != null) {
+        if (activeLogFile != null) {
             activeLogFile.logBinaryStatistics((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_Value]);
         }
     }
@@ -168,10 +161,8 @@ public class ECU {
      * Both Consume and interpret raw data that has been received
      *
      * @param raw_data received byte array
-     * @return The interpreted string of the data
      */
     private void processData(byte[] raw_data) { // Improve: run this on separate thread
-
         if (interpreterMode == MODE.HEX) {
             for (int i = 0; i < raw_data.length; i += 8) {
                 byte[] data_block = new byte[8];
@@ -197,16 +188,16 @@ public class ECU {
                 logRawData(iBuffer);
                 String message = ecuMessageHandler.getStr((int) iBuffer[iBuf_StringID]);
                 int temp = (int) iBuffer[iBuf_CallerID];
-                if((temp < 256 || temp > 4096) && message != null) {
+                if ((temp < 256 || temp > 4096) && message != null) {
                     String comp = message.toLowerCase(Locale.ROOT);
-                    long val = iBuffer[iBuf_Value];
-                    if(comp.contains("[error]")) {
+                    String val = " " + iBuffer[iBuf_Value];
+                    if (comp.contains("[error]")) {
                         logger.error(message.replace("[ERROR]", "").trim() + val);
-                    } else if(comp.contains("[fatal]")) {
+                    } else if (comp.contains("[fatal]")) {
                         logger.error(message.replace("[FATAL]", "").trim() + val);
-                    } else if(comp.contains("[warn]")) {
+                    } else if (comp.contains("[warn]")) {
                         logger.warn(message.replace("[WARN]", "").trim() + val);
-                    } else if(comp.contains("[debug]")) {
+                    } else if (comp.contains("[debug]")) {
                         logger.debug(message.replace("[DEBUG]", "").trim() + val);
                     } else {
                         logger.info(message.replace("[INFO]", "").replace("[ LOG ]", "").trim() + val);

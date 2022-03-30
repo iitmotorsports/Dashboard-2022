@@ -267,6 +267,6 @@ public class ListedFile extends FrameLayout {
         if (Log.getInstance().getActiveLogFile() == null) {
             return false;
         }
-        return Log.getInstance().getActiveLogFile().getEpoch() == file.getEpoch();
+        return Log.getInstance().getActiveLogFile().getEpochSeconds() == file.getEpochSeconds();
     }
 }
