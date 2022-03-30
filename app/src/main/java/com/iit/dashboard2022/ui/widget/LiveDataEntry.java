@@ -99,8 +99,10 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         update = true;
     }
 
+    @UiThread
     public void updateValue() {
         this.value = currentValue + "    H:" + currentHigh + " L:" + currentLow + " A:" + currentAvg;
+        invalidate();
     }
 
     public void setRawValue(double value) {

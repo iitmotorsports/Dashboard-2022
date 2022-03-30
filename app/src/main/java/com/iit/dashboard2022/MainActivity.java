@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* INITIALIZE */
         frontECU = new ECU(this);
+
         mainPager = new Pager(this);
         Log.setContext(this);
         Log.getInstance().loadLogs();
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
         LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
+        ldPage.setEcu(frontECU);
         Errors errorsPage = (Errors) mainPager.getPage(PageManager.ERRORS);
         Commander commandPage = (Commander) mainPager.getPage(PageManager.COMMANDER);
         commandPage.setECU(frontECU);
@@ -111,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             /* FINAL CALLS */
             ECUUpdater ecuUpdater = new ECUUpdater(cdPage, ldPage, sidePanel, frontECU);
             frontECU.getMessageHandler().onLoadEvent(b -> logPage.displayFiles(Log.getInstance().getLogs().values()));
-
             cdPage.reset();
 
             logPage.attachConsole(console, () -> settingsBtn.post(() -> {

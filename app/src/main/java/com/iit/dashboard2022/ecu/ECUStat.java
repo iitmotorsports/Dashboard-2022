@@ -11,7 +11,7 @@ public class ECUStat {
     private final String identifier;
     private int id = -1;
     private String prettyName;
-    public final Map<Consumer<Long>, UpdateMethod> messageListeners = Maps.newHashMap();
+    public final Map<Consumer<ECUStat>, UpdateMethod> messageListeners = Maps.newHashMap();
     private long value = 0;
 
     public ECUStat(String identifier) {
@@ -66,25 +66,25 @@ public class ECUStat {
         long prevValue = this.value;
         this.value = val;
 
-        for (Map.Entry<Consumer<Long>, UpdateMethod> entry : messageListeners.entrySet()) {
-            Consumer<Long> consumer = entry.getKey();
+        for (Map.Entry<Consumer<ECUStat>, UpdateMethod> entry : messageListeners.entrySet()) {
+            Consumer<ECUStat> consumer = entry.getKey();
             switch (entry.getValue()) {
                 case ON_VALUE_CHANGE:
                     if (prevValue != value) {
-                        consumer.accept(val);
+                        consumer.accept(this);
                     }
                     break;
                 case ON_VALUE_DECREASE:
                     if (prevValue > value) {
-                        consumer.accept(val);
+                        consumer.accept(this);
                     }
                     break;
                 case ON_VALUE_INCREASE:
                     if (prevValue < value) {
-                        consumer.accept(val);
+                        consumer.accept(this);
                     }
                 case ON_RECEIVE:
-                    consumer.accept(val);
+                    consumer.accept(this);
                     break;
             }
         }
@@ -95,7 +95,7 @@ public class ECUStat {
      *
      * @param consumer The listener to be consumed
      */
-    public void addMessageListener(Consumer<Long> consumer) {
+    public void addMessageListener(Consumer<ECUStat> consumer) {
         addMessageListener(consumer, UpdateMethod.ON_VALUE_CHANGE);
     }
 
@@ -105,7 +105,7 @@ public class ECUStat {
      * @param messageListener The listener to be consumed
      * @param updateMethod    {@link UpdateMethod}
      */
-    public void addMessageListener(Consumer<Long> messageListener, UpdateMethod updateMethod) {
+    public void addMessageListener(Consumer<ECUStat> messageListener, UpdateMethod updateMethod) {
         messageListeners.put(messageListener, updateMethod);
     }
 

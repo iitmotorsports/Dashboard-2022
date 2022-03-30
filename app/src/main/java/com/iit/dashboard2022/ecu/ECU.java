@@ -42,8 +42,8 @@ public class ECU {
         J_USB = new ECUJUSB(this);
         ecuMessageHandler = new ECUMessageHandler();
 
-        ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(val -> {
-            State state = State.getStateById(val.intValue());
+        ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(stat -> {
+            State state = State.getStateById(stat.getAsInt());
             if (state == null) {
                 //TODO: How the fuck
                 return;

@@ -1,26 +1,43 @@
 package com.iit.dashboard2022.page;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import com.google.common.collect.Maps;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.ecu.ECU;
+import com.iit.dashboard2022.ecu.ECUStat;
+import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
 
-import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LiveData extends Page implements UITester.TestUI {
 
     private LinearLayout liveDataEntries1, liveDataEntries2;
     private ViewGroup rootView;
 
-    private LiveDataEntry[] entries;
-    private long[] values;
     private boolean enabled = true;
+
+    private final Map<ECUStat, LiveDataEntry> entries = Maps.newHashMap();
+    private boolean alt;
+
+    private ECU ecu;
+
+    public void setEcu(ECU ecu) {
+        this.ecu = ecu;
+    }
 
     @Nullable
     @Override
@@ -33,61 +50,36 @@ public class LiveData extends Page implements UITester.TestUI {
         return rootView;
     }
 
-    public long[] setMessageTitles(@NonNull String[] titles) {
-        this.values = null;
-        this.entries = null;
-
-        liveDataEntries1.removeAllViews();
-        liveDataEntries2.removeAllViews();
-        long[] values = new long[titles.length];
-        LiveDataEntry[] entries = new LiveDataEntry[titles.length];
-
-        boolean alt = true;
-        int i = 0;
-        for (String title : titles) {
-            entries[i] = new LiveDataEntry(title, rootView.getContext());
-            if (alt) {
-                liveDataEntries1.addView(entries[i++]);
-            } else {
-                liveDataEntries2.addView(entries[i++]);
+    @UiThread
+    public CompletableFuture<LiveDataEntry> post(ECUStat stat) {
+        CompletableFuture<LiveDataEntry> future = new CompletableFuture<>();
+        AtomicBoolean temp = new AtomicBoolean(true);
+        while (temp.get()) {
+            if (getActivity() == null) {
+                continue;
             }
-            alt = !alt;
+            getActivity().runOnUiThread(() -> {
+                LiveDataEntry entry = entries.get(stat);
+                String title = stat.getPrettyName() == null ? stat.getIdentifier() : stat.getPrettyName();
+                if (entry == null) {
+                    entry = new LiveDataEntry(title, rootView.getContext());
+                    entries.put(stat, entry);
+                    if (alt) {
+                        liveDataEntries2.addView(entry);
+                    } else {
+                        liveDataEntries1.addView(entry);
+                    }
+                    alt = !alt;
+                }
+                temp.set(false);
+                future.complete(entry);
+            });
         }
-
-        this.entries = entries;
-        this.values = values;
-
-        reset();
-        for (i = 0; i < values.length; i++) {
-            entries[i].setValue(values[i]);
-        }
-
-        return values;
+        return future;
     }
 
     public void reset() {
-        if (values != null) {
-            Arrays.fill(values, 0);
-        }
-        if (entries != null) {
-            for (LiveDataEntry lde : entries) {
-                lde.clear();
-            }
-        }
-    }
-
-    public void updateValue(int index) {
-        if (enabled && values != null) {
-            entries[index].setValue(values[index]);
-        }
-    }
-
-    public void updateValues() {
-        if (enabled && values != null) {
-            for (int i = 0; i < values.length; i++) {
-                entries[i].setValue(values[i]);
-            }
-        }
+        entries.values().forEach(LiveDataEntry::clear);
     }
 
     @NonNull
@@ -99,6 +91,21 @@ public class LiveData extends Page implements UITester.TestUI {
     @Override
     public void onPageChange(boolean enter) {
         enabled = enter;
+        if (enter) {
+            for (ECUStat stat : ecu.getMessageHandler().getStatistics().values()) {
+                if (entries.containsKey(stat)) {
+                    continue;
+                }
+                new Handler(Looper.myLooper()).post(() -> {
+                    try {
+                        LiveDataEntry entry = post(stat).get();
+                        stat.addMessageListener(c -> entry.setValue(c.get()));
+                    } catch (ExecutionException | InterruptedException e) {
+                        Log.getLogger().error("Error while updating statistic", e);
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -109,15 +116,11 @@ public class LiveData extends Page implements UITester.TestUI {
 
     @Override
     public void testUI(float percent) {
-        if (enabled && values != null) {
+        if (enabled) {
             if (percent == 0) {
                 reset();
             } else {
-                for (int i = 0; i < values.length; i++) {
-                    if (UITester.Rnd.nextInt(100) < 50 * percent) {
-                        entries[i].setValue((long) (percent * 100));
-                    }
-                }
+
             }
         }
     }

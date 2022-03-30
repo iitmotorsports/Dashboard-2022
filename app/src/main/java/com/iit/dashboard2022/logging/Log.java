@@ -304,11 +304,11 @@ public class Log implements StringLogger {
         LogFile logFile = new LogFile(statisticsMap);
         logs.put(logFile.getEpochSeconds(), logFile);
         if (activeLogFile != null) {
-            getLogger().info("Stopping log: " + activeLogFile.getFormattedName());
+            getLogger().info("Stopping log: " + activeLogFile.getDate());
             activeLogFile.close();
         }
         activeLogFile = logFile;
-        getLogger().info("Starting log: " + activeLogFile.getFormattedName());
+        getLogger().info("Starting log: " + activeLogFile.getDate());
     }
 
     public LogFile getActiveLogFile() {

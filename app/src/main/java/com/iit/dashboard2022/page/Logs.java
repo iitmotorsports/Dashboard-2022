@@ -125,10 +125,10 @@ public class Logs extends Page {
                 ListedFile view = views.get(0);
                 views.remove(view);
                 LogFile file = view.getFile();
-                if (file != null && file.delete()) {
+                if (file != null && file.delete() && Log.getInstance().getActiveLogFile() != null && file.getEpochSeconds() != Log.getInstance().getActiveLogFile().getEpochSeconds()) {
                     rootView.post(() -> removeEntry(view));
                 }
-                if (views.size() == 0) {
+                if (views.size() < 2) {
                     Log.toast("Done deleting", ToastLevel.INFO);
                     return;
                 }

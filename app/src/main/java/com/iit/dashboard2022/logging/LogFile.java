@@ -28,7 +28,7 @@ public class LogFile implements Closeable {
     private FileOutputStream binaryStream = null;
 
     public LogFile(Map<String, String> statsMap) {
-        this(System.currentTimeMillis(), statsMap);
+        this(System.currentTimeMillis() / 1000, statsMap);
     }
 
     public LogFile(long date) {
@@ -62,12 +62,16 @@ public class LogFile implements Closeable {
         return dir.delete();
     }
 
-    public String getFormattedName() {
+    public String getDate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime time = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            return time.format(Constants.DATE_FORMAT) + " - " + getFileSize();
+            LocalDateTime time = Instant.ofEpochSecond(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            return time.format(Constants.DATE_FORMAT);
         }
-        return "Error";
+        return null;
+    }
+
+    public String getFormattedName() {
+        return getDate() + " - " + getFileSize();
     }
 
     public String getFileSize() {
@@ -76,7 +80,7 @@ public class LogFile implements Closeable {
     }
 
     public long getEpochSeconds() {
-        return date / 1000;
+        return date;
     }
 
     public void toLog(String message) {

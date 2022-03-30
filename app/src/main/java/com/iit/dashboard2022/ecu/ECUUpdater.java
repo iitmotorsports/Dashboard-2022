@@ -18,14 +18,14 @@ public class ECUUpdater {
         ECUMessageHandler ecuMsgHandler = frontECU.getMessageHandler();
 
         /* GAUGES */
-        ecuMsgHandler.getStatistic(Speedometer).addMessageListener(val -> {
-            dashboardPage.setSpeedValue(val);
-            dashboardPage.setSpeedPercentage(Math.abs(val - lastSpeed) * 0.32f);
-            lastSpeed = val;
+        ecuMsgHandler.getStatistic(Speedometer).addMessageListener(stat -> {
+            dashboardPage.setSpeedValue(stat.get());
+            dashboardPage.setSpeedPercentage(Math.abs(stat.get() - lastSpeed) * 0.32f);
+            lastSpeed = stat.get();
         });
 
-        ecuMsgHandler.getStatistic(BatteryLife).addMessageListener(val -> dashboardPage.setBatteryPercentage(Math.max(Math.min(val, 100), 0) / 100f));
-        ecuMsgHandler.getStatistic(PowerGauge).addMessageListener(val -> { // NOTE: Actual MC power not being used
+        ecuMsgHandler.getStatistic(BatteryLife).addMessageListener(stat -> dashboardPage.setBatteryPercentage(Math.max(Math.min(stat.get(), 100), 0) / 100f));
+        ecuMsgHandler.getStatistic(PowerGauge).addMessageListener(stat -> { // NOTE: Actual MC power not being used
             long avgMCVolt = (ecuMsgHandler.getStatistic(MC0Voltage).get() + ecuMsgHandler.getStatistic(MC1Voltage).get()) / 2;
             float limit = ecuMsgHandler.getStatistic(BMSVolt).get() * ecuMsgHandler.getStatistic(BMSAmp).get();
             int usage = (int) (avgMCVolt * ecuMsgHandler.getStatistic(BMSDischargeLim).get());
@@ -64,7 +64,11 @@ public class ECUUpdater {
             sidePanel.chargeToggle.post(() -> sidePanel.chargeToggle.setChecked(state == ECUMsgHandler.STATE.Charging));
         });
 
+
          */
+
+
+
 
         /*
          *  LIVE DATA
@@ -91,23 +95,4 @@ public class ECUUpdater {
 
          */
     }
-
-    @NonNull
-    private String removeMsgTag(String stringMsg) {
-        for (ECUColor.MsgType type : ECUColor.MsgType.values()) {
-            String replace = stringMsg.replace(type.key + " ", "");
-            if (!stringMsg.equals(replace)) {
-                stringMsg = replace;
-                break;
-            }
-        }
-
-        stringMsg = stringMsg.trim();
-        if (stringMsg.endsWith(":")) {
-            stringMsg = stringMsg.substring(0, stringMsg.length() - 1);
-        }
-
-        return stringMsg;
-    }
-
 }

@@ -31,6 +31,7 @@ public class ECUMessageHandler {
     private Map<Integer, String> messages = Maps.newHashMap();
 
     private final List<Consumer<Boolean>> jsonLoadedListeners = Lists.newArrayList();
+    private final List<Consumer<ECUStat>> statUpdatedListeners = Lists.newArrayList();
     private final Map<String, ECUStat> ecuStats = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
 
     public ECUMessageHandler(JsonElement element) {
@@ -43,6 +44,10 @@ public class ECUMessageHandler {
 
     public void onLoadEvent(Consumer<Boolean> consumer) {
         jsonLoadedListeners.add(consumer);
+    }
+
+    public void onStatisticUpdateEvent(Consumer<ECUStat> consumer) {
+        statUpdatedListeners.add(consumer);
     }
 
     /**
@@ -68,6 +73,7 @@ public class ECUMessageHandler {
         ECUStat stat = getStatistic(identifier);
         stat.initialize(statId, messages.get(messageId));
         stat.update(data);
+        statUpdatedListeners.forEach(c -> c.accept(stat));
     }
 
     /**
@@ -224,8 +230,9 @@ public class ECUMessageHandler {
                         tempSubsystems.put(tag, entry.getKey());
                     } else {
                         tempStats.put(tag, entry.getKey().replaceAll("\\[", "").replaceAll("]", ""));
-                        // TODO: Pretty name not shipped with v19
-                        getStatistic(entry.getKey().replaceAll("\\[", "").replaceAll("]", "")).initialize(tag, null);
+                        // TODO: Pretty name not shipped with v1
+                        ECUStat stat = getStatistic(entry.getKey().replaceAll("\\[", "").replaceAll("]", ""));
+                        stat.initialize(tag, null);
                     }
                 }
 
@@ -260,6 +267,10 @@ public class ECUMessageHandler {
             temp.put(String.valueOf(e.getKey()), e.getValue());
         }
         return temp;
+    }
+
+    public Map<String, ECUStat> getStatistics() {
+        return ecuStats;
     }
 
     public enum MapHandler {
