@@ -82,7 +82,7 @@ public class SidePanel extends ConstraintLayout {
                 frontECU.setInterpreterMode(lastChecked);
             } else {
                 consoleAnim.start();
-                console.enable(false);
+                //console.enable(false);
                 frontECU.setInterpreterMode(ECU.MODE.DISABLED);
             }
         });
@@ -107,7 +107,6 @@ public class SidePanel extends ConstraintLayout {
         JSONToggle.setOnClickListener(v -> dialog.showDialog());
         JSONToggle.setHasToggleMediator(true);
         frontECU.getMessageHandler().onLoadEvent(b -> JSONToggle.post(() -> JSONToggle.setChecked(b)));
-        frontECU.setLogListener(console::post);
         canMsgButton.setOnClickListener(v -> {
             long id = frontECU.requestMsgID("[Fault Check]", "[ LOG ] MC0 Fault: DC Bus Voltage Low");
             byte[] raw = ByteBuffer.allocate(Long.SIZE / Byte.SIZE).order(ByteOrder.LITTLE_ENDIAN).putLong(id).array();
@@ -121,7 +120,7 @@ public class SidePanel extends ConstraintLayout {
             boolean opened = (status & SerialCom.Opened) == SerialCom.Opened;
             boolean attached = (status & SerialCom.Attached) == SerialCom.Attached;
 
-            console.systemPost(ECU.LOG_TAG, opened ? "Serial Connected" : "Serial Disconnected");
+            Log.getLogger().info(opened ? "Serial Connected" : "Serial Disconnected");
             if (!opened) {
                 console.setStatus(ConsoleWidget.Status.Disconnected);
             }

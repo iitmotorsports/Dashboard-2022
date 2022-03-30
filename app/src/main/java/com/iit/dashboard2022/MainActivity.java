@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         cdPage.setECU(frontECU);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
+        StringAppender.register(console);
         StringAppender.register(errorsPage);
 
         /* SIDE PANEL */

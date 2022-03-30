@@ -6,16 +6,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.common.collect.Lists;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.LogFile;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.USBSerial;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class ECU {
@@ -27,24 +33,20 @@ public class ECU {
     private static final int iBuf_StringID = 1;
     private static final int iBuf_Value = 2;
     private static final int iBuf_MsgID = 3;
-    private static final Date d = new Date();
     private final ECUMessageHandler ecuMessageHandler;
-    private final ECULogger ecuLogger;
     private final ECUJUSB J_USB;
-    private final long[] iBuffer = new long[4];
-    boolean fileLogging = true;
     private final List<Consumer<State>> stateListener = Lists.newArrayList();
-    private Consumer<String> interpretListener;
     private MODE interpreterMode = MODE.DISABLED;
     private int errorCount = 0;
     private State state = State.INITIALIZING;
 
     public static ECU instance;
 
+    private static final Logger logger = LoggerFactory.getLogger("ECU");
+
     public ECU(AppCompatActivity activity) {
         ECU.instance = this;
         J_USB = new ECUJUSB(this);
-        ecuLogger = new ECULogger();
         ecuMessageHandler = new ECUMessageHandler();
 
         ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(val -> {
@@ -64,44 +66,10 @@ public class ECU {
         open();
     }
 
-    /**
-     * Interprets an ECUMsg and puts it's respective IDs into the given array
-     *
-     * @param iBuffer    the length 4 long array for the msg IDs
-     * @param data_block the 8 byte data block
-     */
-    public static void interpretMsg(long[] iBuffer, byte[] data_block) { // TODO: check that the `get`s are done correctly
-        ByteBuffer buf = ByteBuffer.wrap(data_block).order(ByteOrder.LITTLE_ENDIAN);
-        iBuffer[iBuf_CallerID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_StringID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_Value] = buf.getInt() & 0xffffffffL;
-        iBuffer[iBuf_MsgID] = buf.getInt(0);
-    }
-
-    /**
-     * Generate a formatted string to be passed to interpretListener
-     *
-     * @param epoch     Epoch when message was sent
-     * @param tagString The message's tag
-     * @param msgString The message's string
-     * @param number    The message's value
-     * @return Formatted message string
-     */
-    static String formatMsg(long epoch, String tagString, String msgString, long number) {
-        if (tagString == null || msgString == null) {
-            return "";
-        }
-        d.setTime(epoch);
-        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(d) + ' ' : "";
-        return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
-    }
-
     private void receiveData(byte[] data) {
         if (J_USB.JUSB_requesting != 0 && J_USB.receive(data)) {
             return;
         }
-
-        long epoch = SystemClock.elapsedRealtime();
 
         if (!ecuMessageHandler.loaded()) {
             if (errorCount == 0) {
@@ -112,12 +80,9 @@ public class ECU {
         }
 
         if (interpreterMode != ECU.MODE.DISABLED) {
-            String msg = processData(epoch, data);
-            if (interpretListener != null && msg.length() > 0) {
-                interpretListener.accept(msg);
-            }
+            processData(data);
         } else {
-            consumeData(epoch, data);
+            consumeData(data);
         }
     }
 
@@ -144,67 +109,38 @@ public class ECU {
         this.interpreterMode = mode;
     }
 
-    public void setLogListener(Consumer<String> interpretListener) {
-        this.interpretListener = interpretListener;
-    }
-
     /**
      * Log a message's raw data, if possible
      *
-     * @param epoch    Epoch when message was sent
-     * @param msgBlock The message byte array
+     * @param iBuffer The message byte array
      */
-    private void logRawData(long epoch, byte[] msgBlock) {
-        if (fileLogging) {
-            logBuffer.clear();
-            ecuLogger.write(logBuffer.putLong(epoch).array());
-            ecuLogger.write(msgBlock);
+    private void logRawData(long[] iBuffer) {
+        LogFile activeLogFile = Log.getInstance().getActiveLogFile();
+        if(activeLogFile != null) {
+            activeLogFile.logBinaryStatistics((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_Value]);
         }
     }
 
     public void debugUpdate(byte[] data_block) {
-        updateData(data_block);
+        interpretMsg(data_block);
     }
 
     /**
-     * Only update needed values and run callback
+     * Interprets an ECUMsg and puts it's respective IDs into the given array
      *
-     * @param data_block 8 byte data block
-     * @return ECUMsg that was updated, null in none
+     * @param data_block the 8 byte data block
      */
-    private void updateData(byte[] data_block) {
-        interpretMsg(iBuffer, data_block);
-        //TODO: Faults
-        /*
-        String fault = ecuMsgHandler.checkFaults(iBuffer[iBuf_StringID]);
-        if (fault != null && errorListener != null) {
-            errorListener.accept("CAN Fault", fault);
-            return;
-        }
+    public long[] interpretMsg(byte[] data_block) { // TODO: check that the `get`s are done correctly
+        long[] iBuffer = new long[4];
+        ByteBuffer buf = ByteBuffer.wrap(data_block).order(ByteOrder.LITTLE_ENDIAN);
+        iBuffer[iBuf_CallerID] = buf.getShort() & 0xffff;
+        iBuffer[iBuf_StringID] = buf.getShort() & 0xffff;
+        iBuffer[iBuf_Value] = buf.getInt() & 0xffffffffL;
+        iBuffer[iBuf_MsgID] = buf.getInt(0);
 
-         */
-
+        // TODO: Need to update here?
         ecuMessageHandler.updateStatistic((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_StringID], iBuffer[iBuf_Value]);
-    }
-
-    /**
-     * Update requested values, run callback, and generate a formatted string from message
-     *
-     * @param epoch      Epoch when message was sent
-     * @param data_block 8 byte data block
-     * @return the formatted message that was received
-     */
-    private String updateFormattedData(long epoch, byte[] data_block) {
-        //TODO: Log stats?
-        /*
-        ECUMsg msg = updateData(data_block);
-        if (msg == null) {
-            return formatMsg(epoch, ecuKeyMap.getTag((int) iBuffer[iBuf_CallerID]), ecuKeyMap.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
-        } else {
-            return formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value);
-        }
-         */
-        return formatMsg(epoch, ecuMessageHandler.getTag((int) iBuffer[iBuf_CallerID]), ecuMessageHandler.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
+        return iBuffer;
     }
 
     /**
@@ -212,32 +148,29 @@ public class ECU {
      * <p>
      * Should be faster than processData, but does not output anything
      *
-     * @param epoch    Epoch when message was sent
      * @param raw_data received byte array
      */
-    private void consumeData(long epoch, byte[] raw_data) {
+    private void consumeData(byte[] raw_data) {
         for (int i = 0; i < raw_data.length; i += 8) {
             byte[] data_block = new byte[8];
             try {
                 System.arraycopy(raw_data, i, data_block, 0, 8);
             } catch (ArrayIndexOutOfBoundsException e) {
-                Log.getLogger().error("Received cutoff array.");
+                logger.error("Received cutoff array.");
                 continue;
             }
-            updateData(data_block);
-            logRawData(epoch, data_block);
+            long[] iBuffer = interpretMsg(data_block);
+            logRawData(iBuffer);
         }
     }
 
     /**
      * Both Consume and interpret raw data that has been received
      *
-     * @param epoch    Epoch when message was sent
      * @param raw_data received byte array
      * @return The interpreted string of the data
      */
-    private String processData(long epoch, byte[] raw_data) { // Improve: run this on separate thread
-        StringBuilder output = new StringBuilder(32);
+    private void processData(byte[] raw_data) { // Improve: run this on separate thread
 
         if (interpreterMode == MODE.HEX) {
             for (int i = 0; i < raw_data.length; i += 8) {
@@ -245,17 +178,13 @@ public class ECU {
                 try {
                     System.arraycopy(raw_data, i, data_block, 0, 8);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.getLogger().error("Received cutoff array.");
+                    logger.error("Received cutoff array.");
                     continue;
                 }
-                updateData(data_block);
-                logRawData(epoch, data_block);
-                output.append(ByteSplit.bytesToHex(data_block)).append("\n");
+                long[] iBuffer = interpretMsg(data_block);
+                logRawData(iBuffer);
+                logger.debug(ByteSplit.bytesToHex(data_block));
             }
-            if (output.length() == 0) {
-                return "";
-            }
-            return output.substring(0, output.length() - 1);
         } else if (interpreterMode == MODE.ASCII) {
             for (int i = 0; i < raw_data.length; i += 8) {
                 byte[] data_block = new byte[8];
@@ -264,18 +193,28 @@ public class ECU {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     continue;
                 }
-                updateData(data_block);
-                //logRawData(epoch, data_block);
-                output.append(updateFormattedData(epoch, data_block));
+                long[] iBuffer = interpretMsg(data_block);
+                logRawData(iBuffer);
+                String message = ecuMessageHandler.getStr((int) iBuffer[iBuf_StringID]);
+                int temp = (int) iBuffer[iBuf_CallerID];
+                if((temp < 256 || temp > 4096) && message != null) {
+                    String comp = message.toLowerCase(Locale.ROOT);
+                    long val = iBuffer[iBuf_Value];
+                    if(comp.contains("[error]")) {
+                        logger.error(message.replace("[ERROR]", "").trim() + val);
+                    } else if(comp.contains("[fatal]")) {
+                        logger.error(message.replace("[FATAL]", "").trim() + val);
+                    } else if(comp.contains("[warn]")) {
+                        logger.warn(message.replace("[WARN]", "").trim() + val);
+                    } else if(comp.contains("[debug]")) {
+                        logger.debug(message.replace("[DEBUG]", "").trim() + val);
+                    } else {
+                        logger.info(message.replace("[INFO]", "").replace("[ LOG ]", "").trim() + val);
+                    }
+                }
             }
-            if (output.length() == 0) {
-                Log.getLogger().error("USB serial might be overwhelmed!");
-                return output.toString();
-            }
-            return output.substring(0, output.length() - 1);
         } else {
-            consumeData(epoch, raw_data); // attempt to process data
-            return new String(raw_data);
+            consumeData(raw_data); // attempt to process data
         }
     }
 

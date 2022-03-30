@@ -235,7 +235,7 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
 
     @Override
     public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
-
+        post(encoder.getLayout().doLayout(event));
     }
 
     public enum Status {

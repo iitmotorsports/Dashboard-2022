@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Locale;
 import java.util.Map;
 
 public class LogFile implements Closeable {
@@ -24,6 +25,7 @@ public class LogFile implements Closeable {
     private final File statsMapFile;
 
     private FileOutputStream outputStream = null;
+    private FileOutputStream binaryStream = null;
 
     public LogFile(Map<String, String> statsMap) {
         this(System.currentTimeMillis() / 1000, statsMap);
@@ -95,11 +97,37 @@ public class LogFile implements Closeable {
         }
     }
 
+    public void logBinaryStatistics(int id, int data) {
+        String out = String.format(Locale.ENGLISH, "%d %d %d\n", System.currentTimeMillis(), id, data);
+        if (binaryStream == null) {
+            try {
+                if (!statsFile.exists()) {
+                    statsFile.createNewFile();
+                }
+                binaryStream = new FileOutputStream(statsFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            binaryStream.write(out.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void close() {
         if (outputStream != null) {
             try {
                 outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (binaryStream != null) {
+            try {
+                binaryStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
