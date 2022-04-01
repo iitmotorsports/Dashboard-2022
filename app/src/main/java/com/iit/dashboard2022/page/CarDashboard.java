@@ -22,6 +22,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     private StartLight dashStartLight;
     private SpeedGauge sgL, sgR;
     private LinearGauge batteryGauge, powerGauge;
+    private LinearGauge lTempGauge, rTempGauge;
     private SpeedText speedometer;
     private Indicators indicators;
     private String limitFormat;
@@ -35,6 +36,8 @@ public class CarDashboard extends Page implements UITester.TestUI {
         sgR = rootView.findViewById(R.id.speedGaugeRight);
         batteryGauge = rootView.findViewById(R.id.batteryGauge);
         powerGauge = rootView.findViewById(R.id.powerGauge);
+        lTempGauge = rootView.findViewById(R.id.lTempGauge);
+        rTempGauge = rootView.findViewById(R.id.rTempGauge);
         speedometer = rootView.findViewById(R.id.speedometer);
         indicators = rootView.findViewById(R.id.indicators);
         dashStartLight = rootView.findViewById(R.id.dashStartLight);
@@ -62,6 +65,22 @@ public class CarDashboard extends Page implements UITester.TestUI {
     public void setBatteryPercentage(float percent) {
         batteryGauge.setPercent(percent);
         batteryGauge.setValue(Math.round(percent * 100f));
+    }
+
+    public void setLeftTempValue(int value) {
+        lTempGauge.setValue(value);
+    }
+
+    public void setLeftTempPercentage(float percent) {
+        lTempGauge.setPercent(percent);
+    }
+
+    public void setRightTempValue(int value) {
+        rTempGauge.setValue(value);
+    }
+
+    public void setRightTempPercentage(float percent) {
+        rTempGauge.setPercent(percent);
     }
 
     public void setPowerValue(int value) {
@@ -134,6 +153,10 @@ public class CarDashboard extends Page implements UITester.TestUI {
         setSpeedPercentage(percent);
         setBatteryPercentage(percent);
         setPowerPercentage(percent);
+        setRightTempPercentage(percent);
+        setLeftTempPercentage(percent);
+        setLeftTempValue((int) (percent * 400));
+        setRightTempValue((int) (percent * 400));
         setPowerValue((int) (percent * 1000));
         setPowerLimit((int) (percent * 1000));
         setSpeedValue((int) (300 * percent));

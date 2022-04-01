@@ -68,4 +68,6 @@
     <string name="the_main_use_of_this_app_is_to_interface_with_a_microcontroller_over_usb_serial">The main use of this app is to interface with a microcontroller over USB serial to display data on a car dashboard like setup</string>
     <string name="USB">USB</string>
     <string name="toast_message">Toast message</string>
+    <string name="right_temp_title">Right Temp</string>
+    <string name="left_temp_title">Left Temp</string>
 </resources>
