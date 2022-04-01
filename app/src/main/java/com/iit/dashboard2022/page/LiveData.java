@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import com.google.common.collect.Maps;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUStat;
@@ -20,6 +19,7 @@ import com.iit.dashboard2022.ui.widget.LiveDataEntry;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,7 +30,7 @@ public class LiveData extends Page implements UITester.TestUI {
 
     private boolean enabled = true;
 
-    private final Map<ECUStat, LiveDataEntry> entries = Maps.newHashMap();
+    private final Map<ECUStat, LiveDataEntry> entries = new ConcurrentHashMap<>();
     private boolean alt;
 
     private ECU ecu;

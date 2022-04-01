@@ -16,6 +16,7 @@ import com.iit.dashboard2022.util.mapping.JsonHandler;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,8 +31,8 @@ public class ECUMessageHandler {
     private Map<Integer, String> stats = Maps.newHashMap();
     private Map<Integer, String> messages = Maps.newHashMap();
 
-    private final List<Consumer<Boolean>> jsonLoadedListeners = Lists.newArrayList();
-    private final List<Consumer<ECUStat>> statUpdatedListeners = Lists.newArrayList();
+    private final List<Consumer<Boolean>> jsonLoadedListeners = Collections.synchronizedList(Lists.newArrayList());
+    private final List<Consumer<ECUStat>> statUpdatedListeners = Collections.synchronizedList(Lists.newArrayList());
     private final Map<String, ECUStat> ecuStats = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
 
     public ECUMessageHandler(JsonElement element) {

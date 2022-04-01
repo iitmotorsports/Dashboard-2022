@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.common.collect.Lists;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.LogFile;
@@ -17,10 +18,10 @@ import com.iit.dashboard2022.ui.widget.ListedFile;
 import com.iit.dashboard2022.ui.widget.SideButton;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class Logs extends Page {
     private final static HandlerThread workerThread = new HandlerThread("Logging Thread");
@@ -95,7 +96,7 @@ public class Logs extends Page {
 
     @NonNull
     private HashMap<LogFile, ListedFile> getCurrentFiles() {
-        ArrayList<ListedFile> views = getCurrentListedFiles();
+        List<ListedFile> views = getCurrentListedFiles();
         HashMap<LogFile, ListedFile> files = new HashMap<>();
         for (ListedFile view : views) {
             files.put(view.getFile(), view);
@@ -104,8 +105,8 @@ public class Logs extends Page {
     }
 
     @NonNull
-    private ArrayList<ListedFile> getCurrentListedFiles() {
-        ArrayList<ListedFile> views = new ArrayList<>();
+    private List<ListedFile> getCurrentListedFiles() {
+        List<ListedFile> views = Lists.newArrayList();
 
         for (int i = 0; i < fileEntries.getChildCount(); i++) {
             View view = fileEntries.getChildAt(i);
@@ -118,7 +119,7 @@ public class Logs extends Page {
     }
 
     private void deleteAllEntries() {
-        ArrayList<ListedFile> views = getCurrentListedFiles();
+        List<ListedFile> views = getCurrentListedFiles();
         worker.post(new Runnable() {
             @Override
             public void run() {

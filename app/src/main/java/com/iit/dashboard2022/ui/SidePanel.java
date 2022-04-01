@@ -108,7 +108,7 @@ public class SidePanel extends ConstraintLayout {
         JSONToggle.setHasToggleMediator(true);
         frontECU.getMessageHandler().onLoadEvent(b -> JSONToggle.post(() -> JSONToggle.setChecked(b)));
         canMsgButton.setOnClickListener(v -> {
-            long id = frontECU.requestMsgID("[Fault Check]", "[ LOG ] MC0 Fault: DC Bus Voltage Low");
+            long id = frontECU.getMessageHandler().requestMsgID("[Fault Check]", "[ LOG ] MC0 Fault: DC Bus Voltage Low");
             byte[] raw = ByteBuffer.allocate(Long.SIZE / Byte.SIZE).order(ByteOrder.LITTLE_ENDIAN).putLong(id).array();
             frontECU.postPayload(raw);
         });

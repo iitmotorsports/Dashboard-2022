@@ -1,9 +1,9 @@
 package com.iit.dashboard2022.ecu;
 
-import com.google.common.collect.Maps;
 import com.iit.dashboard2022.util.ByteSplit;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class ECUStat {
@@ -11,7 +11,7 @@ public class ECUStat {
     private final String identifier;
     private int id = -1;
     private String prettyName;
-    public final Map<Consumer<ECUStat>, UpdateMethod> messageListeners = Maps.newHashMap();
+    public final Map<Consumer<ECUStat>, UpdateMethod> messageListeners = new ConcurrentHashMap<>();
     private long value = 0;
 
     public ECUStat(String identifier) {

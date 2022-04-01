@@ -14,8 +14,7 @@ import com.iit.dashboard2022.util.USBSerial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
@@ -24,10 +23,9 @@ import java.util.function.Consumer;
 
 public class ECU {
     private final USBSerial usbMethod;
-    private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
     private final ECUMessageHandler ecuMessageHandler;
     private final ECUJUSB J_USB;
-    private final List<Consumer<State>> stateListener = Lists.newArrayList();
+    private final List<Consumer<State>> stateListener = Collections.synchronizedList(Lists.newArrayList());
     private MODE interpreterMode = MODE.DISABLED;
     private int errorCount = 0;
     private State state = State.INITIALIZING;
@@ -114,13 +112,6 @@ public class ECU {
 
     public void onStateChangeEvent(Consumer<State> consumer) {
         this.stateListener.add(consumer);
-    }
-
-    public long requestMsgID(String stringTag, String stringMsg) {
-        if (ecuMessageHandler != null) {
-            return ecuMessageHandler.requestMsgID(stringTag, stringMsg);
-        }
-        return -1;
     }
 
     public void setInterpreterMode(MODE mode) {

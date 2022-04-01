@@ -66,33 +66,5 @@ public class ECUUpdater {
 
 
          */
-
-
-
-
-        /*
-         *  LIVE DATA
-         */
-
-        //TODO: CRY
-        /*
-        ECUMsg[] messages = ecuMsgHandler.getMessageArray();
-        String[] titles = new String[messages.length];
-
-        for (int i = 0; i < messages.length; i++) {
-            titles[i] = removeMsgTag(messages[i].stringMsg);
-        }
-
-        long[] values = liveDataPage.setMessageTitles(titles);
-
-        for (int i = 0; i < messages.length; i++) {
-            int finalI = i;
-            messages[i].addMessageListener(val -> {
-                values[finalI] = val;
-                liveDataPage.updateValue(finalI);
-            }, ECUMsg.UpdateMethod.ON_RECEIVE);
-        }
-
-         */
     }
 }

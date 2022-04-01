@@ -15,10 +15,10 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
+import com.google.common.collect.Lists;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SpeedGauge extends View implements WidgetUpdater.Widget {
@@ -135,7 +135,7 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         int xPos = 0;
         float varX = incX * sd;
 
-        List<Float> widths = new ArrayList<>();
+        List<Float> widths = Lists.newArrayList();
 
         widths.add(0f);
 

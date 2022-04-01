@@ -5,11 +5,12 @@ import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.google.common.collect.Lists;
 
+import java.util.Collections;
 import java.util.List;
 
 public class StringAppender extends AppenderBase<ILoggingEvent> {
 
-    private static final List<StringLogger> loggers = Lists.newArrayList();
+    private static final List<StringLogger> loggers = Collections.synchronizedList(Lists.newArrayList());
 
     public static void register(StringLogger l) {
         loggers.add(l);
