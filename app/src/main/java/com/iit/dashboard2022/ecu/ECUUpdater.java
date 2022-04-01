@@ -50,8 +50,14 @@ public class ECUUpdater {
         });
         ecuMsgHandler.getStatistic(Fault).addMessageListener(stat -> dashboardPage.setIndicator(Indicators.Indicator.Fault, stat.get() > 0));
         ecuMsgHandler.getStatistic(StartLight).addMessageListener(stat -> dashboardPage.setStartLight(stat.get() == 1));
-
-
+        ecuMsgHandler.getStatistic(MC0BoardTemp).addMessageListener(stat -> {
+            dashboardPage.setLeftTempValue(stat.getAsInt());
+            dashboardPage.setLeftTempPercentage(stat.get());
+        });
+        ecuMsgHandler.getStatistic(MC1BoardTemp).addMessageListener(stat -> {
+            dashboardPage.setRightTempValue(stat.getAsInt());
+            dashboardPage.setRightTempPercentage(stat.get());
+        });
         /* State Listener */
         /*
         ecuMsgHandler.setGlobalStateListener(state -> {

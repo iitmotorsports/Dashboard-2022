@@ -30,15 +30,15 @@
         <attr name="taper" format="float"/>
     </declare-styleable>
     <declare-styleable name="LinearGauge">
-        <attr name="colorLow" />
-        <attr name="colorMid" />
-        <attr name="colorHigh" />
-        <attr name="flipped" format="boolean" />
-        <attr name="vertical" format="boolean" />
-        <attr name="android:textColor" />
-        <attr name="android:textSize" />
-        <attr name="android:text" />
-        <attr name="android:title" />
-        <attr name="unit" format="string" />
+        <attr name="colorLow"/>
+        <attr name="colorMid"/>
+        <attr name="colorHigh"/>
+        <attr name="flipped" format="boolean"/>
+        <attr name="vertical" format="boolean"/>
+        <attr name="android:textColor"/>
+        <attr name="android:textSize"/>
+        <attr name="android:text"/>
+        <attr name="android:title"/>
+        <attr name="unit" format="string"/>
     </declare-styleable>
 </resources>

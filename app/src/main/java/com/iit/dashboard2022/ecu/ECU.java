@@ -42,7 +42,6 @@ public class ECU {
         ecuMessageHandler = new ECUMessageHandler();
 
         ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(stat -> {
-            Log.getLogger().error("Statty: " + stat.getAsInt());
             State state = State.getStateById(stat.getAsInt());
             if (state == null) {
                 return;

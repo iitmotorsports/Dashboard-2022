@@ -60,7 +60,7 @@ public class WidgetUpdater {
                         if (enoughMinTimePassed()) {
                             for (Widget sg : WIDGETS) {
                                 sg.onWidgetUpdate();
-                                wait(1);
+                                wait();
                             }
                         }
                     } catch (InterruptedException e) {
