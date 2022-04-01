@@ -8,7 +8,7 @@ ext {
     androidXVersion = "1.4.0"
     materialVersion = "1.4.0"
     usbSerialVersion = "v3.4.2"
-    grpcVersion = "1.44.1"
+    grpcVersion = "1.45.1"
     tomcatVersion = "6.0.53"
     gsonVersion = "2.9.0"
 }
