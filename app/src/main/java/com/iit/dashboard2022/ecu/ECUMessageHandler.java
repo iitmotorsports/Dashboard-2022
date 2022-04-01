@@ -1,37 +1,35 @@
 package com.iit.dashboard2022.ecu;
 
-import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.Constants;
-import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.mapping.JsonFileHandler;
 import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
 import com.iit.dashboard2022.util.mapping.JsonHandler;
-import com.iit.dashboard2022.util.mapping.JsonPasteHandler;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ECUMessageHandler {
-    private final List<BiConsumer<Boolean, String>> statusListeners = new ArrayList<>();
     private boolean pseudoMode = false;
 
     private Map<Integer, String> subsystems = Maps.newHashMap();
     private Map<Integer, String> stats = Maps.newHashMap();
     private Map<Integer, String> messages = Maps.newHashMap();
 
+    private final List<Consumer<Boolean>> jsonLoadedListeners = Lists.newArrayList();
     private final Map<String, ECUStat> ecuStats = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
 
     public ECUMessageHandler(JsonElement element) {
@@ -40,6 +38,10 @@ public class ECUMessageHandler {
     }
 
     public ECUMessageHandler() {
+    }
+
+    public void onLoadEvent(Consumer<Boolean> consumer) {
+        jsonLoadedListeners.add(consumer);
     }
 
     /**
@@ -88,14 +90,6 @@ public class ECUMessageHandler {
         return null;
     }
 
-    public void addStatusListener(@NonNull BiConsumer<Boolean, String> statusListener) {
-        statusListeners.add(statusListener);
-    }
-
-    private void notifyStatusListeners(boolean jsonLoaded, String rawJson) {
-        statusListeners.forEach(b -> b.accept(jsonLoaded, rawJson));
-    }
-
     public boolean loaded() {
         return subsystems != null && stats != null && messages != null;
     }
@@ -129,7 +123,7 @@ public class ECUMessageHandler {
      */
     public long requestMsgID(String stringTag, String stringMsg) {
         if (!loaded()) {
-            Toaster.showToast("JSON map has not been loaded, unable to process request", Toaster.Status.WARNING);
+            Log.toast("JSON map has not been loaded, unable to process request", ToastLevel.WARNING);
             return -1;
         }
         Integer tagID = getTagID(stringTag);
@@ -142,7 +136,7 @@ public class ECUMessageHandler {
             mapping.putShort(strID.shortValue());
             return mapping.getInt(0);
         } else {
-            Toaster.showToast("Unable to match string " + stringTag + " " + stringMsg, Toaster.Status.WARNING);
+            Log.toast("Unable to match string " + stringTag + " " + stringMsg, ToastLevel.WARNING);
         }
 
         return -1;
@@ -173,20 +167,25 @@ public class ECUMessageHandler {
                 subsystems = null;
                 stats = null;
                 messages = null;
-                Toaster.showToast("JSON map deleted", Toaster.Status.INFO);
+                Log.toast("JSON map deleted", ToastLevel.INFO);
                 status = false;
+                // TODO: End log?
             } else {
-                Toaster.showToast("Failed to delete JSON map", Toaster.Status.ERROR);
+                Log.toast("Failed to delete JSON map", ToastLevel.ERROR);
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        notifyStatusListeners(status, null);
+        boolean finalStatus = status;
+        jsonLoadedListeners.forEach(c -> c.accept(finalStatus));
     }
 
     public boolean update(JsonElement element) {
         boolean status = parseMap(element);
-        notifyStatusListeners(status, Constants.GSON.toJson(element));
+        if (status) {
+            Log.getInstance().newLog(getStatsAsMap());
+        }
+        jsonLoadedListeners.forEach(c -> c.accept(status));
         return status;
     }
 
@@ -196,10 +195,10 @@ public class ECUMessageHandler {
                 return false;
             }
             if (loaded()) {
-                Toaster.showToast("JSON map unchanged", Toaster.Status.INFO);
+                Log.toast("JSON map unchanged", ToastLevel.INFO);
                 return true;
             }
-            Toaster.showToast("No JSON map has been loaded", Toaster.Status.WARNING, Toast.LENGTH_LONG);
+            Log.toast("No JSON map has been loaded", ToastLevel.WARNING, true);
             return false;
         }
 
@@ -232,16 +231,16 @@ public class ECUMessageHandler {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Toaster.showToast("JSON does not match correct format", Toaster.Status.ERROR, Toast.LENGTH_LONG);
+                Log.toast("JSON does not match correct format", ToastLevel.ERROR, true);
                 return loaded();
             }
         }
 
         if (!pseudoMode) {
             if (loaded()) {
-                Toaster.showToast("JSON map updated", Toaster.Status.SUCCESS);
+                Log.toast("JSON map updated", ToastLevel.SUCCESS);
             } else {
-                Toaster.showToast("Loaded JSON map", Toaster.Status.INFO, Toast.LENGTH_SHORT);
+                Log.toast("Loaded JSON map", ToastLevel.INFO, true);
             }
             MapHandler.CACHE.get().write(element);
         }
@@ -252,12 +251,18 @@ public class ECUMessageHandler {
         return true;
     }
 
+    public Map<String, String> getStatsAsMap() {
+        Map<String, String> temp = Maps.newHashMap();
+        for (Map.Entry<Integer, String> e : stats.entrySet()) {
+            temp.put(String.valueOf(e.getKey()), e.getValue());
+        }
+        return temp;
+    }
+
     public enum MapHandler {
-        CACHE(new JsonFileHandler(Constants.JSON_FILE)),
+        CACHE(new JsonFileHandler(Constants.JSON_CACHE_FILE)),
 
         SELECTOR(new JsonFileSelectorHandler()),
-
-        PASTE(new JsonPasteHandler()),
 
         ECU(com.iit.dashboard2022.ecu.ECU.instance.getUsb());
 

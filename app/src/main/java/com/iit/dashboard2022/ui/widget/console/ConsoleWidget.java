@@ -16,7 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.PrecomputedTextCompat;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.logging.StringLogger;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
@@ -27,7 +30,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
-public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Widget, UITester.TestUI {
+public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Widget, UITester.TestUI, StringLogger {
 
     private static final LinkedBlockingQueue<CharSequence> rawQueue = new LinkedBlockingQueue<>();
     private static final ConcurrentLinkedQueue<CharSequence> outQueue = new ConcurrentLinkedQueue<>();
@@ -228,6 +231,11 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
                 testingState = true;
             }
         }
+    }
+
+    @Override
+    public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
+
     }
 
     public enum Status {

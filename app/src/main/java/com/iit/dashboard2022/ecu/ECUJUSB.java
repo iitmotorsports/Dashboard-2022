@@ -2,9 +2,10 @@ package com.iit.dashboard2022.ecu;
 
 import android.os.SystemClock;
 import com.google.gson.JsonElement;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.ByteSplit;
 import com.iit.dashboard2022.util.Constants;
-import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.mapping.JsonHandler;
 
 import java.io.ByteArrayOutputStream;
@@ -53,7 +54,7 @@ public class ECUJUSB implements JsonHandler {
 
     boolean receive(byte[] data) {
         if (SystemClock.elapsedRealtime() - JUSB_requesting > 30000) {
-            Toaster.showToast("Requesting JSON from USB Timeout", Toaster.Status.WARNING);
+            Log.toast("Requesting JSON from USB Timeout", ToastLevel.WARNING);
             resetJUSB();
             return false;
         }
@@ -94,7 +95,7 @@ public class ECUJUSB implements JsonHandler {
                 }
                 mainECU.issueCommand(ECU.Command.PRINT_LOOKUP);
             } catch (DataFormatException e) {
-                Toaster.showToast("USB Serial JSON decompression failed", Toaster.Status.ERROR);
+                Log.toast("USB Serial JSON decompression failed", ToastLevel.ERROR);
             } catch (IOException ignored) {
             }
             return true;
@@ -112,7 +113,7 @@ public class ECUJUSB implements JsonHandler {
         }
         future = new CompletableFuture<>();
         resetJUSB();
-        Toaster.showToast("Requesting JSON over USB", Toaster.Status.INFO);
+        Log.toast("Requesting JSON over USB", ToastLevel.INFO);
         JUSB_requesting = SystemClock.elapsedRealtime();
         mainECU.issueCommand(ECU.Command.PRINT_LOOKUP);
         return future;

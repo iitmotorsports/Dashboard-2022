@@ -10,10 +10,15 @@ import android.view.WindowInsets;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.MainActivity;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.URLConnection;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+import java.util.Locale;
 
 /**
  * Utility class with general helpers for the dashboard
@@ -65,43 +70,61 @@ public class HawkUtil {
         return context == null ? null : context.getFilesDir();
     }
 
-    /**
-     * Creates a new {@link HttpsURLConnection} instance
-     *
-     * @param url         URL of request
-     * @param method      Method of request (GET, POST, PUT, DELETE)
-     * @param accept      Accept
-     * @param contentType Content-Type
-     * @param authToken   X-Auth-Token
-     * @return {@link HttpsURLConnection}
-     * @throws IOException if a connection cannot be formed
-     */
-    public static HttpsURLConnection createHttpConnection(String url, String method, String accept, String contentType, String authToken) throws IOException {
-        return createHttpConnection(new URL(url), method, accept, contentType, authToken);
+    public static File getLogFilesDir() {
+        return new File(getFilesDir(), "logs");
     }
 
     /**
-     * Creates a new {@link HttpsURLConnection} instance
+     * Converts amount of bytes to human-readable format
      *
-     * @param url         URL of request
-     * @param method      Method of request (GET, POST, PUT, DELETE)
-     * @param accept      Accept
-     * @param contentType Content-Type
-     * @param authToken   X-Auth-Token
-     * @return {@link HttpsURLConnection}
-     * @throws IOException if a connection cannot be formed
+     * @param bytes Size of file
+     * @return Size of file formatted as a String
      */
-    public static HttpsURLConnection createHttpConnection(URL url, String method, String accept, String contentType, String authToken) throws IOException {
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod(method);
-        if (accept != null) {
-            conn.setRequestProperty("Accept", accept);
+    public static String humanReadableBytes(long bytes) {
+        long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+        if (absB < 1024) {
+            return bytes + " B";
         }
-        if (contentType != null) {
-            conn.setRequestProperty("Content-Type", contentType);
+        long value = absB;
+        CharacterIterator ci = new StringCharacterIterator("KMGTPE");
+        for (int i = 40; i >= 0 && absB > 0xfffccccccccccccL >> i; i -= 10) {
+            value >>= 10;
+            ci.next();
         }
-        conn.setRequestProperty("X-Auth-Token", authToken);
-        return conn;
+        value *= Long.signum(bytes);
+        return String.format(Locale.ENGLISH, "%.1f %ciB", value / 1024.0, ci.current());
     }
+
+    /**
+     * Adds a upload file section to the request
+     *
+     * @param fieldName  name attribute in <input type="file" name="..." />
+     * @param uploadFile a File to be uploaded
+     * @throws IOException
+     */
+    public static void addFilePart(PrintWriter writer, OutputStream outputStream, String boundary, String fieldName, File uploadFile)
+            throws IOException {
+        String fileName = uploadFile.getName();
+        writer.append("--").append(boundary).append(Constants.LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"").append(fieldName).append("\"; filename=\"").append(fileName).append("\"")
+                .append(Constants.LINE_FEED);
+        writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(fileName))
+                .append(Constants.LINE_FEED);
+        writer.append("Content-Transfer-Encoding: binary").append(Constants.LINE_FEED);
+        writer.append(Constants.LINE_FEED);
+        writer.flush();
+
+        FileInputStream inputStream = new FileInputStream(uploadFile);
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(Constants.LINE_FEED);
+        writer.flush();
+    }
+
 }

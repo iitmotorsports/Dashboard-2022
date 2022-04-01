@@ -1,12 +1,12 @@
 package com.iit.dashboard2022.util.mapping;
 
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
-import com.iit.dashboard2022.util.Toaster;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,7 +33,7 @@ public class JsonFileHandler implements JsonHandler {
             br.close();
             return CompletableFuture.completedFuture(element);
         } catch (IOException e) {
-            Toaster.showToast("Failed to load JSON from system", Toaster.Status.ERROR, Toast.LENGTH_LONG);
+            Log.toast("Failed to load JSON from system", ToastLevel.ERROR, true);
         }
         return CompletableFuture.completedFuture(null);
     }
@@ -48,7 +48,7 @@ public class JsonFileHandler implements JsonHandler {
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
-            Toaster.showToast("Failed to save JSON to system", Toaster.Status.ERROR, Toast.LENGTH_LONG);
+            Log.toast("Failed to save JSON to system", ToastLevel.ERROR, true);
         }
     }
 

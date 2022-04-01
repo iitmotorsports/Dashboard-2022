@@ -10,7 +10,6 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMessageHandler;
 import com.iit.dashboard2022.util.HawkUtil;
-import com.iit.dashboard2022.util.Toaster;
 
 public class JSONDialog {
     private final AlertDialog dialog;
@@ -29,7 +28,6 @@ public class JSONDialog {
 
         downloadBtn.setEnabled(HawkUtil.checkInternetConnection(activity));
         downloadBtn.setOnClickListener(v -> {
-            frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.PASTE).thenAccept(b -> Toaster.showToast(b ? "Loaded JSON from Paste API" : "Failed to load JSON from Paste API", b ? Toaster.Status.SUCCESS : Toaster.Status.ERROR));
             dialog.dismiss();
         });
 

@@ -4,7 +4,7 @@ import com.husbylabs.warptables.Field;
 import com.husbylabs.warptables.Status;
 import com.husbylabs.warptables.WTClient;
 import com.husbylabs.warptables.WarpTablesAPI;
-import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.logging.Log;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -42,7 +42,7 @@ public class TelemetryHandler {
         try {
             client.start();
         } catch (IOException e) {
-            Toaster.showToast("Couldn't start Telemetry. Please check the logs.");
+            Log.toast("Couldn't start Telemetry. Please check the logs.");
             e.printStackTrace(System.err);
         }
 

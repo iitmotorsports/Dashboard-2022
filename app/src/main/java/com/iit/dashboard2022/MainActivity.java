@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMessageHandler;
 import com.iit.dashboard2022.ecu.ECUUpdater;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.StringAppender;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
 import com.iit.dashboard2022.page.Errors;
@@ -23,7 +26,6 @@ import com.iit.dashboard2022.ui.widget.SettingsButton;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.HawkUtil;
-import com.iit.dashboard2022.util.Toaster;
 import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
 
 import java.util.concurrent.ExecutionException;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         GLOBAL_CONTEXT = this;
         startActivity(new Intent(this, SplashActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
-        Toaster.setEnabled(false);
+        Log.setEnabled(false);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -50,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         /* INITIALIZE */
         frontECU = new ECU(this);
         mainPager = new Pager(this);
-        Toaster.setContext(this);
+        Log.setContext(this);
+        Log.getInstance().loadLogs();
 
         ((JsonFileSelectorHandler) ECUMessageHandler.MapHandler.SELECTOR.get()).init(this);
         /*
@@ -67,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         ConsoleWidget console = findViewById(R.id.console);
-
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
         LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         commandPage.setECU(frontECU);
         cdPage.setECU(frontECU);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
+
+        StringAppender.register(errorsPage);
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         new Handler(Looper.myLooper()).postDelayed(() -> {
             /* FINAL CALLS */
             ECUUpdater ecuUpdater = new ECUUpdater(cdPage, ldPage, sidePanel, frontECU);
-            frontECU.setJSONLoadListener(() -> logPage.displayFiles(frontECU.getLocalLogs()));
+            frontECU.getMessageHandler().onLoadEvent(b -> logPage.displayFiles(Log.getInstance().getLogs().values()));
 
             cdPage.reset();
 
@@ -118,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
             }));
             WidgetUpdater.start();
 
-            Toaster.setEnabled(true);
+            Log.setEnabled(true);
             try {
                 if (!frontECU.getMessageHandler().load().get()) {
-                    Toaster.showToast("No JSON is currently loaded", Toaster.Status.WARNING);
-                    logPage.displayFiles(frontECU.getLocalLogs());
+                    Log.toast("No JSON is currently loaded", ToastLevel.WARNING);
+                    logPage.displayFiles(Log.getInstance().getLogs().values());
                 } else {
                     frontECU.open();
                 }

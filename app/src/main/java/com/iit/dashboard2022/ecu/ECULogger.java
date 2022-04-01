@@ -1,35 +1,20 @@
 package com.iit.dashboard2022.ecu;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.Toaster;
 
 import java.io.File;
 import java.io.StringReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.List;
 
 public class ECULogger {
-    private static final String LOG_MAP_START = "---[ LOG MAP START ]---\n";
-    private static final String LOG_MAP_END = "---[ LOG MAP END ]---\n";
-    final LogFileIO logFile;
-    //TODO: Separate all errors into error page
 
     public ECULogger() {
-        this.logFile = new LogFileIO();
-        LogFileIO.setGlobalLogFileSanitizer(file -> {
-            String jsonStr = LogFileIO.getString(file, LOG_MAP_END);
-            int logStart = jsonStr.getBytes().length;
-            return logStart == file.length();
-        });
     }
 
     @WorkerThread
     public static String stringifyLogFile(File file) {
+        /*
         if (file == null) {
             return null;
         }
@@ -49,7 +34,7 @@ public class ECULogger {
                 System.arraycopy(bytes, i + 8, msg, 0, 8);
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
-                Toaster.showToast("Warning: log file has leftover bytes", Toaster.Status.WARNING);
+                Log.toast("Warning: log file has leftover bytes", ToastLevel.WARNING);
                 break;
             }
             long epoch = ByteBuffer.wrap(epochB).order(ByteOrder.LITTLE_ENDIAN).getLong();
@@ -65,8 +50,11 @@ public class ECULogger {
             return fnl;
         }
 
-        Toaster.showToast("Returning string interpretation", Toaster.Status.WARNING);
+        Log.toast("Returning string interpretation", ToastLevel.WARNING);
         return LogFileIO.getString(file);
+
+         */
+        return null;
     }
 
     @WorkerThread
@@ -94,36 +82,10 @@ public class ECULogger {
         return output.toString();
     }
 
-    @WorkerThread
-    public static String interpretLogFile(@NonNull File file) {
-        byte[] bytes = LogFileIO.getBytes(file);
-        String jsonStr = LogFileIO.getString(file, LOG_MAP_END);
-        int logStart = jsonStr.getBytes().length;
-        String output = interpretRawData(jsonStr.substring(LOG_MAP_START.length()), bytes, logStart);
-        if (output.length() == 0) {
-            Toaster.showToast("Returning string interpretation", Toaster.Status.WARNING);
-            return LogFileIO.getString(file);
-        }
-        return output;
-    }
-
-    public File getActiveLog() {
-        return logFile.getActiveFile();
-    }
-
-    public List<LogFileIO.LogFile> getLocalLogs() {
-        return logFile.listFiles();
-    }
-
-    public void newLog(@NonNull String rawJson) {
-        logFile.newLog();
-        logFile.write(LOG_MAP_START.getBytes());
-        logFile.write(rawJson.getBytes());
-        logFile.write("\n".getBytes());
-        logFile.write(LOG_MAP_END.getBytes());
-    }
-
     public void write(byte[] bytes) {
+        /*
         logFile.write(bytes);
+
+         */
     }
 }
