@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.ecu;
 
+import android.util.Pair;
 import android.view.Gravity;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.common.collect.Lists;
@@ -17,21 +18,22 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public class ECU {
     private final USBSerial usbMethod;
     private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
-    private static final int iBuf_CallerID = 0;
-    private static final int iBuf_StringID = 1;
-    private static final int iBuf_Value = 2;
-    private static final int iBuf_MsgID = 3;
     private final ECUMessageHandler ecuMessageHandler;
     private final ECUJUSB J_USB;
     private final List<Consumer<State>> stateListener = Lists.newArrayList();
     private MODE interpreterMode = MODE.DISABLED;
     private int errorCount = 0;
     private State state = State.INITIALIZING;
+
+    private final BlockingQueue<Pair<Long, byte[]>> payloadQueue = new LinkedBlockingQueue<>();
 
     public static ECU instance;
 
@@ -52,6 +54,31 @@ public class ECU {
             stateListener.forEach(consumer -> consumer.accept(state));
         }, ECUStat.UpdateMethod.ON_VALUE_CHANGE);
 
+        Thread ecuThread = new Thread(() -> {
+            while(true) {
+                try {
+                    Pair<Long, byte[]> data = payloadQueue.take();
+                    for (int i = 0; i < data.second.length; i += 8) {
+                        byte[] data_block = new byte[8];
+                        try {
+                            System.arraycopy(data.second, i, data_block, 0, 8);
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            logger.error("Received cutoff array.");
+                            continue;
+                        }
+                        ECUPayload payload = new ECUPayload(data.first, data_block);
+                        handlePayload(payload);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        ecuThread.setDaemon(true);
+        ecuThread.setName("ECU-Thread");
+        ecuThread.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(ecuThread::interrupt));
+
         // Start Serial
         usbMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
         usbMethod.setDataListener(this::receiveData);
@@ -71,12 +98,11 @@ public class ECU {
             errorCount = ++errorCount % 8;
             return;
         }
+        postPayload(data);
+    }
 
-        if (interpreterMode != ECU.MODE.DISABLED) {
-            processData(data);
-        } else {
-            consumeData(data);
-        }
+    public void postPayload(byte[] data) {
+        payloadQueue.add(new Pair<>(System.currentTimeMillis(), data));
     }
 
     public void issueCommand(Command command) {
@@ -105,108 +131,39 @@ public class ECU {
     /**
      * Log a message's raw data, if possible
      *
-     * @param iBuffer The message byte array
+     * @param payload The payload from the ECU.
      */
-    private void logRawData(long[] iBuffer) {
+    private void logRawData(ECUPayload payload) {
         LogFile activeLogFile = Log.getInstance().getActiveLogFile();
         if (activeLogFile != null) {
-            activeLogFile.logBinaryStatistics((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_Value]);
+            activeLogFile.logBinaryStatistics((int) payload.getCallerId(), (int) payload.getValue());
         }
     }
 
-    public void debugUpdate(byte[] data_block) {
-        interpretMsg(data_block);
-    }
-
-    /**
-     * Interprets an ECUMsg and puts it's respective IDs into the given array
-     *
-     * @param data_block the 8 byte data block
-     */
-    public long[] interpretMsg(byte[] data_block) { // TODO: check that the `get`s are done correctly
-        long[] iBuffer = new long[4];
-        ByteBuffer buf = ByteBuffer.wrap(data_block).order(ByteOrder.LITTLE_ENDIAN);
-        iBuffer[iBuf_CallerID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_StringID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_Value] = buf.getInt() & 0xffffffffL;
-        iBuffer[iBuf_MsgID] = buf.getInt(0);
-
-        // TODO: Need to update here?
-        ecuMessageHandler.updateStatistic((int) iBuffer[iBuf_CallerID], (int) iBuffer[iBuf_StringID], iBuffer[iBuf_Value]);
-        return iBuffer;
-    }
-
-    /**
-     * Consume data, does not interpret anything about it
-     * <p>
-     * Should be faster than processData, but does not output anything
-     *
-     * @param raw_data received byte array
-     */
-    private void consumeData(byte[] raw_data) {
-        for (int i = 0; i < raw_data.length; i += 8) {
-            byte[] data_block = new byte[8];
-            try {
-                System.arraycopy(raw_data, i, data_block, 0, 8);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                logger.error("Received cutoff array.");
-                continue;
-            }
-            long[] iBuffer = interpretMsg(data_block);
-            logRawData(iBuffer);
-        }
-    }
-
-    /**
-     * Both Consume and interpret raw data that has been received
-     *
-     * @param raw_data received byte array
-     */
-    private void processData(byte[] raw_data) { // Improve: run this on separate thread
+    private void handlePayload(ECUPayload payload) {
         if (interpreterMode == MODE.HEX) {
-            for (int i = 0; i < raw_data.length; i += 8) {
-                byte[] data_block = new byte[8];
-                try {
-                    System.arraycopy(raw_data, i, data_block, 0, 8);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    logger.error("Received cutoff array.");
-                    continue;
-                }
-                long[] iBuffer = interpretMsg(data_block);
-                logRawData(iBuffer);
-                logger.debug(ByteSplit.bytesToHex(data_block));
-            }
+            logger.debug(ByteSplit.bytesToHex(payload.getRawData()));
         } else if (interpreterMode == MODE.ASCII) {
-            for (int i = 0; i < raw_data.length; i += 8) {
-                byte[] data_block = new byte[8];
-                try {
-                    System.arraycopy(raw_data, i, data_block, 0, 8);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    continue;
-                }
-                long[] iBuffer = interpretMsg(data_block);
-                logRawData(iBuffer);
-                String message = ecuMessageHandler.getStr((int) iBuffer[iBuf_StringID]);
-                int temp = (int) iBuffer[iBuf_CallerID];
-                if ((temp < 256 || temp > 4096) && message != null) {
-                    String comp = message.toLowerCase(Locale.ROOT);
-                    String val = " " + iBuffer[iBuf_Value];
-                    if (comp.contains("[error]")) {
-                        logger.error(message.replace("[ERROR]", "").trim() + val);
-                    } else if (comp.contains("[fatal]")) {
-                        logger.error(message.replace("[FATAL]", "").trim() + val);
-                    } else if (comp.contains("[warn]")) {
-                        logger.warn(message.replace("[WARN]", "").trim() + val);
-                    } else if (comp.contains("[debug]")) {
-                        logger.debug(message.replace("[DEBUG]", "").trim() + val);
-                    } else {
-                        logger.info(message.replace("[INFO]", "").replace("[ LOG ]", "").trim() + val);
-                    }
+            String message = ecuMessageHandler.getStr((int) payload.getStringId());
+            int temp = (int) payload.getCallerId();
+            if ((temp < 256 || temp > 4096) && message != null) {
+                String comp = message.toLowerCase(Locale.ROOT);
+                String val = " " + payload.getValue();
+                if (comp.contains("[error]")) {
+                    logger.error(message.replace("[ERROR]", "").trim() + val);
+                } else if (comp.contains("[fatal]")) {
+                    logger.error(message.replace("[FATAL]", "").trim() + val);
+                } else if (comp.contains("[warn]")) {
+                    logger.warn(message.replace("[WARN]", "").trim() + val);
+                } else if (comp.contains("[debug]")) {
+                    logger.debug(message.replace("[DEBUG]", "").trim() + val);
+                } else {
+                    logger.info(message.replace("[INFO]", "").replace("[ LOG ]", "").trim() + val);
                 }
             }
-        } else {
-            consumeData(raw_data); // attempt to process data
         }
+        ecuMessageHandler.updateStatistic((int) payload.getCallerId(), (int) payload.getStringId(), payload.getValue());
+        logRawData(payload);
     }
 
     public ECUMessageHandler getMessageHandler() {
