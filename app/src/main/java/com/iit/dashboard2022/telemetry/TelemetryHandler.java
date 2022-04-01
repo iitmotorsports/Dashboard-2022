@@ -43,7 +43,7 @@ public class TelemetryHandler {
             client.start();
         } catch (IOException e) {
             Log.toast("Couldn't start Telemetry. Please check the logs.");
-            e.printStackTrace(System.err);
+            Log.getLogger().error("Error while starting telemetry.", e);
         }
 
         //TODO: Temp

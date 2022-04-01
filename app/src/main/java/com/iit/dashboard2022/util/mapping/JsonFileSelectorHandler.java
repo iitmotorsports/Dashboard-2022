@@ -53,7 +53,7 @@ public class JsonFileSelectorHandler implements JsonHandler {
                 return;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Error while using map file selection dialog", e);
         }
         future.complete(null);
     }

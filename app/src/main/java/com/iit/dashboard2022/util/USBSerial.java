@@ -12,6 +12,7 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
+import com.iit.dashboard2022.logging.Log;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -95,7 +96,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
             return true;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to open new USB connection", e);
         }
         return false;
     }
@@ -123,7 +124,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
                 port = null;
                 setConnStatus((checkStatus(SerialCom.Attached) ? SerialCom.Attached : SerialCom.Detached) | SerialCom.Closed);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.getLogger().error("Failed to close USB connection", e);
             }
         }
     }
@@ -135,7 +136,7 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
                 port.write(buffer, 0);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to write data to USB serial device", e);
         }
     }
 

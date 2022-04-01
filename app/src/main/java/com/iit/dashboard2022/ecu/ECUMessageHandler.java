@@ -180,7 +180,7 @@ public class ECUMessageHandler {
                 Log.toast("Failed to delete JSON map", ToastLevel.ERROR);
             }
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to delete log map file", e);
         }
         boolean finalStatus = status;
         jsonLoadedListeners.forEach(c -> c.accept(finalStatus));
@@ -240,8 +240,8 @@ public class ECUMessageHandler {
                     tempMessages.put(entry.getValue().getAsInt(), entry.getKey());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 Log.toast("JSON does not match correct format", ToastLevel.ERROR, true);
+                Log.getLogger().error("Failed to parse JSON map", e);
                 return loaded();
             }
         }

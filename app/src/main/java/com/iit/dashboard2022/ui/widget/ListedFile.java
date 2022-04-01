@@ -177,7 +177,7 @@ public class ListedFile extends FrameLayout {
         try {
             fileInfo.post(() -> fileInfo.setText(file.getFormattedName() + (isActive() ? " - Active" : "")));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to update log file information", e);
             if (fileInfo != null) {
                 fileInfo.post(() -> fileInfo.setText(R.string.listed_file_fail));
             }

@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                     frontECU.open();
                 }
             } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+                Log.getLogger().error("Error while loading ECU");
             }
         }, 500);
         super.onPostCreate(savedInstanceState);

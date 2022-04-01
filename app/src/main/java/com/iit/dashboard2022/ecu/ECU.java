@@ -19,7 +19,6 @@ import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
@@ -55,7 +54,7 @@ public class ECU {
         }, ECUStat.UpdateMethod.ON_VALUE_CHANGE);
 
         Thread ecuThread = new Thread(() -> {
-            while(true) {
+            while (true) {
                 try {
                     Pair<Long, byte[]> data = payloadQueue.take();
                     for (int i = 0; i < data.second.length; i += 8) {
@@ -70,7 +69,7 @@ public class ECU {
                         handlePayload(payload);
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.getLogger().warn("ECU Thread Interrupted", e);
                 }
             }
         });

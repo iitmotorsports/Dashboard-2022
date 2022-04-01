@@ -47,8 +47,8 @@ public class JsonFileHandler implements JsonHandler {
             Constants.GSON.toJson(element, writer);
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
             Log.toast("Failed to save JSON to system", ToastLevel.ERROR, true);
+            Log.getLogger().error("Failed to save JSON cache to system", e);
         }
     }
 

@@ -91,13 +91,13 @@ public class LogFile implements Closeable {
                 }
                 outputStream = new FileOutputStream(logFile);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.getLogger().error("Failed to create log file or open output stream", e);
             }
         }
         try {
             outputStream.write(message.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to write data to log file", e);
         }
     }
 
@@ -110,13 +110,13 @@ public class LogFile implements Closeable {
                 }
                 binaryStream = new FileOutputStream(statsFile);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.getLogger().error("Failed to create statistics file or open output stream", e);
             }
         }
         try {
             binaryStream.write(out.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to write data to statistics file", e);
         }
     }
 
@@ -126,14 +126,14 @@ public class LogFile implements Closeable {
             try {
                 outputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.getLogger().error("Failed to close log file output stream", e);
             }
         }
         if (binaryStream != null) {
             try {
                 binaryStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.getLogger().error("Failed to close statistics file output stream", e);
             }
         }
     }
