@@ -7,13 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-
 import androidx.annotation.IntDef;
-
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
+import com.iit.dashboard2022.logging.Log;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -40,10 +39,11 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
                     case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                        if (open())
+                        if (open()) {
                             setConnStatus(Attached | Opened);
-                        else
+                        } else {
                             setConnStatus(Attached | Closed);
+                        }
                         break;
                     case UsbManager.ACTION_USB_DEVICE_DETACHED: // TODO: ensure the thing detached was the thing that last connected
                         setConnStatus(Detached | Closed);
@@ -75,8 +75,9 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     }
 
     private boolean openNewConnection() {
-        if (isOpen())
+        if (isOpen()) {
             return true;
+        }
         List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager);
         if (availableDrivers.isEmpty()) {
             return false;
@@ -95,32 +96,35 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
             return true;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to open new USB connection", e);
         }
         return false;
     }
 
     @Override
     public boolean open() {
-        if (isOpen())
+        if (isOpen()) {
             return true;
+        }
         boolean opened = openNewConnection();
-        if (opened)
+        if (opened) {
             setConnStatus(SerialCom.Attached | SerialCom.Opened);
+        }
         return opened;
     }
 
     @Override
     public void close() {
-        if (!isOpen())
+        if (!isOpen()) {
             return;
+        }
         if (port != null) {
             try {
                 port.close();
                 port = null;
                 setConnStatus((checkStatus(SerialCom.Attached) ? SerialCom.Attached : SerialCom.Detached) | SerialCom.Closed);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.getLogger().error("Failed to close USB connection", e);
             }
         }
     }
@@ -128,10 +132,11 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     @Override
     public void write(byte[] buffer) {
         try {
-            if (port != null && isOpen())
+            if (port != null && isOpen()) {
                 port.write(buffer, 0);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to write data to USB serial device", e);
         }
     }
 
@@ -153,12 +158,12 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({UsbSerialPort.STOPBITS_1, UsbSerialPort.STOPBITS_1_5, UsbSerialPort.STOPBITS_2})
+    @IntDef({ UsbSerialPort.STOPBITS_1, UsbSerialPort.STOPBITS_1_5, UsbSerialPort.STOPBITS_2 })
     @interface StopBits {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({UsbSerialPort.DATABITS_5, UsbSerialPort.DATABITS_6, UsbSerialPort.DATABITS_7, UsbSerialPort.DATABITS_8})
+    @IntDef({ UsbSerialPort.DATABITS_5, UsbSerialPort.DATABITS_6, UsbSerialPort.DATABITS_7, UsbSerialPort.DATABITS_8 })
     @interface DataBits {
     }
 

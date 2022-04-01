@@ -4,19 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUMsgHandler;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.SpeedText;
 import com.iit.dashboard2022.ui.widget.StartLight;
 import com.iit.dashboard2022.ui.widget.gauge.LinearGauge;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
+import com.iit.dashboard2022.util.Constants;
 
 import java.util.Locale;
 
@@ -122,7 +120,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
     }
 
     public void reset() {
-        if (dashStartLight != null)
+        if (dashStartLight != null) {
             dashStartLight.postDelayed(() -> {
                 setSpeedPercentage(0);
                 setBatteryPercentage(0);
@@ -136,10 +134,12 @@ public class CarDashboard extends Page implements UITester.TestUI {
                     setIndicator(indicator, false);
                 }
                 setStartLight(false);
-                if (frontECU != null)
-                    frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.State).update(-1);
-                setState(ECUMsgHandler.STATE.Initializing.toString());
+                if (frontECU != null) {
+                    frontECU.getMessageHandler().getStatistic(Constants.Statistics.State).update(-1);
+                }
+                setState(ECU.State.INITIALIZING.toString());
             }, 20);
+        }
     }
 
     @NonNull
@@ -169,8 +169,9 @@ public class CarDashboard extends Page implements UITester.TestUI {
         } else {
             setState(UITester.rndStr((int) (percent * 25)));
             for (Indicators.Indicator i : Indicators.Indicator.values()) {
-                if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9)
+                if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9) {
                     setIndicator(i, percent > 0.5);
+                }
             }
             setIndicator(Indicators.Indicator.Lag, true);
             setLagTime((long) (percent * 5000));

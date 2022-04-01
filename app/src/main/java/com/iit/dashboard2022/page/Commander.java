@@ -8,23 +8,21 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUCommands;
-import com.iit.dashboard2022.ecu.ECUMsg;
-import com.iit.dashboard2022.ecu.ECUMsgHandler;
+import com.iit.dashboard2022.ecu.ECUStat;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
 import com.iit.dashboard2022.ui.widget.LiveDataSelector;
 import com.iit.dashboard2022.util.ByteSplit;
-import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.util.Constants;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -51,15 +49,15 @@ public class Commander extends Page {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.tab_commander_layout, container, false);
-        slider = (Slider) rootView.findViewById(R.id.ValueSlider);
-        valueEdit = (EditText) rootView.findViewById(R.id.ValueEdit);
-        toggle = (SwitchMaterial) rootView.findViewById(R.id.OnOffSwitch);
-        maxValueText = (TextView) rootView.findViewById(R.id.maxValueText);
-        minValueText = (TextView) rootView.findViewById(R.id.minValueText);
-        valueActiveText = (TextView) rootView.findViewById(R.id.valueActiveText);
-        IDTextView = (TextView) rootView.findViewById(R.id.IDTextView);
-        submitBtn = (MaterialButton) rootView.findViewById(R.id.submitBtn);
-        valueListLayout = (LinearLayout) rootView.findViewById(R.id.valueListLayout);
+        slider = rootView.findViewById(R.id.ValueSlider);
+        valueEdit = rootView.findViewById(R.id.ValueEdit);
+        toggle = rootView.findViewById(R.id.OnOffSwitch);
+        maxValueText = rootView.findViewById(R.id.maxValueText);
+        minValueText = rootView.findViewById(R.id.minValueText);
+        valueActiveText = rootView.findViewById(R.id.valueActiveText);
+        IDTextView = rootView.findViewById(R.id.IDTextView);
+        submitBtn = rootView.findViewById(R.id.submitBtn);
+        valueListLayout = rootView.findViewById(R.id.valueListLayout);
 
         selector.setSelectionChangedListener(newSelection -> {
             currentSelection = newSelection;
@@ -69,17 +67,17 @@ public class Commander extends Page {
 
         submitBtn.setOnClickListener(view -> {
             if (frontECU == null || !frontECU.isOpen()) {
-                Toaster.showToast("Unable to submit, not connected to device", Toaster.ERROR);
+                Log.toast("Unable to submit, not connected to device", ToastLevel.ERROR);
                 return;
             }
             valueEdit.clearFocus();
-            Toaster.showToast("Submitting Value", Toaster.INFO);
-            frontECU.issueCommand(ECUCommands.SET_SERIAL_VAR);
+            Log.toast("Submitting Value", ToastLevel.INFO);
+            frontECU.issueCommand(ECU.Command.SET_SERIAL_VAR);
 
             ByteBuffer bb = ByteBuffer.allocate(8);
             bb.order(ByteOrder.LITTLE_ENDIAN);
             bb.putFloat(currentValue);
-            frontECU.write(ByteSplit.joinArray(new byte[]{ID}, bb.array()));
+            frontECU.write(ByteSplit.joinArray(new byte[]{ ID }, bb.array()));
         });
 
         slider.addOnChangeListener((slider1, value, fromUser) -> {
@@ -101,7 +99,7 @@ public class Commander extends Page {
         });
 
         valueEdit.setOnFocusChangeListener((view, b) -> {
-            if (!b)
+            if (!b) {
                 try {
                     currentValue = Float.parseFloat(valueEdit.getText().toString());
                     currentValue = Math.max(Math.min(currentValue, setMax), setMin);
@@ -110,6 +108,7 @@ public class Commander extends Page {
                     currentValue = 0;
                     updateValues(valueEdit);
                 }
+            }
         });
 
         newSetup("No selected value", ID, currentValue, setMin, setMax);
@@ -132,16 +131,17 @@ public class Commander extends Page {
 
     public void setECU(ECU frontECU) {
         this.frontECU = frontECU;
-        frontECU.getEcuMsgHandler().getMessage(ECUMsgHandler.SerialVarResponse).addMessageListener(val -> Toaster.showToast("Value received (truncated): " + val, Toaster.SUCCESS), ECUMsg.ON_RECEIVE);
+        frontECU.getMessageHandler().getStatistic(Constants.Statistics.SerialVarResponse).addMessageListener(val -> Log.toast("Value received (truncated): " + val, ToastLevel.SUCCESS), ECUStat.UpdateMethod.ON_RECEIVE);
     }
 
     @UiThread
     public void updateValues(@Nullable View activeView) {
         if (!toggle.equals(activeView)) {
-            if (currentValue == setMax)
+            if (currentValue == setMax) {
                 toggle.setChecked(true);
-            else if (currentValue == setMin)
+            } else if (currentValue == setMin) {
                 toggle.setChecked(false);
+            }
         }
         if (!slider.equals(activeView)) {
             slider.setValue(currentValue);

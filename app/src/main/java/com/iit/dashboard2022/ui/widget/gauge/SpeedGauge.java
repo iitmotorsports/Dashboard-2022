@@ -13,14 +13,12 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
-
+import com.google.common.collect.Lists;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SpeedGauge extends View implements WidgetUpdater.Widget {
@@ -107,12 +105,13 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
     }
 
     int getColor(float percent) {
-        if (percent > 2 / 3f)
+        if (percent > 2 / 3f) {
             return colorWheel[2];
-        else if (percent > 1 / 3f)
+        } else if (percent > 1 / 3f) {
             return colorWheel[1];
-        else
+        } else {
             return colorWheel[0];
+        }
     }
 
     void drawBars(int x, int y) {
@@ -136,7 +135,7 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         int xPos = 0;
         float varX = incX * sd;
 
-        List<Float> widths = new ArrayList<>();
+        List<Float> widths = Lists.newArrayList();
 
         widths.add(0f);
 
@@ -191,8 +190,9 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         canvasBuffer.drawBitmap(bitmapBG, null, dst, null);
         canvasBuffer.drawRect(mask, maskPaint);
         canvasBuffer.drawBitmap(bitmaskDraw, null, dst, dstOver);
-        if (oldTaper > 0.75f)
+        if (oldTaper > 0.75f) {
             canvasBuffer.drawArc(arcCutout, 180, arcSweep, true, maskPaint);
+        }
         canvasBuffer.drawOval(ovalCutout, maskPaint); // TODO: Smooth out corner on mask
         canvas.drawBitmap(bitmaskBuffer, null, dst, null);
     }
@@ -203,8 +203,9 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
-        if (x <= 0 || y <= 0)
+        if (x <= 0 || y <= 0) {
             return;
+        }
         width = x;
         height = y;
         dst = new RectF(0, 0, x, y);
@@ -245,8 +246,9 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         }
         ovalCutout.set((-oldTaper * width) - width / 2f, OHeight, (oldTaper * width) + width / 2f, height * 4f);
 
-        if (invalid)
+        if (invalid) {
             postInvalidate();
+        }
     }
 
 }

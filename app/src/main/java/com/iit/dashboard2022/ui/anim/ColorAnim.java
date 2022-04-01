@@ -3,7 +3,6 @@ package com.iit.dashboard2022.ui.anim;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;

@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/listedFileMain"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/listed_file_bg">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/listedFileMain"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content"
+                                                   android:background="@drawable/listed_file_bg">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/fileInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/listed_file_fail"
-        android:textAlignment="center"
-        android:textAppearance="@style/TabText"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:textAllCaps="false"
-        tools:ignore="TouchTargetSizeCheck" />
+            android:id="@+id/fileInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/listed_file_fail"
+            android:textAlignment="center"
+            android:textAppearance="@style/TabText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:textAllCaps="false"
+            tools:ignore="TouchTargetSizeCheck"/>
 
     <com.iit.dashboard2022.ui.widget.SideButton
-        android:id="@+id/showButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/show"
-        app:layout_constraintBottom_toBottomOf="@+id/fileInfo"
-        app:layout_constraintEnd_toStartOf="@+id/uploadButton"
-        app:layout_constraintTop_toTopOf="@+id/fileInfo"
-        tools:ignore="TouchTargetSizeCheck" />
+            android:id="@+id/showButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/show"
+            app:layout_constraintBottom_toBottomOf="@+id/fileInfo"
+            app:layout_constraintEnd_toStartOf="@+id/uploadButton"
+            app:layout_constraintTop_toTopOf="@+id/fileInfo"
+            tools:ignore="TouchTargetSizeCheck"/>
 
     <com.iit.dashboard2022.ui.widget.SideButton
-        android:id="@+id/uploadButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/upload"
-        app:layout_constraintBottom_toBottomOf="@+id/showButton"
-        app:layout_constraintEnd_toStartOf="@+id/deleteButton"
-        app:layout_constraintTop_toTopOf="@+id/showButton"
-        tools:ignore="TouchTargetSizeCheck" />
+            android:id="@+id/uploadButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/upload"
+            app:layout_constraintBottom_toBottomOf="@+id/showButton"
+            app:layout_constraintEnd_toStartOf="@+id/deleteButton"
+            app:layout_constraintTop_toTopOf="@+id/showButton"
+            tools:ignore="TouchTargetSizeCheck"/>
 
     <com.iit.dashboard2022.ui.widget.SideButton
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/delete"
-        app:layout_constraintBottom_toBottomOf="@+id/uploadButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/uploadButton"
-        tools:ignore="TouchTargetSizeCheck" />
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/delete"
+            app:layout_constraintBottom_toBottomOf="@+id/uploadButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/uploadButton"
+            tools:ignore="TouchTargetSizeCheck"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

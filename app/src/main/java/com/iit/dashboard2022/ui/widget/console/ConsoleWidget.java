@@ -10,15 +10,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.PrecomputedTextCompat;
-
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.logging.StringLogger;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
@@ -29,7 +30,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
-public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Widget, UITester.TestUI {
+public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Widget, UITester.TestUI, StringLogger {
 
     private static final LinkedBlockingQueue<CharSequence> rawQueue = new LinkedBlockingQueue<>();
     private static final ConcurrentLinkedQueue<CharSequence> outQueue = new ConcurrentLinkedQueue<>();
@@ -162,8 +163,9 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
     }
 
     public void enable(boolean enabled) {
-        if (run == enabled)
+        if (run == enabled) {
             return;
+        }
         if (enabled) {
             run = true;
         } else {
@@ -209,10 +211,11 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
 
     @Override
     public void testUI(float percent) {
-        if (percent > 0.1)
+        if (percent > 0.1) {
             post(UITester.rndStr((int) (percent * 50)));
-        else
+        } else {
             systemPost(UITester.rndStr((int) (percent * 10)), UITester.rndStr((int) (percent * 50)));
+        }
 
         if (percent == 0) {
             uiHandle.postDelayed(this::clear, 100);
@@ -222,12 +225,17 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
             newError();
             if (!testingState) {
                 uiHandle.post(() -> {
-                    consoleStatus.setText(String.format(Locale.US, statusFormat, Status.Testing.toString()));
+                    consoleStatus.setText(String.format(Locale.US, statusFormat, Status.Testing));
                     consoleStatus.setBackgroundColor(getResources().getColor(Status.Testing.color, getContext().getTheme()));
                 });
                 testingState = true;
             }
         }
+    }
+
+    @Override
+    public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
+        post(encoder.getLayout().doLayout(event));
     }
 
     public enum Status {

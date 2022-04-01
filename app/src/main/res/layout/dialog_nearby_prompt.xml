@@ -1,107 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:foregroundGravity="center"
-    android:minWidth="0dp"
-    android:minHeight="0dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="20dp"
-    app:layout_constraintHeight_min="wrap"
-    app:layout_constraintWidth_min="wrap">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="wrap_content"
+                                                   android:layout_height="wrap_content"
+                                                   android:layout_gravity="center"
+                                                   android:foregroundGravity="center"
+                                                   android:minWidth="0dp"
+                                                   android:minHeight="0dp"
+                                                   android:paddingTop="20dp"
+                                                   android:paddingBottom="20dp"
+                                                   app:layout_constraintHeight_min="wrap"
+                                                   app:layout_constraintWidth_min="wrap">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_min="wrap"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_min="wrap">
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/confirm_this_code_matches_on_both_devices"
-            android:textSize="18sp" />
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_min="wrap"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_min="wrap">
 
         <TextView
-            android:id="@+id/authText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/dialog_code_placeholder"
-            android:textColor="@color/primary"
-            android:textSize="60sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/accept_connection_to"
-                android:textSize="18sp" />
+                android:text="@string/confirm_this_code_matches_on_both_devices"
+                android:textSize="18sp"/>
 
-            <TextView
-                android:id="@+id/connName"
-                android:layout_width="0dp"
+        <TextView
+                android:id="@+id/authText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/dialog_code_placeholder"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textColor="@color/primary"
+                android:textSize="60sp"
+                android:textStyle="bold"/>
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/accept_connection_to"
+                    android:textSize="18sp"/>
+
+            <TextView
+                    android:id="@+id/connName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/dialog_code_placeholder"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
             <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/acceptBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:layout_marginEnd="16dp"
-                android:includeFontPadding="true"
-                android:padding="8dp"
-                android:text="@string/accept"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/rejectBtn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="TouchTargetSizeCheck" />
+                    android:id="@+id/acceptBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:includeFontPadding="true"
+                    android:padding="8dp"
+                    android:text="@string/accept"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/rejectBtn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck"/>
 
             <com.iit.dashboard2022.ui.widget.SideButton
-                android:id="@+id/rejectBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:layout_marginStart="16dp"
-                android:includeFontPadding="true"
-                android:padding="8dp"
-                android:text="@string/reject"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/acceptBtn"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="TouchTargetSizeCheck" />
+                    android:id="@+id/rejectBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_marginStart="16dp"
+                    android:includeFontPadding="true"
+                    android:padding="8dp"
+                    android:text="@string/reject"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/acceptBtn"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -11,12 +11,10 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.widget.FrameLayout;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
 import androidx.appcompat.content.res.AppCompatResources;
-
 import com.iit.dashboard2022.R;
 
 public class OverlayFrameLayout extends FrameLayout {

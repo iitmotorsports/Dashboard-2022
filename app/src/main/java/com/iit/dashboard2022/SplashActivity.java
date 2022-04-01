@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.VideoView;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 @SuppressLint("CustomSplashScreen")
@@ -57,8 +56,9 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startNextActivity() {
-        if (isFinishing())
+        if (isFinishing()) {
             return;
+        }
         finish();
     }
 }

@@ -7,10 +7,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 
@@ -73,8 +71,9 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
 
     @UiThread
     public void setActive(boolean active) {
-        if (this.active == active)
+        if (this.active == active) {
             return;
+        }
         this.active = active;
         bgPaint.setAlpha(active ? 255 : 64);
         update = true;
@@ -100,8 +99,10 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         update = true;
     }
 
+    @UiThread
     public void updateValue() {
         this.value = currentValue + "    H:" + currentHigh + " L:" + currentLow + " A:" + currentAvg;
+        invalidate();
     }
 
     public void setRawValue(double value) {
@@ -115,16 +116,18 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
     }
 
     public double[] getValues() {
-        return new double[]{currentValue, currentAvg, currentLow, currentHigh};
+        return new double[]{ currentValue, currentAvg, currentLow, currentHigh };
     }
 
     public void setValue(double value) {
         currentAvg = (currentValue + value) / 2;
         currentValue = value;
-        if (value < currentLow)
+        if (value < currentLow) {
             currentLow = value;
-        if (value > currentHigh)
+        }
+        if (value > currentHigh) {
             currentHigh = value;
+        }
 
         updateValue();
         setActive(true);
@@ -156,8 +159,9 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
         canvas.drawRoundRect(border, border, width - border, height - border, radius, radius, bgPaint);
         float yPos = (height / 2) - ((titlePaint.descent() + titlePaint.ascent()) / 2);
         canvas.drawText(title, height / 4f, yPos, titlePaint);
-        if (enableValue)
+        if (enableValue) {
             canvas.drawText(value, width - height / 4f, yPos, valuePaint);
+        }
     }
 
     @Override

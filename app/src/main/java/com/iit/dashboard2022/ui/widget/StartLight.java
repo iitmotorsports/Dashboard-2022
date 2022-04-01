@@ -7,9 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
 import androidx.annotation.AttrRes;
-
 import com.iit.dashboard2022.R;
 
 public class StartLight extends FrameLayout implements WidgetUpdater.Widget {

@@ -3,23 +3,23 @@ package com.iit.dashboard2022.ui.widget;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.LogFile;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
-import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.Toaster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class ListedFile extends FrameLayout {
     private final MaterialButton showButton, uploadButton, deleteButton;
     private final ConstraintLayout listedFileMain;
     private final MaterialTextView fileInfo;
-    private LogFileIO.LogFile file;
+    private LogFile file;
 
     public ListedFile(@NonNull Context context) {
         this(context, null);
@@ -109,9 +109,10 @@ public class ListedFile extends FrameLayout {
         ListedFile.globalFileListListener = globalFileListListener;
     }
 
-    public static ListedFile getInstance(@NonNull Context context, @NonNull LogFileIO.LogFile file) {
-        if (inactiveEntries.size() == 0)
+    public static ListedFile getInstance(@NonNull Context context, @NonNull LogFile file) {
+        if (inactiveEntries.size() == 0) {
             new ListedFile(context);
+        }
 
         ListedFile entry = inactiveEntries.get(0);
         entry.setFile(file);
@@ -124,8 +125,9 @@ public class ListedFile extends FrameLayout {
     }
 
     public static void deselectActive() {
-        if (lastSelected != null)
+        if (lastSelected != null) {
             lastSelected.deselect();
+        }
     }
 
     public void destroy() {
@@ -134,8 +136,9 @@ public class ListedFile extends FrameLayout {
     }
 
     public void recycle() {
-        if (lastSelected == this)
+        if (lastSelected == this) {
             lastSelected = null;
+        }
         if (animViewShow == this) {
             animatorShow.cancel();
             animViewShow = null;
@@ -159,19 +162,22 @@ public class ListedFile extends FrameLayout {
     }
 
     public void select() {
-        if (lastSelected == this)
+        if (lastSelected == this) {
             return;
-        if (lastSelected != null)
+        }
+        if (lastSelected != null) {
             lastSelected.deselect();
+        }
         lastSelected = this;
         animateVisibility(true);
     }
 
+    @SuppressLint("SetTextI18n")
     public void updateInfo() {
         try {
-            fileInfo.post(() -> fileInfo.setText(file.getTitle()));
+            fileInfo.post(() -> fileInfo.setText(file.getFormattedName() + (isActive() ? " - Active" : "")));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.getLogger().error("Failed to update log file information", e);
             if (fileInfo != null) {
                 fileInfo.post(() -> fileInfo.setText(R.string.listed_file_fail));
             }
@@ -179,13 +185,14 @@ public class ListedFile extends FrameLayout {
     }
 
     @Nullable
-    public LogFileIO.LogFile getFile() {
+    public LogFile getFile() {
         return file;
     }
 
-    public void setFile(LogFileIO.LogFile file) {
-        if (!inactiveEntries.contains(this))
+    public void setFile(LogFile file) {
+        if (!inactiveEntries.contains(this)) {
             return;
+        }
         inactiveEntries.remove(this);
         setVisibility(VISIBLE);
         this.file = file;
@@ -193,8 +200,9 @@ public class ListedFile extends FrameLayout {
     }
 
     private void notifyListener(ListedFileAction listedFileAction) {
-        if (file != null && globalFileListListener != null)
+        if (file != null && globalFileListListener != null) {
             globalFileListListener.onListedFileAction(this, listedFileAction);
+        }
     }
 
     private void onShowPressed(View v) {
@@ -206,15 +214,16 @@ public class ListedFile extends FrameLayout {
     }
 
     private void onDeletePressed(View v) {
-        Toaster.showToast("Hold to confirm", Toaster.INFO);
+        Log.toast("Hold to confirm", ToastLevel.INFO);
     }
 
     @SuppressWarnings("SameReturnValue")
     private boolean onDeleteLongPressed(View v) {
-        if (file.isActiveFile())
-            Toaster.showToast("Cannot delete active file", Toaster.WARNING);
-        else
+        if (isActive()) {
+            Log.toast("Cannot delete active file", ToastLevel.WARNING);
+        } else {
             notifyListener(ListedFileAction.DELETE);
+        }
         return true;
     }
 
@@ -224,13 +233,15 @@ public class ListedFile extends FrameLayout {
 
     private void animateVisibility(boolean visible) {
         if (visible) {
-            if (animViewShow != null)
+            if (animViewShow != null) {
                 animatorShow.cancel();
+            }
             animViewShow = this;
             animatorShow.start();
         } else {
-            if (animViewHide != null)
+            if (animViewHide != null) {
                 animatorHide.cancel();
+            }
             animViewHide = this;
             animatorHide.reverse();
         }
@@ -250,5 +261,12 @@ public class ListedFile extends FrameLayout {
 
     public interface GlobalFileListListener {
         void onListedFileAction(@NonNull ListedFile listedFile, @NonNull ListedFileAction action);
+    }
+
+    public boolean isActive() {
+        if (Log.getInstance().getActiveLogFile() == null) {
+            return false;
+        }
+        return Log.getInstance().getActiveLogFile().getEpochSeconds() == file.getEpochSeconds();
     }
 }

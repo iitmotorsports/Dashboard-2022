@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-
 import androidx.annotation.StyleableRes;
-
 import com.google.android.material.button.MaterialButton;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
@@ -48,8 +46,9 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
         mTextOffSize = a.getDimensionPixelSize(i++, textSize);
         mTextOnSize = a.getDimensionPixelSize(i, textSize);
 
-        if (mText != null)
+        if (mText != null) {
             setText(mText);
+        }
 
         setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
@@ -108,8 +107,9 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
 
     @Override
     public void setActionedCheck(boolean checked) {
-        if (isChecked() == checked)
+        if (isChecked() == checked) {
             return;
+        }
         performClick();
     }
 

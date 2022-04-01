@@ -10,17 +10,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.iit.dashboard2022.R;
+import com.iit.dashboard2022.logging.StringLogger;
 import com.iit.dashboard2022.ui.UITester;
 
 import java.text.DateFormat;
 import java.util.Date;
 
-public class Errors extends Page implements UITester.TestUI {
+public class Errors extends Page implements UITester.TestUI, StringLogger {
 
     private TextView errorText;
     private ScrollView errorScroller;
@@ -77,6 +79,21 @@ public class Errors extends Page implements UITester.TestUI {
         } else if (percent > 0.8f) {
             postError(UITester.rndStr(4), UITester.rndStr(8));
             postWarning(UITester.rndStr(4), UITester.rndStr(8));
+        }
+    }
+
+    @Override
+    public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
+        if (event.getLevel() != Level.ERROR && event.getLevel() != Level.WARN) {
+            return;
+        }
+        SpannableStringBuilder spannable = new SpannableStringBuilder(encoder.getLayout().doLayout(event) + "\n");
+        spannable.setSpan(new ForegroundColorSpan(event.getLevel() == Level.ERROR ? ErrorColor : WarnColor), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (errorText != null) {
+            errorText.post(() -> {
+                errorText.append(spannable);
+                errorScroller.fullScroll(ScrollView.FOCUS_DOWN);
+            });
         }
     }
 }

@@ -31,15 +31,17 @@ public class ConsoleScroller extends ScrollView {
     }
 
     public void scrollDown() { // TODO: Is there a better way to scroll?
-        if (enabled)
+        if (enabled) {
             post(scrollDownRunner);
+        }
     }
 
     public void enable(boolean enabled) {
         if (this.enabled != enabled) {
             this.enabled = enabled;
-            if (scrollerStatusListener != null)
+            if (scrollerStatusListener != null) {
                 scrollerStatusListener.run(enabled);
+            }
         }
     }
 
@@ -58,8 +60,9 @@ public class ConsoleScroller extends ScrollView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN)
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             enable(false);
+        }
         return super.onTouchEvent(ev);
     }
 

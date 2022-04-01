@@ -1,112 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:theme="@style/Theme.Dashboard2022"
-    tools:context=".MainActivity">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:theme="@style/Theme.Dashboard2022"
+                                                   tools:context=".MainActivity">
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/mainPager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/mainPager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <com.iit.dashboard2022.ui.SidePanel
-        android:id="@+id/sidePanel"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/sidePanel"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
         <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:tabGravity="center"
-            app:tabIndicatorAnimationDuration="100"
-            app:tabIndicatorAnimationMode="elastic"
-            app:tabIndicatorColor="@color/primary"
-            app:tabIndicatorFullWidth="true"
-            app:tabIndicatorGravity="top"
-            app:tabIndicatorHeight="5dp"
-            app:tabMinWidth="5dp"
-            app:tabMode="auto"
-            app:tabRippleColor="@android:color/transparent"
-            app:tabSelectedTextColor="@color/primary"
-            app:tabTextAppearance="@style/TabText"
-            app:tabTextColor="@color/midground"
-            app:tabUnboundedRipple="false">
-
-            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/example" />
+                android:background="@android:color/transparent"
+                app:tabGravity="center"
+                app:tabIndicatorAnimationDuration="100"
+                app:tabIndicatorAnimationMode="elastic"
+                app:tabIndicatorColor="@color/primary"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorGravity="top"
+                app:tabIndicatorHeight="5dp"
+                app:tabMinWidth="5dp"
+                app:tabMode="auto"
+                app:tabRippleColor="@android:color/transparent"
+                app:tabSelectedTextColor="@color/primary"
+                app:tabTextAppearance="@style/TabText"
+                app:tabTextColor="@color/midground"
+                app:tabUnboundedRipple="false">
 
             <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/example" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/example"/>
 
             <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/example" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/example"/>
 
             <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/example" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/example"/>
+
+            <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/example"/>
 
         </com.google.android.material.tabs.TabLayout>
 
         <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
         <com.iit.dashboard2022.ui.widget.SettingsButton
-            android:id="@+id/settingsBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/settings"
-            android:src="@drawable/round_settings"
-            tools:ignore="ImageContrastCheck" />
+                android:id="@+id/settingsBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/settings"
+                android:src="@drawable/round_settings"
+                tools:ignore="ImageContrastCheck"/>
 
     </LinearLayout>
 
     <com.iit.dashboard2022.ui.widget.console.ConsoleWidget
-        android:id="@+id/console"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/sidePanel"
-        app:layout_constraintStart_toStartOf="@+id/mainPager"
-        app:layout_constraintTop_toTopOf="@+id/mainPager" />
+            android:id="@+id/console"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toStartOf="@+id/sidePanel"
+            app:layout_constraintStart_toStartOf="@+id/mainPager"
+            app:layout_constraintTop_toTopOf="@+id/mainPager"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

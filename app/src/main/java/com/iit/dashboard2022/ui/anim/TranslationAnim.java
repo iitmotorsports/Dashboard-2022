@@ -60,15 +60,17 @@ public class TranslationAnim {
                 public void onGlobalLayout() {
                     view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     autoSizeInit(view, axis, from, interpolator);
-                    if (onInitializedListener != null)
+                    if (onInitializedListener != null) {
                         onInitializedListener.run();
+                    }
                     if (!reloadingAutoSize && startWhenRdy) {
                         start();
                     } else {
-                        if (state == ANIM_FORWARD)
+                        if (state == ANIM_FORWARD) {
                             start();
-                        else if (state == ANIM_BACKWARD)
+                        } else if (state == ANIM_BACKWARD) {
                             reverse();
+                        }
                     }
                     reloadingAutoSize = false;
                 }
@@ -76,8 +78,9 @@ public class TranslationAnim {
             view.getViewTreeObserver().addOnGlobalLayoutListener(autoSizeListener);
         } else {
             init(view, axis, from, to, interpolator);
-            if (onInitializedListener != null)
+            if (onInitializedListener != null) {
                 onInitializedListener.run();
+            }
         }
     }
 
@@ -108,21 +111,24 @@ public class TranslationAnim {
     public void startWhenReady() {
         if (!startWhenRdy) {
             startWhenRdy = true;
-            if (!autoSize)
+            if (!autoSize) {
                 start();
+            }
         }
     }
 
     public float start() {
-        if (translator != null)
+        if (translator != null) {
             translator.start();
+        }
         state = ANIM_FORWARD;
         return posDX;
     }
 
     public float reverse() {
-        if (translator != null)
+        if (translator != null) {
             translator.reverse();
+        }
         state = ANIM_BACKWARD;
         return -posDX;
     }

@@ -10,39 +10,39 @@
     android:theme="@style/Theme.Dashboard2022">
 
     <com.iit.dashboard2022.ui.widget.StartLight
-        android:id="@+id/dashStartLight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+            android:id="@+id/dashStartLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
     </com.iit.dashboard2022.ui.widget.StartLight>
 
     <com.iit.dashboard2022.ui.widget.SpeedText
-        android:id="@+id/speedometer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/speedGauges"
-        app:layout_constraintEnd_toEndOf="@+id/speedGauges"
-        app:layout_constraintStart_toStartOf="@+id/speedGauges"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/speedometer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/speedGauges"
+            app:layout_constraintEnd_toEndOf="@+id/speedGauges"
+            app:layout_constraintStart_toStartOf="@+id/speedGauges"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <com.iit.dashboard2022.ui.widget.Indicators
-        android:id="@+id/indicators"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layout_constraintEnd_toEndOf="@+id/speedGauges"
-        app:layout_constraintStart_toStartOf="@+id/speedGauges"
-        app:layout_constraintTop_toTopOf="@+id/speedGauges" />
+            android:id="@+id/indicators"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintEnd_toEndOf="@+id/speedGauges"
+            app:layout_constraintStart_toStartOf="@+id/speedGauges"
+            app:layout_constraintTop_toTopOf="@+id/speedGauges"/>
 
-    <LinearLayout
+    <LinearLayout        
         android:id="@+id/speedGauges"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -58,35 +58,35 @@
         app:layout_constraintVertical_bias="0.68">
 
         <com.iit.dashboard2022.ui.widget.gauge.SpeedGauge
-            android:id="@+id/speedGaugeLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/midground"
-            android:scaleX="-1"
-            app:colorHigh="@color/red"
-            app:colorLow="@color/green"
-            app:colorMid="@color/yellow" />
+                android:id="@+id/speedGaugeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/midground"
+                android:scaleX="-1"
+                app:colorHigh="@color/red"
+                app:colorLow="@color/green"
+                app:colorMid="@color/yellow"/>
 
         <TextView
-            style="@style/SideLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minEms="0"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@string/mph"
-            android:textAlignment="center" />
+                style="@style/SideLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minEms="0"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/mph"
+                android:textAlignment="center"/>
 
         <com.iit.dashboard2022.ui.widget.gauge.SpeedGauge
-            android:id="@+id/speedGaugeRight"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/midground"
-            app:colorHigh="@color/red"
-            app:colorLow="@color/green"
-            app:colorMid="@color/yellow" />
+                android:id="@+id/speedGaugeRight"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/midground"
+                app:colorHigh="@color/red"
+                app:colorLow="@color/green"
+                app:colorMid="@color/yellow"/>
     </LinearLayout>
 
     <LinearLayout
@@ -103,38 +103,38 @@
         app:layout_constraintTop_toBottomOf="@+id/speedGauges">
 
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
-            android:id="@+id/powerGauge"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/midground"
-            android:text="@string/limit_format"
-            android:textColor="@color/background"
-            android:textSize="14sp"
-            android:title="@string/pack_power"
-            app:colorHigh="@color/blue"
-            app:colorLow="@color/foreground"
-            app:flipped="true"
-            app:unit="W" />
+                android:id="@+id/powerGauge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/midground"
+                android:text="@string/limit_format"
+                android:textColor="@color/background"
+                android:textSize="14sp"
+                android:title="@string/pack_power"
+                app:colorHigh="@color/blue"
+                app:colorLow="@color/foreground"
+                app:flipped="true"
+                app:unit="W"/>
 
         <Space
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1.3" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.3"/>
 
         <com.iit.dashboard2022.ui.widget.gauge.LinearGauge
-            android:id="@+id/batteryGauge"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/midground"
-            android:textColor="@color/background"
-            android:textSize="14sp"
-            android:title="@string/battery_charge"
-            app:colorHigh="@color/green"
-            app:colorLow="@color/red"
-            app:colorMid="@color/yellow"
-            app:unit="%%" />
+                android:id="@+id/batteryGauge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/midground"
+                android:textColor="@color/background"
+                android:textSize="14sp"
+                android:title="@string/battery_charge"
+                app:colorHigh="@color/green"
+                app:colorLow="@color/red"
+                app:colorMid="@color/yellow"
+                app:unit="%%"/>
 
     </LinearLayout>
 
