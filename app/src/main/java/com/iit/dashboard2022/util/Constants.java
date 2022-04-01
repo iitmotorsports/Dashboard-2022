@@ -57,9 +57,9 @@ public class Constants {
         public static final String BMSDischargeLim = "bms_dis_i_lim";
         public static final String BMSChargeLim = "bms_chr_i_lim";
         public static final String Fault = "fault";
-        //public static final String Lag = 18;
-        //public static final String Beat = 19;
-        //public static final String StartLight = 20;
+        public static final String Lag = "lag";
+        public static final String Beat = "beat";
+        public static final String StartLight = "start_light";
         public static final String State = "state"; // State is special :)
         public static final String SerialVarResponse = "serial_var_response";
     }

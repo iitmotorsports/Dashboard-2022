@@ -175,7 +175,6 @@ public class ECUMessageHandler {
                 messages = null;
                 Log.toast("JSON map deleted", ToastLevel.INFO);
                 status = false;
-                // TODO: End log?
             } else {
                 Log.toast("Failed to delete JSON map", ToastLevel.ERROR);
             }
@@ -229,7 +228,7 @@ public class ECUMessageHandler {
                         tempSubsystems.put(tag, entry.getKey());
                     } else {
                         tempStats.put(tag, entry.getKey().replaceAll("\\[", "").replaceAll("]", ""));
-                        // TODO: Pretty name not shipped with v1
+                        // Pretty name not shipped with v1
                         ECUStat stat = getStatistic(entry.getKey().replaceAll("\\[", "").replaceAll("]", ""));
                         stat.initialize(tag, null);
                     }

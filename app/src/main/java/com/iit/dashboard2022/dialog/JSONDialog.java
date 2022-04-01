@@ -31,7 +31,6 @@ public class JSONDialog {
             dialog.dismiss();
         });
 
-        //        scanBtn.setOnClickListener(v -> stream.updateQRJson());
         findBtn.setOnClickListener(v -> {
             frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.SELECTOR);
             dialog.dismiss();

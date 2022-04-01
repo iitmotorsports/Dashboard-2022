@@ -22,6 +22,7 @@ import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.PageManager;
 import com.iit.dashboard2022.page.Pager;
 import com.iit.dashboard2022.ui.SidePanel;
+import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
@@ -74,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
 
         StringAppender.register(console);
         StringAppender.register(errorsPage);
+
+        frontECU.onStateChangeEvent(state -> {
+            cdPage.setState(state.name());
+            cdPage.setIndicator(Indicators.Indicator.Waiting, state == ECU.State.IDLE);
+            cdPage.setIndicator(Indicators.Indicator.Charging, state == ECU.State.CHARGING);
+            sidePanel.chargeToggle.post(() -> sidePanel.chargeToggle.setChecked(state == ECU.State.CHARGING));
+        });
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.SidePanel;
+import com.iit.dashboard2022.ui.widget.Indicators;
 
 import static com.iit.dashboard2022.util.Constants.Statistics.*;
 
@@ -39,18 +40,17 @@ public class ECUUpdater {
             dashboardPage.setPowerPercentage(Math.max(Math.min(percent, 100), 0) / 100f);
             dashboardPage.setPowerValue(usage);
         });
+
         /* INDICATORS */
 
-        //TODO: CRY
-        /*
-        ecuMsgHandler.getMessage(ECUMsgHandler.Beat).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Lag, false), ECUMsg.UpdateMethod.ON_RECEIVE);
-        ecuMsgHandler.getMessage(ECUMsgHandler.Lag).addMessageListener(val -> {
+        ecuMsgHandler.getStatistic(Beat).addMessageListener(stat -> dashboardPage.setIndicator(Indicators.Indicator.Lag, false), ECUStat.UpdateMethod.ON_RECEIVE);
+        ecuMsgHandler.getStatistic(Lag).addMessageListener(stat -> {
             dashboardPage.setIndicator(Indicators.Indicator.Lag, true);
-            dashboardPage.setLagTime(val);
-        }, ECUMsg.UpdateMethod.ON_RECEIVE);
-        ecuMsgHandler.getMessage(ECUMsgHandler.Fault).addMessageListener(val -> dashboardPage.setIndicator(Indicators.Indicator.Fault, val > 0));
-        ecuMsgHandler.getMessage(ECUMsgHandler.StartLight).addMessageListener(val -> dashboardPage.setStartLight(val == 1));
-         */
+            dashboardPage.setLagTime(stat.get());
+        });
+        ecuMsgHandler.getStatistic(Fault).addMessageListener(stat -> dashboardPage.setIndicator(Indicators.Indicator.Fault, stat.get() > 0));
+        ecuMsgHandler.getStatistic(StartLight).addMessageListener(stat -> dashboardPage.setStartLight(stat.get() == 1));
+
 
         /* State Listener */
         /*
@@ -58,10 +58,6 @@ public class ECUUpdater {
             if (state == null) {
                 return;
             }
-            dashboardPage.setState(state.title);
-            dashboardPage.setIndicator(Indicators.Indicator.Waiting, state == ECUMsgHandler.STATE.Idle);
-            dashboardPage.setIndicator(Indicators.Indicator.Charging, state == ECUMsgHandler.STATE.Charging);
-            sidePanel.chargeToggle.post(() -> sidePanel.chargeToggle.setChecked(state == ECUMsgHandler.STATE.Charging));
         });
 
 
