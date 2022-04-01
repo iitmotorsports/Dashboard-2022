@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.iit.dashboard2022.logging.Log;
@@ -213,16 +212,15 @@ public class ECUMessageHandler {
         Map<Integer, String> tempStats = Maps.newHashMap();
         Map<Integer, String> tempMessages = Maps.newHashMap();
 
-        Log.getLogger().error(new GsonBuilder().setPrettyPrinting().create().toJson(element));
-
         if (element.isJsonObject() && element.getAsJsonObject().has("version")) {
+            Log.getLogger().debug("Loading V2 map ...");
             // TODO: V2 parsing
         } else {
+            Log.getLogger().debug("Loading legacy map ...");
             try {
                 JsonArray array = element.getAsJsonArray();
                 for (Map.Entry<String, JsonElement> entry : array.get(0).getAsJsonObject().entrySet()) {
                     int tag = entry.getValue().getAsInt();
-                    Log.getLogger().error(tag + ", " + entry.getKey());
                     if (tag < Constants.v1MappingCutoff || tag >= 4096) {
                         ECU.State state = ECU.State.getStateByName(entry.getKey());
                         if (state != null) {

@@ -120,20 +120,20 @@ public class Logs extends Page {
 
     private void deleteAllEntries() {
         List<ListedFile> views = getCurrentListedFiles();
-        worker.post(new Runnable() {
-            @Override
-            public void run() {
-                ListedFile view = views.get(0);
-                views.remove(view);
+        worker.post(() -> {
+            int preSize = views.size();
+            Lists.newArrayList(views).forEach(view -> {
                 LogFile file = view.getFile();
-                if (file != null && file.delete() && Log.getInstance().getActiveLogFile() != null && file.getEpochSeconds() != Log.getInstance().getActiveLogFile().getEpochSeconds()) {
-                    rootView.post(() -> removeEntry(view));
-                }
-                if (views.size() < 2) {
-                    Log.toast("Done deleting", ToastLevel.INFO);
+                if (file == null || (Log.getInstance().getActiveLogFile() != null && file.getEpochSeconds() == Log.getInstance().getActiveLogFile().getEpochSeconds())) {
                     return;
                 }
-                worker.postDelayed(this, 100);
+                views.remove(view);
+                rootView.post(() -> removeEntry(view));
+            });
+            if (views.size() == preSize) {
+                Log.toast("No files deleted", ToastLevel.INFO);
+            } else {
+                Log.toast("Done deleting", ToastLevel.INFO);
             }
         });
     }
