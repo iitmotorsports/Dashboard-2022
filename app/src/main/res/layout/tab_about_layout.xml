@@ -33,13 +33,11 @@
                 android:textStyle="bold"/>
 
         <TextView
-                android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/this_app_is_used_for_the_society_of_automotive_engineers_club_at_illinois_tech_fsae_iit"/>
 
         <TextView
-                android:id="@+id/textView7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/the_main_use_of_this_app_is_to_interface_with_a_microcontroller_over_usb_serial"/>

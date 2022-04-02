@@ -1,4 +1,4 @@
-<configuration debug="true">
+<configuration>
     <appender name="DASH_APP" class="com.iit.dashboard2022.logging.StringAppender">
         <encoder>
             <pattern>[%d{HH:mm:ss.SSS} %level] [%logger{36}]: %message%n</pattern>

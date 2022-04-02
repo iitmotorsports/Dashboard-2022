@@ -188,7 +188,10 @@ public class Logs extends Page {
                 break;
             case UPLOAD:
                 Log.toast("Uploading File", ToastLevel.INFO);
-                worker.post(() -> Log.getInstance().postToCabinet(listedFile.getFile()));
+                worker.post(() -> {
+                    if(listedFile.getFile() == null) return;
+                    Log.getInstance().postToCabinet(listedFile.getFile());
+                });
                 break;
             case DELETE:
                 Log.toast("Deleting File", ToastLevel.INFO);

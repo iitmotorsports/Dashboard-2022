@@ -119,8 +119,6 @@ public class LiveData extends Page implements UITester.TestUI {
         if (enabled) {
             if (percent == 0) {
                 reset();
-            } else {
-
             }
         }
     }

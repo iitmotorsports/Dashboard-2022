@@ -425,7 +425,6 @@ public class Log implements StringLogger {
                     }
                     reader.close();
                     httpConn.disconnect();
-                } else {
                 }
             } catch (IOException ignored) {
             }

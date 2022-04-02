@@ -61,7 +61,7 @@ public class LogFile implements Closeable {
     /**
      * Deletes all files associated with the session.
      *
-     * @return
+     * @return True if all files are successfully deleted, false otherwise.
      */
     public boolean delete() {
         logFile.delete();

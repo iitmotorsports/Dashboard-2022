@@ -5,8 +5,8 @@ plugins {
 ext {
     warptablesVersion = "0.0.1+84"
     logbackVersion = "1.3.0-alpha14"
-    androidXVersion = "1.4.0"
-    materialVersion = "1.4.0"
+    androidXVersion = "1.4.1"
+    materialVersion = "1.5.0"
     usbSerialVersion = "v3.4.2"
     grpcVersion = "1.45.1"
     tomcatVersion = "6.0.53"
