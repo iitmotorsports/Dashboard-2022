@@ -35,7 +35,7 @@ public class JSONDialog {
             frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.SELECTOR);
             dialog.dismiss();
         });
-        delBtn.setOnClickListener(v -> frontECU.clear());
+        delBtn.setOnClickListener(v -> frontECU.getMessageHandler().clear());
         scanBtn.setOnClickListener(v -> frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.ECU));
         scanBtn.setText(R.string.USB);
 

@@ -23,6 +23,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+/**
+ * A utility for handling mapping of ECU messages.
+ *
+ * @author Noah Husby
+ */
 public class ECUMessageHandler {
     private boolean pseudoMode = false;
 
@@ -42,10 +47,20 @@ public class ECUMessageHandler {
     public ECUMessageHandler() {
     }
 
+    /**
+     * Event fired each time a new mapping is loaded.
+     *
+     * @param consumer {@link Consumer<Boolean>}
+     */
     public void onLoadEvent(Consumer<Boolean> consumer) {
         jsonLoadedListeners.add(consumer);
     }
 
+    /**
+     * Event fired each time a statistic is updated.
+     *
+     * @param consumer {@link Consumer<ECUStat>}
+     */
     public void onStatisticUpdateEvent(Consumer<ECUStat> consumer) {
         statUpdatedListeners.add(consumer);
     }
@@ -65,6 +80,13 @@ public class ECUMessageHandler {
         return stat;
     }
 
+    /**
+     * Updates a statistic from an incoming ECU payload.
+     *
+     * @param statId    The numerical ID of the state.
+     * @param messageId The ID representing the pretty name of the statistic.
+     * @param data      New statistic data.
+     */
     protected void updateStatistic(int statId, int messageId, long data) {
         String identifier = stats.get(statId);
         if (identifier == null) {
@@ -96,6 +118,11 @@ public class ECUMessageHandler {
         return null;
     }
 
+    /**
+     * Gets whether the mapping is fully loaded.
+     *
+     * @return True if all mappings have been loaded, false otherwise.
+     */
     public boolean loaded() {
         return subsystems != null && stats != null && messages != null;
     }
@@ -166,6 +193,9 @@ public class ECUMessageHandler {
         return future;
     }
 
+    /**
+     * Clears the current mapping, and deletes the mapping cache.
+     */
     public void clear() {
         boolean status = loaded();
         try {
@@ -185,6 +215,12 @@ public class ECUMessageHandler {
         jsonLoadedListeners.forEach(c -> c.accept(finalStatus));
     }
 
+    /**
+     * Updates the mapping from a new json entry.
+     *
+     * @param element JSON representation of mapping.
+     * @return True if successfully loaded, false otherwise.
+     */
     public boolean update(JsonElement element) {
         boolean status = parseMap(element);
         if (status) {
@@ -194,6 +230,12 @@ public class ECUMessageHandler {
         return status;
     }
 
+    /**
+     * Parses an incoming mapping message.
+     *
+     * @param element JSON representation of mapping.
+     * @return True if successfully loaded, false otherwise.
+     */
     private boolean parseMap(JsonElement element) {
         if (element == null || element.isJsonNull()) {
             if (pseudoMode) {
@@ -259,6 +301,13 @@ public class ECUMessageHandler {
         return true;
     }
 
+    /**
+     * Gets the stats as a string map.
+     * Key (String) = Stat Integer ID
+     * Value (String) = Stat String ID
+     *
+     * @return Map of statistics.
+     */
     public Map<String, String> getStatsAsMap() {
         Map<String, String> temp = Maps.newHashMap();
         for (Map.Entry<Integer, String> e : stats.entrySet()) {
@@ -267,25 +316,57 @@ public class ECUMessageHandler {
         return temp;
     }
 
+    /**
+     * Gets the map of generated statistics.
+     *
+     * @return Map of generated statistics.
+     */
     public Map<String, ECUStat> getStatistics() {
         return ecuStats;
     }
 
+    /**
+     * An enumeration of handlers for loading the mapping.
+     */
     public enum MapHandler {
+        /**
+         * Loads mapping from local cache.
+         */
         CACHE(new JsonFileHandler(Constants.JSON_CACHE_FILE)),
 
+        /**
+         * Loads mapping from file selector.
+         */
         SELECTOR(new JsonFileSelectorHandler()),
 
-        ECU(com.iit.dashboard2022.ecu.ECU.instance.getUsb());
+        /**
+         * Loads mapping from ECU.
+         */
+        ECU(null);
 
-        private final JsonHandler handler;
+        private JsonHandler handler;
 
         MapHandler(JsonHandler handler) {
             this.handler = handler;
         }
 
+        /**
+         * Gets the handler for the mapping method.
+         *
+         * @return {@link JsonHandler}
+         */
         public JsonHandler get() {
             return handler;
+        }
+
+        /**
+         * Sets the handler for the mapping method.
+         * Should only be used internally.
+         *
+         * @param handler {@link JsonHandler}
+         */
+        public void set(JsonHandler handler) {
+            this.handler = handler;
         }
     }
 }

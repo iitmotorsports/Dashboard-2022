@@ -21,35 +21,40 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
+/**
+ * A class that handles the communication and representation of the vehicle's engine control unit.
+ *
+ * @author Isaias Rivera
+ * @author Noah Husby
+ */
 public class ECU {
-    private final USBSerial usbMethod;
+    private static final Logger logger = LoggerFactory.getLogger("ECU");
+
     private final ECUMessageHandler ecuMessageHandler;
+    private final USBSerial usbMethod;
     private final ECUJUSB J_USB;
     private final List<Consumer<State>> stateListener = Collections.synchronizedList(Lists.newArrayList());
-    private MODE interpreterMode = MODE.DISABLED;
+    private Mode interpreterMode = Mode.DISABLED;
     private int errorCount = 0;
-    private State state = State.INITIALIZING;
 
     private final BlockingQueue<Pair<Long, byte[]>> payloadQueue = new LinkedBlockingQueue<>();
 
-    public static ECU instance;
-
-    private static final Logger logger = LoggerFactory.getLogger("ECU");
 
     public ECU(AppCompatActivity activity) {
-        ECU.instance = this;
         J_USB = new ECUJUSB(this);
+        ECUMessageHandler.MapHandler.ECU.set(J_USB);
         ecuMessageHandler = new ECUMessageHandler();
 
+        // Handles state management
         ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(stat -> {
             State state = State.getStateById(stat.getAsInt());
             if (state == null) {
                 return;
             }
-            this.state = state;
             stateListener.forEach(consumer -> consumer.accept(state));
         }, ECUStat.UpdateMethod.ON_VALUE_CHANGE);
 
+        // Thread for handling message queue
         Thread ecuThread = new Thread(() -> {
             while (true) {
                 try {
@@ -82,11 +87,24 @@ public class ECU {
         open();
     }
 
+    /**
+     * Adds raw payload to queue.
+     *
+     * @param data Raw message data from ECU.
+     */
+    public void postPayload(byte[] data) {
+        payloadQueue.add(new Pair<>(System.currentTimeMillis(), data));
+    }
+
+    /**
+     * Handles incoming raw message from ECU.
+     *
+     * @param data Raw message from ECU.
+     */
     private void receiveData(byte[] data) {
         if (J_USB.JUSB_requesting != 0 && J_USB.receive(data)) {
             return;
         }
-
         if (!ecuMessageHandler.loaded()) {
             if (errorCount == 0) {
                 Log.toast("No JSON map Loaded", ToastLevel.WARNING, false, Gravity.START);
@@ -97,23 +115,31 @@ public class ECU {
         postPayload(data);
     }
 
-    public void postPayload(byte[] data) {
-        payloadQueue.add(new Pair<>(System.currentTimeMillis(), data));
-    }
-
+    /**
+     * Sends a {@link Command} to the ECU
+     *
+     * @param command The {@link Command} to send
+     */
     public void issueCommand(Command command) {
         usbMethod.write(command.getData());
     }
 
-    public void clear() {
-        ecuMessageHandler.clear();
-    }
-
+    /**
+     * Event fired each time the {@link State} changes.
+     *
+     * @param consumer {@link Consumer<State>}
+     */
     public void onStateChangeEvent(Consumer<State> consumer) {
         this.stateListener.add(consumer);
     }
 
-    public void setInterpreterMode(MODE mode) {
+    /**
+     * Sets the interpreter mode of incoming messages.
+     * Valid options include: DISABLED, ASCII, HEX, RAW.
+     *
+     * @param mode {@link Mode} The mode to be set.
+     */
+    public void setInterpreterMode(Mode mode) {
         this.interpreterMode = mode;
     }
 
@@ -129,10 +155,16 @@ public class ECU {
         }
     }
 
+    /**
+     * Handles the payload based upon the interpreter mode.
+     * The raw data is logged to the binary file regardless of mode.
+     *
+     * @param payload {@link ECUPayload}
+     */
     private void handlePayload(ECUPayload payload) {
-        if (interpreterMode == MODE.HEX) {
+        if (interpreterMode == Mode.HEX) {
             logger.debug(ByteSplit.bytesToHex(payload.getRawData()));
-        } else if (interpreterMode == MODE.ASCII) {
+        } else if (interpreterMode == Mode.ASCII) {
             String message = ecuMessageHandler.getStr((int) payload.getStringId());
             int temp = (int) payload.getCallerId();
             if ((temp < 256 || temp > 4096) && message != null) {
@@ -155,54 +187,93 @@ public class ECU {
         logRawData(payload);
     }
 
+    /**
+     * Gets the message handler for the ECU.
+     *
+     * @return {@link ECUMessageHandler}
+     */
     public ECUMessageHandler getMessageHandler() {
         return ecuMessageHandler;
     }
 
-    public ECUJUSB getUsb() {
-        return J_USB;
-    }
-
+    /**
+     * Writes a raw payload to the ECU.
+     * Caution: Only use this if you know what you're doing.
+     *
+     * @param data The raw data to be written.
+     */
     public void write(byte[] data) {
         usbMethod.write(data);
     }
 
+    /**
+     * Event fired each time the ECU connects / disconnects.
+     *
+     * @param statusListener {@link Consumer<Integer>}
+     */
     public void setConnectionListener(Consumer<Integer> statusListener) {
         usbMethod.setStatusListener(statusListener);
     }
 
+    /**
+     * Opens the connection to the USB serial device
+     *
+     * @return True if successfully opened, false if not
+     */
     public boolean open() {
         return usbMethod.open();
     }
 
+    /**
+     * Attempts to close the connection to the USB serial device
+     */
     public void close() {
         usbMethod.close();
     }
 
+    /**
+     * Gets whether the connection to the USB device is active
+     *
+     * @return True if active, false otherwise
+     */
     public boolean isOpen() {
         return usbMethod.isOpen();
     }
 
+    /**
+     * Gets whether the USB device is attached
+     *
+     * @return True if attached, false if not
+     */
     public boolean isAttached() {
         return usbMethod.isAttached();
     }
 
-    /**
-     * Gets current state of the vehicle
-     *
-     * @return the current state of the vehicle
-     */
-    public State getState() {
-        return state;
-    }
-
-    public enum MODE {
+    public enum Mode {
+        /**
+         * No interpretation of data.
+         */
         DISABLED,
+
+        /**
+         * Data is encoded to ascii log messages.
+         */
         ASCII,
+
+        /**
+         * Data is encoded as hex values.
+         */
         HEX,
+
+        /**
+         * Data is encoded in it's original form.
+         */
         RAW
     }
 
+    /**
+     * An enumeration of ECU commands.
+     */
     public enum Command {
         CHARGE(123),
         SEND_CAN_BUS_MESSAGE(111),
@@ -221,12 +292,20 @@ public class ECU {
             this.data = new byte[]{ Integer.valueOf(id).byteValue() };
         }
 
+        /**
+         * Gets the raw data representation of the command.
+         *
+         * @return Representation of command as a byte array.
+         */
         public byte[] getData() {
             return data;
         }
     }
 
-    public enum State { // Use actual name, brackets are added on when matching to actual state name
+    /**
+     * An enumeration of vehicle states.
+     */
+    public enum State {
         INITIALIZING("Teensy Initialize"),
         PRE_CHARGE("PreCharge State"),
         IDLE("Idle State"),
@@ -242,18 +321,39 @@ public class ECU {
             this.name = title;
         }
 
+        /**
+         * Sets the numerical ID of the state.
+         *
+         * @param id ID of state as integer.
+         */
         public void setTagId(int id) {
             this.id = id;
         }
 
+        /**
+         * Gets the numerical ID of the state.
+         *
+         * @return ID of state as integer.
+         */
         public int getTagId() {
             return id;
         }
 
+        /**
+         * Gets the pretty name of the state.
+         *
+         * @return Pretty name of state.
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Gets the state by it's numerical ID.
+         *
+         * @param id ID of state.
+         * @return {@link State} if exists, null otherwise.
+         */
         public static State getStateById(int id) {
             for (State state : State.values()) {
                 if (state.getTagId() == id) {
@@ -263,7 +363,14 @@ public class ECU {
             return null;
         }
 
+        /**
+         * Gets the state by it's name.
+         *
+         * @param name Name of state.
+         * @return {@link State} if exists, null otherwise.
+         */
         public static State getStateByName(String name) {
+            name = name.replaceAll("\\[", "").replaceAll("]", "");
             for (State state : State.values()) {
                 if (state.getName().equalsIgnoreCase(name)) {
                     return state;

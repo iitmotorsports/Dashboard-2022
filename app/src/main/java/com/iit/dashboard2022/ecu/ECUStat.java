@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * A representation of a specified ECU statistic.
+ */
 public class ECUStat {
 
     private final String identifier;

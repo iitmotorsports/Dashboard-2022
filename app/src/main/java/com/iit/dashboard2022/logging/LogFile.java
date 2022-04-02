@@ -16,6 +16,11 @@ import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * A representation of a logging session.
+ *
+ * @author Noah Husby
+ */
 public class LogFile implements Closeable {
 
     private final long date;
@@ -54,6 +59,11 @@ public class LogFile implements Closeable {
         }
     }
 
+    /**
+     * Deletes all files associated with the session.
+     *
+     * @return
+     */
     public boolean delete() {
         logFile.delete();
         statsFile.delete();
@@ -62,6 +72,11 @@ public class LogFile implements Closeable {
         return dir.delete();
     }
 
+    /**
+     * Gets the date of creation of the session.
+     *
+     * @return Date of session creation formatted as a String.
+     */
     public String getDate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime time = Instant.ofEpochSecond(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -70,19 +85,39 @@ public class LogFile implements Closeable {
         return null;
     }
 
+    /**
+     * Gets the formatted name of the session.
+     *
+     * @return Formatted name of the log file in the format of "{Log Date} - {Size}".
+     */
     public String getFormattedName() {
         return getDate() + " - " + getFileSize();
     }
 
+    /**
+     * Gets the file size of the session.
+     *
+     * @return Size of the session formatted as a String.
+     */
     public String getFileSize() {
         long totalBytes = logFile.length() + statsFile.length() + statsMapFile.length();
         return HawkUtil.humanReadableBytes(totalBytes);
     }
 
+    /**
+     * Gets the creation time of the session as epoch.
+     *
+     * @return Creation time of the session as epoch seconds.
+     */
     public long getEpochSeconds() {
         return date;
     }
 
+    /**
+     * Writes a String log message to the log file.
+     *
+     * @param message The message to write to the file.
+     */
     public void toLog(String message) {
         if (outputStream == null) {
             try {
@@ -101,6 +136,12 @@ public class LogFile implements Closeable {
         }
     }
 
+    /**
+     * Logs binary data to the statistics file.
+     *
+     * @param id   ID of statistics.
+     * @param data Value of statistic.
+     */
     public void logBinaryStatistics(int id, int data) {
         String out = String.format(Locale.ENGLISH, "%d %d %d\n", System.currentTimeMillis(), id, data);
         if (binaryStream == null) {
@@ -138,14 +179,29 @@ public class LogFile implements Closeable {
         }
     }
 
+    /**
+     * Gets the log file of the session.
+     *
+     * @return Text log file.
+     */
     public File getLogFile() {
         return logFile;
     }
 
+    /**
+     * Gets the statistics file of the session.
+     *
+     * @return Statistics log file.
+     */
     public File getStatsFile() {
         return statsFile;
     }
 
+    /**
+     * Gets the statistics map of the session.
+     *
+     * @return Statistics mapping file.
+     */
     public File getStatsMapFile() {
         return statsMapFile;
     }

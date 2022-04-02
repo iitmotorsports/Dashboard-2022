@@ -49,6 +49,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * A utility class for handling logs.
+ *
+ * @author Noah Husby
+ */
 public class Log implements StringLogger {
     private final static Logger LOGGER = LoggerFactory.getLogger("Dashboard");
 
@@ -69,6 +74,12 @@ public class Log implements StringLogger {
     private Map<Long, LogFile> logs = Maps.newTreeMap();
     private LogFile activeLogFile = null;
 
+    /**
+     * Sets the global context for toasts.
+     * Should only be called once.
+     *
+     * @param context {@link Context}
+     */
     public static void setContext(Context context) {
         newToast = () -> {
             Toast toast;
@@ -105,18 +116,44 @@ public class Log implements StringLogger {
         };
     }
 
+    /**
+     * Shows a toast with a normal level.
+     *
+     * @param msg Message to display.
+     */
     public static void toast(String msg) {
         toast(msg, ToastLevel.NORMAL);
     }
 
+    /**
+     * Shows a toast with the specified level.
+     *
+     * @param msg    Message to display.
+     * @param status Level of toast.
+     */
     public static void toast(String msg, ToastLevel status) {
         toast(msg, status, false, Gravity.CENTER);
     }
 
+    /**
+     * Shows a toast with the specified level.
+     *
+     * @param msg        Message to display.
+     * @param status     Level of toast.
+     * @param longRender The toast will be displayed for a long time if true, short otherwise.
+     */
     public static void toast(String msg, ToastLevel status, boolean longRender) {
         toast(msg, status, longRender, Gravity.CENTER);
     }
 
+    /**
+     * Shows a toast with the specified level.
+     *
+     * @param msg        Message to display.
+     * @param status     Level of toast.
+     * @param longRender The toast will be displayed for a long time if true, short otherwise.
+     * @param gravity    Gravity of toast
+     */
     public static void toast(String msg, ToastLevel status, boolean longRender, int gravity) {
         if (!enable || newToast == null) {
             return;
@@ -129,10 +166,18 @@ public class Log implements StringLogger {
         uiHandle.postDelayed(newToast, 20);
     }
 
+    /**
+     * Enable toasts.
+     *
+     * @param enable Toasts will be enabled if true, false otherwise.
+     */
     public static void setEnabled(boolean enable) {
         Log.enable = enable;
     }
 
+    /**
+     * A representation of a toast message.
+     */
     private static class ToastMessage {
         final int duration;
         final int gravity;
@@ -311,10 +356,22 @@ public class Log implements StringLogger {
         getLogger().info("Starting log: " + activeLogFile.getDate());
     }
 
+    /**
+     * Gets the active log file.
+     *
+     * @return {@link LogFile} if currently logging, null otherwise.
+     */
     public LogFile getActiveLogFile() {
         return activeLogFile;
     }
 
+    /**
+     * Gets a map of logs.
+     * Key (Long) = Epoch of log creation.
+     * Value (LogFile) = {@link LogFile}
+     *
+     * @return Map of logs.
+     */
     public Map<Long, LogFile> getLogs() {
         return logs;
     }
@@ -326,6 +383,12 @@ public class Log implements StringLogger {
         }
     }
 
+    /**
+     * Posts a log file to the Cabinet API.
+     *
+     * @param log {@link LogFile}
+     * @see <a href="https://github.com/illinois-tech-motorsports/cabinet">Cabinet API</a>
+     */
     public void postToCabinet(LogFile log) {
         String boundary = "===" + System.currentTimeMillis() + "===";
         PrintWriter writer;

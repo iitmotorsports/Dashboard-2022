@@ -16,6 +16,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
+/**
+ * A utility class for interacting with the ECU Serial Bus.
+ *
+ * @author Isaias Rivera
+ * @author Noah Husby
+ */
 public class ECUJUSB implements JsonHandler {
     private final ByteArrayOutputStream JUSB_data = new ByteArrayOutputStream();
     private final ECU mainECU;
@@ -29,6 +35,9 @@ public class ECUJUSB implements JsonHandler {
         this.mainECU = mainECU;
     }
 
+    /**
+     * Resets the USB settings.
+     */
     private void resetJUSB() {
         JUSB_requesting = 0;
         JUSB_size = -1;

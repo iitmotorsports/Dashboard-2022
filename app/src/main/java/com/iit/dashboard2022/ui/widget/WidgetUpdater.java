@@ -1,6 +1,7 @@
 package com.iit.dashboard2022.ui.widget;
 
 import android.os.SystemClock;
+import com.google.common.collect.Sets;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 
 import java.util.HashSet;
@@ -58,9 +59,9 @@ public class WidgetUpdater {
                             wait();
                         }
                         if (enoughMinTimePassed()) {
-                            for (Widget sg : WIDGETS) {
+                            for (Widget sg : Sets.newHashSet(WIDGETS)) {
                                 sg.onWidgetUpdate();
-                                wait();
+                                wait(1);
                             }
                         }
                     } catch (InterruptedException e) {

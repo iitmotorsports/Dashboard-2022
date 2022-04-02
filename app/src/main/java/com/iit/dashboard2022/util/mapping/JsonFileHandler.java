@@ -15,6 +15,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * An implementation of {@link JsonHandler} that loads the mapping from a specific file.
+ *
+ * @author Noah Husby
+ */
 public class JsonFileHandler implements JsonHandler {
 
     private final String fileName;

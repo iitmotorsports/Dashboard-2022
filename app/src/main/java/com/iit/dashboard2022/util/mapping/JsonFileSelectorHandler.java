@@ -17,6 +17,11 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * An implementation of {@link JsonHandler} that loads the mapping from a file selector.
+ *
+ * @author Noah Husby
+ */
 public class JsonFileSelectorHandler implements JsonHandler {
 
     private ActivityResultLauncher<String> launcher;
@@ -25,6 +30,11 @@ public class JsonFileSelectorHandler implements JsonHandler {
     public JsonFileSelectorHandler() {
     }
 
+    /**
+     * Initializes the proper GUI elements from the general activity.
+     *
+     * @param activity {@link AppCompatActivity}
+     */
     public void init(AppCompatActivity activity) {
         this.launcher = activity.registerForActivityResult(new ActivityResultContracts.GetContent(),
                 this::handle);
@@ -37,6 +47,11 @@ public class JsonFileSelectorHandler implements JsonHandler {
         return future;
     }
 
+    /**
+     * Handles the mapping loading process from the selected file.
+     *
+     * @param uri Path of selected file.
+     */
     private void handle(Uri uri) {
         if (future == null) {
             return;

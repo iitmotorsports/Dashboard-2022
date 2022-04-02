@@ -35,7 +35,7 @@ public class SidePanel extends ConstraintLayout {
     public final SideButton clearConsoleButton, canMsgButton, canEchoButton;
     public final TranslationAnim sidePanelDrawerAnim;
     public TranslationAnim consoleAnim;
-    public ECU.MODE lastChecked = ECU.MODE.ASCII;
+    public ECU.Mode lastChecked = ECU.Mode.ASCII;
 
     public SidePanel(Context context) {
         this(context, null);
@@ -83,17 +83,17 @@ public class SidePanel extends ConstraintLayout {
             } else {
                 consoleAnim.start();
                 //console.enable(false);
-                frontECU.setInterpreterMode(ECU.MODE.DISABLED);
+                frontECU.setInterpreterMode(ECU.Mode.DISABLED);
             }
         });
 
         consoleRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.asciiRButton) {
-                lastChecked = ECU.MODE.ASCII;
+                lastChecked = ECU.Mode.ASCII;
             } else if (checkedId == R.id.hexRButton) {
-                lastChecked = ECU.MODE.HEX;
+                lastChecked = ECU.Mode.HEX;
             } else if (checkedId == R.id.rawRButton) {
-                lastChecked = ECU.MODE.RAW;
+                lastChecked = ECU.Mode.RAW;
             }
             frontECU.setInterpreterMode(lastChecked);
             console.setMode(lastChecked.name());

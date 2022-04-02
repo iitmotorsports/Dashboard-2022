@@ -4,6 +4,11 @@ import com.google.gson.JsonElement;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * An interface representing a method of loading the ECU mapping.
+ *
+ * @author Noah Husby
+ */
 public interface JsonHandler {
     /**
      * Reads json mapping from input
