@@ -55,7 +55,7 @@ public class Constants {
         public static final String Lag = "lag";
         public static final String Beat = "beat";
         public static final String StartLight = "start_light";
-        public static final String State = "state"; // State is special :)
+        public static final String State = "state";
         public static final String SerialVarResponse = "serial_var_response";
     }
 }

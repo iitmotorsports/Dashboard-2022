@@ -184,11 +184,11 @@ public class MainActivity extends AppCompatActivity {
         ecuMsgHandler.getStatistic(StartLight).addMessageListener(stat -> dashboard.setStartLight(stat.get() == 1));
         ecuMsgHandler.getStatistic(MC0BoardTemp).addMessageListener(stat -> {
             dashboard.setLeftTempValue(stat.getAsInt());
-            dashboard.setLeftTempPercentage(stat.get());
+            dashboard.setLeftTempPercentage(stat.get() / 100f);
         });
         ecuMsgHandler.getStatistic(MC1BoardTemp).addMessageListener(stat -> {
             dashboard.setRightTempValue(stat.getAsInt());
-            dashboard.setRightTempPercentage(stat.get());
+            dashboard.setRightTempPercentage(stat.get() / 100f);
         });
     }
 

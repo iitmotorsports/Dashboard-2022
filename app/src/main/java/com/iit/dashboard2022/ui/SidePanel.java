@@ -9,7 +9,6 @@ import android.widget.RadioGroup;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.ToastLevel;

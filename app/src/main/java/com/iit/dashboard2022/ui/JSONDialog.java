@@ -1,4 +1,4 @@
-package com.iit.dashboard2022.dialog;
+package com.iit.dashboard2022.ui;
 
 import android.app.Activity;
 import android.view.View;
@@ -27,9 +27,7 @@ public class JSONDialog {
         dialog = mBuilder.create();
 
         downloadBtn.setEnabled(HawkUtil.checkInternetConnection(activity));
-        downloadBtn.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
+        downloadBtn.setOnClickListener(v -> dialog.dismiss());
 
         findBtn.setOnClickListener(v -> {
             frontECU.getMessageHandler().load(ECUMessageHandler.MapHandler.SELECTOR);
