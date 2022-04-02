@@ -1,7 +1,6 @@
 package com.iit.dashboard2022.util;
 
 import android.graphics.Typeface;
-import android.os.Build;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -30,11 +29,7 @@ public class Constants {
     public static final DateTimeFormatter DATE_FORMAT;
 
     static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DATE_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
-        } else {
-            DATE_FORMAT = null;
-        }
+        DATE_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
         GSON = new GsonBuilder().setPrettyPrinting().setLenient().create();
     }
 

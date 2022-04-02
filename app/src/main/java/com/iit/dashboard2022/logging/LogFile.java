@@ -1,6 +1,5 @@
 package com.iit.dashboard2022.logging;
 
-import android.os.Build;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
 
@@ -78,11 +77,8 @@ public class LogFile implements Closeable {
      * @return Date of session creation formatted as a String.
      */
     public String getDate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime time = Instant.ofEpochSecond(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            return time.format(Constants.DATE_FORMAT);
-        }
-        return null;
+        LocalDateTime time = Instant.ofEpochSecond(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        return time.format(Constants.DATE_FORMAT);
     }
 
     /**
