@@ -3,28 +3,25 @@ package com.iit.dashboard2022.page;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.text.Spannable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import com.google.common.collect.Lists;
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ecu.ECUColor;
-import com.iit.dashboard2022.ecu.ECULogger;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.LogFile;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.widget.ListedFile;
 import com.iit.dashboard2022.ui.widget.SideButton;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
-import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.PasteAPI;
-import com.iit.dashboard2022.util.Toaster;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class Logs extends Page {
     private final static HandlerThread workerThread = new HandlerThread("Logging Thread");
@@ -45,7 +42,7 @@ public class Logs extends Page {
         fileEntries = rootView.findViewById(R.id.fileEntries);
 
         ListedFile.setGlobalFileListListener(this::onListedFileAction);
-        deleteAllButton.setOnClickListener(v -> Toaster.showToast("Hold to confirm", Toaster.INFO));
+        deleteAllButton.setOnClickListener(v -> Log.toast("Hold to confirm", ToastLevel.INFO));
         deleteAllButton.setOnLongClickListener(this::onDeleteAllButtonLongClick);
         updateAllButton.setOnClickListener(v -> updateAll());
 
@@ -66,35 +63,19 @@ public class Logs extends Page {
         fileEntries.addView(listedFile, 1);
     }
 
-    public void displayFiles(LogFileIO.LogFile[] files) {
-        if (files.length == 0)
+    public void displayFiles(Collection<LogFile> files) {
+        if (files.size() == 0) {
             return;
-        worker.post(new Runnable() {
-            int c = 0;
-            final HashMap<LogFileIO.LogFile, ListedFile> currentFiles = getCurrentFiles();
+        }
 
-            @Override
-            public void run() {
-                LogFileIO.LogFile file = files[c++];
-                if (currentFiles.containsKey(file)) {
-                    ListedFile toUpdate = currentFiles.get(file);
-                    if (toUpdate != null)
-                        toUpdate.updateInfo();
-                    currentFiles.remove(file);
-                } else if (file != null) {
-                    rootView.post(() -> displayListedFile(ListedFile.getInstance(rootView.getContext(), file)));
+        final HashSet<LogFile> fileHash = new HashSet<>(getCurrentFiles().keySet());
+        for (LogFile f : files) {
+            worker.post(() -> {
+                if (!fileHash.contains(f)) {
+                    rootView.post(() -> displayListedFile(ListedFile.getInstance(rootView.getContext(), f)));
                 }
-                if (c == files.length) {
-                    for (LogFileIO.LogFile f : currentFiles.keySet()) {
-                        ListedFile toRemove = currentFiles.get(f);
-                        if (toRemove != null)
-                            rootView.post(() -> removeEntry(toRemove));
-                    }
-                } else {
-                    worker.postDelayed(this, 100);
-                }
-            }
-        });
+            });
+        }
     }
 
     public void updateAll() {
@@ -108,15 +89,15 @@ public class Logs extends Page {
 
     @SuppressWarnings("SameReturnValue")
     private boolean onDeleteAllButtonLongClick(View view) { // TODO: Add dialog to confirm again
-        Toaster.showToast("Deleting all entries", Toaster.WARNING);
+        Log.toast("Deleting all entries", ToastLevel.WARNING);
         deleteAllEntries();
         return true;
     }
 
     @NonNull
-    private HashMap<LogFileIO.LogFile, ListedFile> getCurrentFiles() {
-        ArrayList<ListedFile> views = getCurrentListedFiles();
-        HashMap<LogFileIO.LogFile, ListedFile> files = new HashMap<>();
+    private HashMap<LogFile, ListedFile> getCurrentFiles() {
+        List<ListedFile> views = getCurrentListedFiles();
+        HashMap<LogFile, ListedFile> files = new HashMap<>();
         for (ListedFile view : views) {
             files.put(view.getFile(), view);
         }
@@ -124,8 +105,8 @@ public class Logs extends Page {
     }
 
     @NonNull
-    private ArrayList<ListedFile> getCurrentListedFiles() {
-        ArrayList<ListedFile> views = new ArrayList<>();
+    private List<ListedFile> getCurrentListedFiles() {
+        List<ListedFile> views = Lists.newArrayList();
 
         for (int i = 0; i < fileEntries.getChildCount(); i++) {
             View view = fileEntries.getChildAt(i);
@@ -138,21 +119,21 @@ public class Logs extends Page {
     }
 
     private void deleteAllEntries() {
-        ArrayList<ListedFile> views = getCurrentListedFiles();
-
-        worker.post(new Runnable() {
-            @Override
-            public void run() {
-                ListedFile view = views.get(0);
-                views.remove(view);
-                LogFileIO.LogFile file = view.getFile();
-                if (file != null && file.delete())
-                    rootView.post(() -> removeEntry(view));
-                if (views.size() == 0) {
-                    Toaster.showToast("Done deleting", Toaster.INFO);
+        List<ListedFile> views = getCurrentListedFiles();
+        worker.post(() -> {
+            int preSize = views.size();
+            Lists.newArrayList(views).forEach(view -> {
+                LogFile file = view.getFile();
+                if (file == null || (Log.getInstance().getActiveLogFile() != null && file.getEpochSeconds() == Log.getInstance().getActiveLogFile().getEpochSeconds())) {
                     return;
                 }
-                worker.postDelayed(this, 100);
+                views.remove(view);
+                rootView.post(() -> removeEntry(view));
+            });
+            if (views.size() == preSize) {
+                Log.toast("No files deleted", ToastLevel.INFO);
+            } else {
+                Log.toast("Done deleting", ToastLevel.INFO);
             }
         });
     }
@@ -160,28 +141,30 @@ public class Logs extends Page {
     private void onListedFileAction(@NonNull ListedFile listedFile, @NonNull ListedFile.ListedFileAction action) {
         switch (action) {
             case SHOW:
+                // TODO: SHOW
+                /*
                 if (console == null) {
-                    Toaster.showToast("No console attached", Toaster.ERROR);
+                    Log.toast("No console attached", ToastLevel.ERROR);
                     return;
                 }
                 ListedFile.deselectActive();
                 worker.post(() -> {
                     console.post(() -> console.clear());
 
-                    LogFileIO.LogFile file = listedFile.getFile();
+                    LogFile file = listedFile.getFile();
                     if (file == null) {
-                        Toaster.showToast("File returned null", Toaster.ERROR);
+                        Log.toast("File returned null", ToastLevel.ERROR);
                         return;
                     }
 
                     String msg = ECULogger.interpretLogFile(file);
                     if (msg.length() == 0) {
-                        Toaster.showToast("File returned empty", Toaster.WARNING);
+                        Log.toast("File returned empty", ToastLevel.WARNING);
                         return;
                     }
 
                     Spannable[] msgBlocks = ECUColor.colorMsgString(rootView.getContext(), msg);
-                    Toaster.showToast("Showing file on console", Toaster.INFO);
+                    Log.toast("Showing file on console", ToastLevel.INFO);
                     showConsole.run();
                     worker.post(new Runnable() {
                         int c = 0;
@@ -189,31 +172,40 @@ public class Logs extends Page {
                         @Override
                         public void run() {
                             Spannable span = msgBlocks[c++];
-                            if (span != null)
+                            if (span != null) {
                                 console.systemPost("Log", TextUtils.concat(file.getTitle(), " - " + c + "/" + msgBlocks.length + "\n", span));
-                            if (c != msgBlocks.length)
+                            }
+                            if (c != msgBlocks.length) {
                                 worker.postDelayed(this, 64);
+                            }
                         }
                     });
                 });
+
+                break;
+
+                 */
                 break;
             case UPLOAD:
-                Toaster.showToast("Uploading File", Toaster.INFO);
-                worker.post(() -> PasteAPI.uploadPaste(ECULogger.stringifyLogFile(listedFile.getFile())));
+                Log.toast("Uploading File", ToastLevel.INFO);
+                worker.post(() -> {
+                    if(listedFile.getFile() == null) return;
+                    Log.getInstance().postToCabinet(listedFile.getFile());
+                });
                 break;
             case DELETE:
-                Toaster.showToast("Deleting File", Toaster.INFO);
-                LogFileIO.LogFile file = listedFile.getFile();
+                Log.toast("Deleting File", ToastLevel.INFO);
+                LogFile file = listedFile.getFile();
                 if (file != null) {
                     if (file.delete()) {
-                        Toaster.showToast("File deleted", Toaster.SUCCESS);
+                        Log.toast("File deleted", ToastLevel.SUCCESS);
                         removeEntry(listedFile);
                     } else {
-                        Toaster.showToast("Failed to delete file", Toaster.ERROR);
+                        Log.toast("Failed to delete file", ToastLevel.ERROR);
                     }
                     return;
                 }
-                Toaster.showToast("File returned null", Toaster.WARNING);
+                Log.toast("File returned null", ToastLevel.WARNING);
                 removeEntry(listedFile);
                 break;
         }

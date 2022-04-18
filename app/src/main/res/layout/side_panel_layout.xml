@@ -1,169 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:background="@android:color/black"
-    tools:ignore="Overdraw">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="wrap_content"
+                                                   android:layout_height="match_parent"
+                                                   android:layout_gravity="center"
+                                                   android:background="@android:color/black"
+                                                   tools:ignore="Overdraw">
 
     <com.iit.dashboard2022.ui.layout.OverlayFrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginBottom="64dp"
-        android:color="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:mask="@drawable/overlay_mask">
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="64dp"
+            android:color="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:mask="@drawable/overlay_mask">
 
         <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="8dp">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
                 <com.iit.dashboard2022.ui.widget.SideLabel
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/usb_serial"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/usb_serial"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideToggle
-                    android:id="@+id/connToggle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textOff="@string/connect"
-                    android:textOn="@string/disconnect"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/connToggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textOff="@string/connect"
+                        android:textOn="@string/disconnect"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideToggle
-                    android:id="@+id/JSONToggle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textOff="@string/json_unloaded"
-                    android:textOn="@string/json_loaded"
-                    app:textOffSize="10sp"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/JSONToggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textOff="@string/json_unloaded"
+                        android:textOn="@string/json_loaded"
+                        app:textOffSize="10sp"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideLabel
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/console"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/console"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideSwitch
-                    android:id="@+id/consoleSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:enableText="false"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck">
+                        android:id="@+id/consoleSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:enableText="false"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck">
 
                 </com.iit.dashboard2022.ui.widget.SideSwitch>
 
                 <RadioGroup
-                    android:id="@+id/consoleRadioGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipChildren="false">
+                        android:id="@+id/consoleRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipChildren="false">
 
                     <com.iit.dashboard2022.ui.widget.SideRadio
-                        android:id="@+id/asciiRButton"
-                        style="@style/SideRadioButton"
-                        android:layout_width="match_parent"
-                        android:text="@string/ascii"
-                        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+                            android:id="@+id/asciiRButton"
+                            style="@style/SideRadioButton"
+                            android:layout_width="match_parent"
+                            android:text="@string/ascii"
+                            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
 
                     <com.iit.dashboard2022.ui.widget.SideRadio
-                        android:id="@+id/hexRButton"
-                        style="@style/SideRadioButton"
-                        android:layout_width="match_parent"
-                        android:text="@string/hex"
-                        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+                            android:id="@+id/hexRButton"
+                            style="@style/SideRadioButton"
+                            android:layout_width="match_parent"
+                            android:text="@string/hex"
+                            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
 
                     <com.iit.dashboard2022.ui.widget.SideRadio
-                        android:id="@+id/rawRButton"
-                        style="@style/SideRadioButton"
-                        android:layout_width="match_parent"
-                        android:text="@string/raw"
-                        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+                            android:id="@+id/rawRButton"
+                            style="@style/SideRadioButton"
+                            android:layout_width="match_parent"
+                            android:text="@string/raw"
+                            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
 
                 </RadioGroup>
 
                 <com.iit.dashboard2022.ui.widget.SideButton
-                    android:id="@+id/clearConsoleButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/clear_console"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/clearConsoleButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/clear_console"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideLabel
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/controls"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/controls"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideToggle
-                    android:id="@+id/chargeToggle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textOff="@string/charge"
-                    android:textOn="@string/charging"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/chargeToggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textOff="@string/charge"
+                        android:textOn="@string/charging"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideSwitch
-                    android:id="@+id/reverseSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/reverse"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/reverseSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/reverse"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideLabel
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/debug"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/debug"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideButton
-                    android:id="@+id/canMsgButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/can_message"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/canMsgButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/can_message"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideButton
-                    android:id="@+id/canEchoButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/can_echo"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/canEchoButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/can_echo"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideSwitch
-                    android:id="@+id/uiTestSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/test_ui"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" >
+                        android:id="@+id/uiTestSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/test_ui"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck">
 
                 </com.iit.dashboard2022.ui.widget.SideSwitch>
 
                 <com.iit.dashboard2022.ui.widget.SideSwitch
-                    android:id="@+id/nearbyAPISwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/nearby_switch_text"
-                    tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
+                        android:id="@+id/nearbyAPISwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/nearby_switch_text"
+                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
             </LinearLayout>
         </ScrollView>

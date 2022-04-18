@@ -1,43 +1,44 @@
 <resources>
-    <attr name="sideButtonStyle" format="reference" />
-    <attr name="sideToggleButtonStyle" format="reference" />
-    <attr name="sideLabelStyle" format="reference" />
-    <attr name="sideSwitchWidgetStyle" format="reference" />
+    <attr name="sideButtonStyle" format="reference"/>
+    <attr name="sideToggleButtonStyle" format="reference"/>
+    <attr name="sideLabelStyle" format="reference"/>
+    <attr name="sideSwitchWidgetStyle" format="reference"/>
     <declare-styleable name="FullscreenAttrs">
-        <attr name="fullscreenBackgroundColor" format="color" />
-        <attr name="fullscreenTextColor" format="color" />
+        <attr name="fullscreenBackgroundColor" format="color"/>
+        <attr name="fullscreenTextColor" format="color"/>
     </declare-styleable>
     <declare-styleable name="SideToggle">
-        <attr name="android:textOn" format="string" />
-        <attr name="android:textOff" format="string" />
-        <attr name="textOnSize" format="dimension" />
-        <attr name="textOffSize" format="dimension" />
-        <attr name="android:disabledAlpha" format="float" />
-        <attr name="android:checked" format="boolean" />
+        <attr name="android:textOn" format="string"/>
+        <attr name="android:textOff" format="string"/>
+        <attr name="textOnSize" format="dimension"/>
+        <attr name="textOffSize" format="dimension"/>
+        <attr name="android:disabledAlpha" format="float"/>
+        <attr name="android:checked" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="SideSwitch">
-        <attr name="android:text" format="string" />
-        <attr name="enableText" format="boolean" />
+        <attr name="android:text" format="string"/>
+        <attr name="enableText" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="OverlayFrameLayout">
-        <attr name="mask" format="reference" />
-        <attr name="android:color" />
+        <attr name="mask" format="reference"/>
+        <attr name="android:color"/>
     </declare-styleable>
     <declare-styleable name="SpeedGauge">
-        <attr name="colorLow" format="color" />
-        <attr name="colorMid" format="color" />
-        <attr name="colorHigh" format="color" />
-        <attr name="taper" format="float" />
+        <attr name="colorLow" format="color"/>
+        <attr name="colorMid" format="color"/>
+        <attr name="colorHigh" format="color"/>
+        <attr name="taper" format="float"/>
     </declare-styleable>
     <declare-styleable name="LinearGauge">
-        <attr name="colorLow" />
-        <attr name="colorMid" />
-        <attr name="colorHigh" />
-        <attr name="flipped" format="boolean" />
-        <attr name="android:textColor" />
-        <attr name="android:textSize" />
-        <attr name="android:text" />
-        <attr name="android:title" />
-        <attr name="unit" format="string" />
+        <attr name="colorLow"/>
+        <attr name="colorMid"/>
+        <attr name="colorHigh"/>
+        <attr name="flipped" format="boolean"/>
+        <attr name="vertical" format="boolean"/>
+        <attr name="android:textColor"/>
+        <attr name="android:textSize"/>
+        <attr name="android:text"/>
+        <attr name="android:title"/>
+        <attr name="unit" format="string"/>
     </declare-styleable>
 </resources>

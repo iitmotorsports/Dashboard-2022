@@ -9,11 +9,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-
 import com.iit.dashboard2022.R;
 
 import java.util.Locale;
@@ -25,15 +23,6 @@ public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
     private final String lagTimerMSFormat, lagTimerSFormat;
     private final float lagTimerLarge, LagTimerSmall;
     private String currentLagTime = "";
-
-    public enum Indicator {
-        Lag,
-        Fault,
-        Waiting,
-        Charging;
-
-        boolean on = false;
-    }
 
     public Indicators(Context context) {
         this(context, null);
@@ -85,8 +74,9 @@ public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
         int v = Indicator.Lag.on ? View.VISIBLE : View.GONE;
         lagRadio.setVisibility(v);
         lagTimer.setVisibility(v);
-        if (v == View.VISIBLE)
+        if (v == View.VISIBLE) {
             updateLagTime();
+        }
 
         faultRadio.setChecked(Indicator.Fault.on);
         faultRadio.setVisibility(Indicator.Fault.on ? View.VISIBLE : View.GONE);
@@ -100,10 +90,11 @@ public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
 
     @UiThread
     private void updateLagTime() {
-        if (currentLagTime.length() >= 5)
+        if (currentLagTime.length() >= 5) {
             lagTimer.setTextSize(LagTimerSmall);
-        else
+        } else {
             lagTimer.setTextSize(lagTimerLarge);
+        }
         lagTimer.setText(currentLagTime);
     }
 
@@ -131,10 +122,11 @@ public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
         if (ms == 0) {
             currentLagTime = "";
         } else {
-            if (ms >= 1000)
+            if (ms >= 1000) {
                 currentLagTime = String.format(Locale.US, lagTimerSFormat, ms / 1000.0f);
-            else
+            } else {
                 currentLagTime = String.format(Locale.US, lagTimerMSFormat, ms);
+            }
         }
         WidgetUpdater.post();
     }
@@ -148,5 +140,14 @@ public class Indicators extends FrameLayout implements WidgetUpdater.Widget {
     @Override
     public void onWidgetUpdate() {
         post(this::updateIndicators);
+    }
+
+    public enum Indicator {
+        Lag,
+        Fault,
+        Waiting,
+        Charging;
+
+        boolean on = false;
     }
 }

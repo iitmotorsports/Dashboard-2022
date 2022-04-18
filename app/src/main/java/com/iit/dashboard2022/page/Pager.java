@@ -3,10 +3,8 @@ package com.iit.dashboard2022.page;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.view.ViewGroup;
-
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.iit.dashboard2022.R;
@@ -14,6 +12,10 @@ import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 
 public class Pager {
+    public static final int LEFT = 0;
+    public static final int TOP = 1;
+    public static final int RIGHT = 2;
+    public static final int BOTTOM = 3;
     private final Page[] pages;
     private final ViewPager2 viewPager;
     private final PageManager pageManager;
@@ -96,11 +98,6 @@ public class Pager {
             return v.performClick();
         });
     }
-
-    public static final int LEFT = 0;
-    public static final int TOP = 1;
-    public static final int RIGHT = 2;
-    public static final int BOTTOM = 3;
 
     private void fakeTouch() {
         viewPager.beginFakeDrag();

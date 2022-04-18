@@ -6,16 +6,12 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioGroup;
-import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.dialog.JSONDialog;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUCommands;
-import com.iit.dashboard2022.ecu.ECUCommunication;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Errors;
 import com.iit.dashboard2022.page.LiveData;
@@ -25,7 +21,7 @@ import com.iit.dashboard2022.ui.widget.SideRadio;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
-import com.iit.dashboard2022.util.Toaster;
+import com.iit.dashboard2022.util.SerialCom;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -36,10 +32,9 @@ public class SidePanel extends ConstraintLayout {
     public final SideSwitch uiTestSwitch, nearbyAPISwitch, reverseSwitch, consoleSwitch;
     public final SideToggle chargeToggle, JSONToggle, connToggle;
     public final SideButton clearConsoleButton, canMsgButton, canEchoButton;
-
-    public TranslationAnim consoleAnim;
     public final TranslationAnim sidePanelDrawerAnim;
-    public ECU.MODE lastChecked = ECU.MODE.ASCII;
+    public TranslationAnim consoleAnim;
+    public ECU.Mode lastChecked = ECU.Mode.ASCII;
 
     public SidePanel(Context context) {
         this(context, null);
@@ -86,18 +81,18 @@ public class SidePanel extends ConstraintLayout {
                 frontECU.setInterpreterMode(lastChecked);
             } else {
                 consoleAnim.start();
-                console.enable(false);
-                frontECU.setInterpreterMode(ECU.MODE.DISABLED);
+                //console.enable(false);
+                frontECU.setInterpreterMode(ECU.Mode.DISABLED);
             }
         });
 
         consoleRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.asciiRButton) {
-                lastChecked = ECU.MODE.ASCII;
+                lastChecked = ECU.Mode.ASCII;
             } else if (checkedId == R.id.hexRButton) {
-                lastChecked = ECU.MODE.HEX;
+                lastChecked = ECU.Mode.HEX;
             } else if (checkedId == R.id.rawRButton) {
-                lastChecked = ECU.MODE.RAW;
+                lastChecked = ECU.Mode.RAW;
             }
             frontECU.setInterpreterMode(lastChecked);
             console.setMode(lastChecked.name());
@@ -110,40 +105,47 @@ public class SidePanel extends ConstraintLayout {
 
         JSONToggle.setOnClickListener(v -> dialog.showDialog());
         JSONToggle.setHasToggleMediator(true);
-        frontECU.addStatusListener((jsonLoaded, raw) -> JSONToggle.post(() -> JSONToggle.setChecked(jsonLoaded)));
-        frontECU.setLogListener(console::post);
-        frontECU.setErrorListener((tag, msg) -> {
-            errorsPage.postError(tag, msg);
-            console.systemPost(tag, msg);
-            console.newError();
-        });
-
+        frontECU.getMessageHandler().onLoadEvent(b -> JSONToggle.post(() -> JSONToggle.setChecked(b)));
         canMsgButton.setOnClickListener(v -> {
-            long id = frontECU.requestMsgID("[Fault Check]", "[ LOG ] MC0 Fault: DC Bus Voltage Low");
+            long id = frontECU.getMessageHandler().requestMsgID("[Fault Check]", "[ LOG ] MC0 Fault: DC Bus Voltage Low");
             byte[] raw = ByteBuffer.allocate(Long.SIZE / Byte.SIZE).order(ByteOrder.LITTLE_ENDIAN).putLong(id).array();
-            frontECU.debugUpdate(raw);
+            frontECU.postPayload(raw);
         });
 
-        ECUCommunication com = frontECU.getEcuCommunicator();
+        // TODO: New nearby API?
+        //nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> frontECU.enableNearbyAPI(isChecked));
 
-        nearbyAPISwitch.setOnCheckedChangeListener((buttonView, isChecked) -> com.enableNearbyAPI(isChecked));
+        frontECU.setConnectionListener(status -> {
+            boolean opened = (status & SerialCom.Opened) == SerialCom.Opened;
+            boolean attached = (status & SerialCom.Attached) == SerialCom.Attached;
 
-        frontECU.setConnectionListener(connected -> {
-            console.systemPost(ECU.LOG_TAG, connected ? "Serial Connected" : "Serial Disconnected");
-            if (!connected) {
+            Log.getLogger().info(opened ? "Serial Connected" : "Serial Disconnected");
+            if (!opened) {
                 console.setStatus(ConsoleWidget.Status.Disconnected);
             }
-            Toaster.showToast(connected ? "ECU Connected" : "ECU Disconnected", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
-        });
 
-        frontECU.setConnectionStateListener(open -> {
-            connToggle.post(() -> connToggle.setChecked(open));
-            console.setStatus(open ? ConsoleWidget.Status.Connected : (frontECU.isAttached() ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
-            if (!open) {
+            StringBuilder msg = new StringBuilder("ECU ");
+
+            if (attached) {
+                msg.append("attached and ");
+            } else {
+                msg.append("detached and ");
+            }
+
+            if (opened) {
+                msg.append("opened");
+            } else {
+                msg.append("closed");
+            }
+
+            Log.toast(msg.toString(), ToastLevel.INFO, false, Gravity.END);
+
+            connToggle.post(() -> connToggle.setChecked(opened));
+            console.setStatus(opened ? ConsoleWidget.Status.Connected : (attached ? ConsoleWidget.Status.Attached : ConsoleWidget.Status.Disconnected));
+            if (!opened) {
                 dashboard.reset();
                 liveDataPage.reset();
             }
-            Toaster.showToast(open ? "ECU Opened" : "ECU Closed", Toaster.INFO, Toast.LENGTH_SHORT, Gravity.START);
         });
 
         connToggle.setOnClickListener(v -> {
@@ -156,9 +158,9 @@ public class SidePanel extends ConstraintLayout {
         connToggle.setHasToggleMediator(true);
         chargeToggle.setHasToggleMediator(true);
         reverseSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            frontECU.issueCommand(ECUCommands.TOGGLE_REVERSE); // TODO: Use discrete ON / OFF, instead of a toggle
+            frontECU.issueCommand(ECU.Command.TOGGLE_REVERSE); // TODO: Use discrete ON / OFF, instead of a toggle
         });
-        chargeToggle.setOnClickListener(v -> frontECU.issueCommand(ECUCommands.CHARGE));
+        chargeToggle.setOnClickListener(v -> frontECU.issueCommand(ECU.Command.CHARGE));
     }
 
     public void onLayoutChange() {

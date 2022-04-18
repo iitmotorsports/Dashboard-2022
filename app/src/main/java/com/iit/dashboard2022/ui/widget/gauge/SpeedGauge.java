@@ -13,34 +13,31 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
-
+import com.google.common.collect.Lists;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SpeedGauge extends View implements WidgetUpdater.Widget {
     private final Bitmap bitmapBG, bitmaskDraw, bitmaskBuffer;
-    private final Canvas canvasBuffer, canvasBG, canvasDraw;
-    private RectF dst;
+    private final Canvas canvasBG, canvasDraw, canvasBuffer;
     private final Paint paint, maskPaint, dstOver;
     private final Rect mask;
-
-    private int width = 0, height = 0;
-    private int bars = 0;
-    private float percent = 0, oldPercent = 0;
-
+    private final RectF ovalCutout = new RectF(), arcCutout = new RectF();
+    float arcSweep = 0f;
     /* User Managed */
-    private final float taper;
     private final float minWidth;
     private final int BGColor;
     private final int[] colorWheel = new int[3];
+    private RectF dst;
+    private int width = 0, height = 0;
+    private int bars = 0;
+    private float taper, oldTaper = 0;
+    private float percent = 0, oldPercent = 0;
     private int[] maskWidths;
-
 
     public SpeedGauge(Context context) {
         this(context, null);
@@ -83,7 +80,7 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         colorWheel[0] = a.getColor(i++, Color.DKGRAY);
         colorWheel[1] = a.getColor(i++, Color.LTGRAY);
         minWidth = a.getDimension(i++, 8f);
-        taper = a.getFloat(i, 64);
+        taper = a.getFloat(i, 0.5f);
 
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
 
@@ -108,12 +105,13 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
     }
 
     int getColor(float percent) {
-        if (percent > 2 / 3f)
+        if (percent > 2 / 3f) {
             return colorWheel[2];
-        else if (percent > 1 / 3f)
+        } else if (percent > 1 / 3f) {
             return colorWheel[1];
-        else
+        } else {
             return colorWheel[0];
+        }
     }
 
     void drawBars(int x, int y) {
@@ -131,27 +129,25 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
 
         int count = (int) (((x) / 8f));
         float incX = x / (float) count;
-        float incY = y / (float) count;
 
         float sd = getResources().getDisplayMetrics().scaledDensity;
         boolean draw = true;
-        int xPos = 0, yPos = (int) (incY * 16);
+        int xPos = 0;
         float varX = incX * sd;
-        float varY = 0;
 
-        List<Float> widths = new ArrayList<>();
+        List<Float> widths = Lists.newArrayList();
 
         widths.add(0f);
 
         while (xPos <= x) {
+
             if (draw) {
                 paint.setColor(BGColor);
-                canvasBG.drawRect(xPos, 0, xPos + incX + varX, yPos, paint);
+                canvasBG.drawRect(xPos, 0, xPos + incX + varX, height, paint);
                 paint.setColor(getColor((xPos + incX) / width));
-                canvasDraw.drawRect(xPos, 0, xPos + incX + varX, yPos, paint);
+                canvasDraw.drawRect(xPos, 0, xPos + incX + varX, height, paint);
                 widths.add(xPos + incX + varX);
                 varX -= incX / 8;
-                varY += (float) (xPos + width) / (width * taper * sd);
                 if (varX < minWidth - incX) {
                     varX = minWidth - incX;
                 }
@@ -159,24 +155,23 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
                 xPos += varX;
             }
 
-            yPos += (height - yPos) * varY;
             xPos += incX;
             draw = !draw;
         }
-
+        widths.remove(widths.size() - 1);
         widths.add((float) width);
 
         bars = widths.size();
         maskWidths = new int[widths.size()];
 
         int c = 0;
-
         for (Float i : widths) {
             maskWidths[c++] = (int) (i.intValue() + minWidth / 4);
         }
 
         maskWidths[0] = 0;
 
+        WidgetUpdater.post();
     }
 
     private int getCount(float percent) {
@@ -195,15 +190,26 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         canvasBuffer.drawBitmap(bitmapBG, null, dst, null);
         canvasBuffer.drawRect(mask, maskPaint);
         canvasBuffer.drawBitmap(bitmaskDraw, null, dst, dstOver);
+        if (oldTaper > 0.75f) {
+            canvasBuffer.drawArc(arcCutout, 180, arcSweep, true, maskPaint);
+        }
+        canvasBuffer.drawOval(ovalCutout, maskPaint); // TODO: Smooth out corner on mask
         canvas.drawBitmap(bitmaskBuffer, null, dst, null);
     }
 
+    public void setTaper(float percent) {
+        this.taper = percent;
+        WidgetUpdater.post();
+    }
+
     protected void onSizeChanged(int x, int y, int ox, int oy) {
-        if (x <= 0 || y <= 0)
+        if (x <= 0 || y <= 0) {
             return;
+        }
         width = x;
         height = y;
         dst = new RectF(0, 0, x, y);
+        arcCutout.set(-width, -height * 2, width * 3, height * 2);
         drawBars(x, y);
     }
 
@@ -213,12 +219,34 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
     }
 
     public void onWidgetUpdate() {
+        boolean invalid = false;
+
         if (oldPercent != percent) {
             float dv = WidgetUpdater.truncate((percent - oldPercent) * WidgetUpdater.DV(percent));
             oldPercent += dv;
             oldPercent = WidgetUpdater.truncate(oldPercent);
+            invalid = true;
+        }
 
-            mask.set(0, 0, getMaskWidth(oldPercent), height);
+        if (oldTaper != taper) {
+            float dv = WidgetUpdater.truncate((taper - oldTaper) * WidgetUpdater.DV(taper));
+            oldTaper += dv;
+            oldTaper = WidgetUpdater.truncate(oldTaper);
+            invalid = true;
+        }
+
+        mask.set(0, 0, getMaskWidth(oldPercent), height);
+
+        float OHeight = height / 4f;
+
+        if (oldTaper > 0.75f) {
+            float _oldTaper = oldTaper - .75f;
+            OHeight -= _oldTaper * height / 4f;
+            arcSweep = _oldTaper * -10;
+        }
+        ovalCutout.set((-oldTaper * width) - width / 2f, OHeight, (oldTaper * width) + width / 2f, height * 4f);
+
+        if (invalid) {
             postInvalidate();
         }
     }

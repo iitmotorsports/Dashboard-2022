@@ -6,9 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-
 import com.iit.dashboard2022.R;
 
 public class SpeedText extends View implements WidgetUpdater.Widget {

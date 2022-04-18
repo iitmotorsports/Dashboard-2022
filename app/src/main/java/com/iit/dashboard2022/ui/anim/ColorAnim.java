@@ -3,7 +3,6 @@ package com.iit.dashboard2022.ui.anim;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
@@ -12,10 +11,6 @@ public class ColorAnim {
     private final float[] anim_from = new float[3], anim_to = new float[3];
     private final float[] anim_hsv = new float[3];
     private final ValueAnimator anim;
-
-    public interface colorUpdater {
-        void update(@ColorInt int color);
-    }
 
     public ColorAnim(@NonNull Context context, @ColorRes int from, @ColorRes int to, @NonNull colorUpdater updater) {
         Color.colorToHSV(context.getColor(from), anim_from);
@@ -43,6 +38,10 @@ public class ColorAnim {
 
     public void cancel() {
         anim.cancel();
+    }
+
+    public interface colorUpdater {
+        void update(@ColorInt int color);
     }
 
 }

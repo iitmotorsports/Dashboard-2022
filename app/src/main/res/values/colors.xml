@@ -4,6 +4,7 @@
     <color name="secondary">#8e1b22</color>
 
     <color name="foreground">#cfd5e4</color>
+    <color name="foregroundSecondary">#999eac</color>
     <color name="midground">#363c47</color>
     <color name="background">#070e1a</color>
     <color name="backgroundSecondary">#121822</color>
@@ -12,7 +13,12 @@
     <color name="red">#ec0019</color>
     <color name="green">#008200</color>
     <color name="blue">#0082c3</color>
-    <color name="magenta">#c800e2</color>
 
     <color name="translucent_bg">#80000816</color>
+    <color name="defaultTextColor">#FFFFFF</color>
+    <color name="errorColor">#D50000</color>
+    <color name="infoColor">#3F51B5</color>
+    <color name="successColor">#388E3C</color>
+    <color name="warningColor">#FFA900</color>
+    <color name="normalColor">#353A3E</color>
 </resources>

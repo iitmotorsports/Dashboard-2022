@@ -8,23 +8,21 @@ import android.view.animation.Animation;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.RotateAnimation;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
 
 public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton implements ActionableCheck {
     private static final int ANIM_DEGREES = 60;
-
+    boolean moving = false;
+    ValueAnimator translator;
     private RotateAnimation close, open, lockSpin, jiggle;
     private ColorAnim spinColorAnim, lockedColorAnim;
     private LockCallback lockCallback;
     private Runnable callbackOpen, callbackClose;
     private boolean callbackSet = false;
-
     private boolean isOpen = false;
     private boolean locked = false;
     private boolean running = false;
@@ -40,10 +38,6 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
     public SettingsButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-    }
-
-    public interface LockCallback {
-        void run(boolean locked);
     }
 
     public void setCallbacks(@NonNull Runnable callbackOpen, @NonNull Runnable callbackClose, @NonNull LockCallback lockCallback) {
@@ -118,8 +112,9 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         translator.addUpdateListener(animation -> {
             float fraction = animation.getAnimatedFraction();
             if (fraction == 1.0f) {
-                if (locked)
+                if (locked) {
                     startAnimation(lockSpin);
+                }
                 moving = false;
             }
             fraction = AnimSetting.ANIM_DEFAULT_INTERPOLATOR.getInterpolation(fraction);
@@ -127,9 +122,6 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
             setTranslationY(getHeight() / 2.0f * fraction);
         });
     }
-
-    boolean moving = false;
-    ValueAnimator translator;
 
     public void lock(boolean locked) {
         if (this.locked != locked) {
@@ -158,14 +150,16 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
     @Override
     public boolean performClick() {
-        if (moving || !callbackSet)
+        if (moving || !callbackSet) {
             return false;
+        }
         if (locked) {
             startAnimation(jiggle);
             return false;
         }
-        if (running)
+        if (running) {
             return false;
+        }
         if (isOpen) {
             spinColorAnim.reverse();
             startAnimation(close);
@@ -179,15 +173,21 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
     @Override
     public boolean performLongClick() {
-        if (!callbackSet)
+        if (!callbackSet) {
             return false;
+        }
         lock(!locked);
         return true;
     }
 
     @Override
     public void setActionedCheck(boolean checked) {
-        if (isOpen != checked)
+        if (isOpen != checked) {
             performClick();
+        }
+    }
+
+    public interface LockCallback {
+        void run(boolean locked);
     }
 }

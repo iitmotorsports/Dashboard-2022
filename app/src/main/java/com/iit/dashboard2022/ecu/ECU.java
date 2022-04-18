@@ -1,333 +1,382 @@
 package com.iit.dashboard2022.ecu;
 
-import android.os.SystemClock;
-
-import androidx.annotation.NonNull;
+import android.util.Pair;
+import android.view.Gravity;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.google.common.collect.Lists;
+import com.hoho.android.usbserial.driver.UsbSerialPort;
+import com.iit.dashboard2022.logging.Log;
+import com.iit.dashboard2022.logging.LogFile;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.ByteSplit;
-import com.iit.dashboard2022.util.LogFileIO;
-import com.iit.dashboard2022.util.SerialCom;
+import com.iit.dashboard2022.util.Constants;
+import com.iit.dashboard2022.util.USBSerial;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.text.DateFormat;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 
+/**
+ * A class that handles the communication and representation of the vehicle's engine control unit.
+ *
+ * @author Isaias Rivera
+ * @author Noah Husby
+ */
 public class ECU {
-    public static final String LOG_TAG = "ECU";
-    private static final ByteBuffer logBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
+    private static final Logger logger = LoggerFactory.getLogger("ECU");
 
-    private final ECUCommunication com;
-    private final ECUMsgHandler ecuMsgHandler;
-    private final ECUKeyMap ecuKeyMap;
-    private final ECULogger ecuLogger;
+    private final ECUMessageHandler ecuMessageHandler;
+    private final USBSerial usbMethod;
+    private final ECUJUSB J_USB;
+    private final List<Consumer<State>> stateListener = Collections.synchronizedList(Lists.newArrayList());
+    private Mode interpreterMode = Mode.DISABLED;
+    private int errorCount = 0;
 
-    private Runnable jsonLoadListener;
-    private InterpretListener interpretListener;
-    private ErrorListener errorListener;
-    private MODE interpreterMode = MODE.DISABLED;
-    boolean fileLogging = true;
+    private final BlockingQueue<Pair<Long, byte[]>> payloadQueue = new LinkedBlockingQueue<>();
 
-    public enum MODE {
-        DISABLED,
-        ASCII,
-        HEX,
-        RAW
-    }
-
-    public interface InterpretListener {
-        void newMessage(String msg);
-    }
-
-    public interface ErrorListener {
-        void newError(String tag, String msg);
-    }
 
     public ECU(AppCompatActivity activity) {
-        ecuLogger = new ECULogger(activity);
-        ecuKeyMap = new ECUKeyMap(activity);
-        ecuMsgHandler = new ECUMsgHandler(ecuKeyMap);
+        J_USB = new ECUJUSB(this);
+        ECUMessageHandler.MapHandler.ECU.set(J_USB);
+        ecuMessageHandler = new ECUMessageHandler();
 
-        ecuKeyMap.addStatusListener((jsonLoaded, rawJson) -> {
-            if (jsonLoaded) {
-                ecuMsgHandler.loadMessageKeys();
-                if (rawJson != null)
-                    ecuLogger.newLog(rawJson);
-                if (jsonLoadListener != null)
-                    jsonLoadListener.run();
+        // Handles state management
+        ecuMessageHandler.getStatistic(Constants.Statistics.State).addMessageListener(stat -> {
+            State state = State.getStateById(stat.getAsInt());
+            if (state == null) {
+                return;
             }
-        });
+            stateListener.forEach(consumer -> consumer.accept(state));
+        }, ECUStat.UpdateMethod.ON_VALUE_CHANGE);
 
-        com = new ECUCommunication(activity, data -> {
-            long epoch = SystemClock.elapsedRealtime();
-            if (interpreterMode != ECU.MODE.DISABLED) {
-                String msg = processData(epoch, data);
-                if (interpretListener != null && msg.length() > 0) {
-                    interpretListener.newMessage(msg);
+        // Thread for handling message queue
+        Thread ecuThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Pair<Long, byte[]> data = payloadQueue.take();
+                    for (int i = 0; i < data.second.length; i += 8) {
+                        byte[] data_block = new byte[8];
+                        try {
+                            System.arraycopy(data.second, i, data_block, 0, 8);
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            logger.error("Received cutoff array.");
+                            continue;
+                        }
+                        ECUPayload payload = new ECUPayload(data.first, data_block);
+                        handlePayload(payload);
+                    }
+                } catch (InterruptedException e) {
+                    Log.getLogger().warn("ECU Thread Interrupted", e);
                 }
-            } else {
-                consumeData(epoch, data);
             }
         });
-    }
+        ecuThread.setDaemon(true);
+        ecuThread.setName("ECU-Thread");
+        ecuThread.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(ecuThread::interrupt));
 
-    public void issueCommand(@ECUCommands.ECUCommand int Command) {
-        com.write(ECUCommands.COMMANDS[Command]);
-    }
-
-    public void clear() {
-        ecuKeyMap.clear();
-    }
-
-    public boolean open() {
-        return com.open();
-    }
-
-    public void close() {
-        com.close();
-    }
-
-    public boolean isOpen() {
-        return com.isOpen();
-    }
-
-    public boolean isAttached() {
-        return com.isConnected();
-    }
-
-    public void requestJSONFile() {
-        ecuKeyMap.requestJSONFile();
-    }
-
-    public boolean loadJSONFromSystem() {
-        return ecuKeyMap.loadJSONFromSystem();
-    }
-
-    public boolean loadJSONString(String jsonString) {
-        return ecuKeyMap.loadJSONString(jsonString);
-    }
-
-    public void setJSONLoadListener(Runnable listener) {
-        this.jsonLoadListener = listener;
-    }
-
-    public void addStatusListener(@NonNull ECUKeyMap.StatusListener statusListener) {
-        ecuKeyMap.addStatusListener(statusListener);
-    }
-
-    public long requestMsgID(String stringTag, String stringMsg) {
-        if (ecuKeyMap != null)
-            return ecuKeyMap.requestMsgID(stringTag, stringMsg);
-        return -1;
-    }
-
-    public void setInterpreterMode(MODE mode) {
-        this.interpreterMode = mode;
-    }
-
-    public void setLogListener(InterpretListener interpretListener) {
-        this.interpretListener = interpretListener;
-    }
-
-    public void setErrorListener(ErrorListener errorListener) {
-        this.errorListener = errorListener;
-        com.setErrorListener(exception -> errorListener.newError("Serial", "Thread Stopped: " + exception.getMessage()));
-    }
-
-    public void setConnectionListener(SerialCom.ConnectionListener ConnectionListener) {
-        com.setConnectionListener(ConnectionListener);
-    }
-
-    public void setConnectionStateListener(SerialCom.ConnectionStateListener connectionStateListener) {
-        com.setConnectionStateListener(connectionStateListener);
-    }
-
-    public ECUMsgHandler getEcuMsgHandler() {
-        return ecuMsgHandler;
-    }
-
-    public ECUCommunication getEcuCommunicator() {
-        return com;
-    }
-
-    public List<LogFileIO.LogFile> getLocalLogs() {
-        return ecuLogger.getLocalLogs();
+        // Start Serial
+        usbMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
+        usbMethod.setDataListener(this::receiveData);
+        usbMethod.autoConnect(true);
+        open();
     }
 
     /**
-     * Set whether logging to a local file is enabled
+     * Adds raw payload to queue.
      *
-     * @param enabled Whether logging is enabled
+     * @param data Raw message data from ECU.
      */
-    public void enableFileLogging(boolean enabled) {
-        if (fileLogging != enabled) {
-            fileLogging = enabled;
+    public void postPayload(byte[] data) {
+        payloadQueue.add(new Pair<>(System.currentTimeMillis(), data));
+    }
+
+    /**
+     * Handles incoming raw message from ECU.
+     *
+     * @param data Raw message from ECU.
+     */
+    private void receiveData(byte[] data) {
+        if (J_USB.JUSB_requesting != 0 && J_USB.receive(data)) {
+            return;
         }
+        if (!ecuMessageHandler.loaded()) {
+            if (errorCount == 0) {
+                Log.toast("No JSON map Loaded", ToastLevel.WARNING, false, Gravity.START);
+            }
+            errorCount = ++errorCount % 8;
+            return;
+        }
+        postPayload(data);
+    }
+
+    /**
+     * Sends a {@link Command} to the ECU
+     *
+     * @param command The {@link Command} to send
+     */
+    public void issueCommand(Command command) {
+        usbMethod.write(command.getData());
+    }
+
+    /**
+     * Event fired each time the {@link State} changes.
+     *
+     * @param consumer {@link Consumer<State>}
+     */
+    public void onStateChangeEvent(Consumer<State> consumer) {
+        this.stateListener.add(consumer);
+    }
+
+    /**
+     * Sets the interpreter mode of incoming messages.
+     * Valid options include: DISABLED, ASCII, HEX, RAW.
+     *
+     * @param mode {@link Mode} The mode to be set.
+     */
+    public void setInterpreterMode(Mode mode) {
+        this.interpreterMode = mode;
     }
 
     /**
      * Log a message's raw data, if possible
      *
-     * @param epoch    Epoch when message was sent
-     * @param msgBlock The message byte array
+     * @param payload The payload from the ECU.
      */
-    private void logRawData(long epoch, byte[] msgBlock) {
-        if (fileLogging) {
-            logBuffer.clear();
-            ecuLogger.write(logBuffer.putLong(epoch).array());
-            ecuLogger.write(msgBlock);
+    private void logRawData(ECUPayload payload) {
+        LogFile activeLogFile = Log.getInstance().getActiveLogFile();
+        if (activeLogFile != null) {
+            activeLogFile.logBinaryStatistics((int) payload.getCallerId(), (int) payload.getValue());
         }
     }
 
-    private final long[] iBuffer = new long[4];
-    private static final int iBuf_CallerID = 0;
-    private static final int iBuf_StringID = 1;
-    private static final int iBuf_Value = 2;
-    private static final int iBuf_MsgID = 3;
-
     /**
-     * Interprets an ECUMsg and puts it's respective IDs into the given array
+     * Handles the payload based upon the interpreter mode.
+     * The raw data is logged to the binary file regardless of mode.
      *
-     * @param iBuffer    the length 4 long array for the msg IDs
-     * @param data_block the 8 byte data block
+     * @param payload {@link ECUPayload}
      */
-    public static void interpretMsg(long[] iBuffer, byte[] data_block) { // TODO: check that the `get`s are done correctly
-        ByteBuffer buf = ByteBuffer.wrap(data_block).order(ByteOrder.LITTLE_ENDIAN);
-        iBuffer[iBuf_CallerID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_StringID] = buf.getShort() & 0xffff;
-        iBuffer[iBuf_Value] = buf.getInt() & 0xffffffffL;
-        iBuffer[iBuf_MsgID] = buf.getInt(0);
+    private void handlePayload(ECUPayload payload) {
+        if (interpreterMode == Mode.HEX) {
+            logger.debug(ByteSplit.bytesToHex(payload.getRawData()));
+        } else if (interpreterMode == Mode.ASCII) {
+            String message = ecuMessageHandler.getStr((int) payload.getStringId());
+            int temp = (int) payload.getCallerId();
+            if ((temp < 256 || temp > 4096) && message != null) {
+                String comp = message.toLowerCase(Locale.ROOT);
+                String val = " " + payload.getValue();
+                if (comp.contains("[error]")) {
+                    logger.error(message.replace("[ERROR]", "").trim() + val);
+                } else if (comp.contains("[fatal]")) {
+                    logger.error(message.replace("[FATAL]", "").trim() + val);
+                } else if (comp.contains("[warn]")) {
+                    logger.warn(message.replace("[WARN]", "").trim() + val);
+                } else if (comp.contains("[debug]")) {
+                    logger.debug(message.replace("[DEBUG]", "").trim() + val);
+                } else {
+                    logger.info(message.replace("[INFO]", "").replace("[ LOG ]", "").trim() + val);
+                }
+            }
+        }
+        ecuMessageHandler.updateStatistic((int) payload.getCallerId(), (int) payload.getStringId(), payload.getValue());
+        logRawData(payload);
     }
 
-    public void debugUpdate(byte[] data_block) {
-        updateData(data_block);
+    /**
+     * Gets the message handler for the ECU.
+     *
+     * @return {@link ECUMessageHandler}
+     */
+    public ECUMessageHandler getMessageHandler() {
+        return ecuMessageHandler;
     }
 
     /**
-     * Only update needed values and run callback
+     * Writes a raw payload to the ECU.
+     * Caution: Only use this if you know what you're doing.
      *
-     * @param data_block 8 byte data block
-     * @return ECUMsg that was updated, null in none
+     * @param data The raw data to be written.
      */
-    private ECUMsg updateData(byte[] data_block) {
-        interpretMsg(iBuffer, data_block);
-        String fault = ecuMsgHandler.checkFaults(iBuffer[iBuf_StringID]);
-        if (fault != null && errorListener != null) {
-            errorListener.newError("CAN Fault", fault);
+    public void write(byte[] data) {
+        usbMethod.write(data);
+    }
+
+    /**
+     * Event fired each time the ECU connects / disconnects.
+     *
+     * @param statusListener {@link Consumer<Integer>}
+     */
+    public void setConnectionListener(Consumer<Integer> statusListener) {
+        usbMethod.setStatusListener(statusListener);
+    }
+
+    /**
+     * Opens the connection to the USB serial device
+     *
+     * @return True if successfully opened, false if not
+     */
+    public boolean open() {
+        return usbMethod.open();
+    }
+
+    /**
+     * Attempts to close the connection to the USB serial device
+     */
+    public void close() {
+        usbMethod.close();
+    }
+
+    /**
+     * Gets whether the connection to the USB device is active
+     *
+     * @return True if active, false otherwise
+     */
+    public boolean isOpen() {
+        return usbMethod.isOpen();
+    }
+
+    /**
+     * Gets whether the USB device is attached
+     *
+     * @return True if attached, false if not
+     */
+    public boolean isAttached() {
+        return usbMethod.isAttached();
+    }
+
+    public enum Mode {
+        /**
+         * No interpretation of data.
+         */
+        DISABLED,
+
+        /**
+         * Data is encoded to ascii log messages.
+         */
+        ASCII,
+
+        /**
+         * Data is encoded as hex values.
+         */
+        HEX,
+
+        /**
+         * Data is encoded in it's original form.
+         */
+        RAW
+    }
+
+    /**
+     * An enumeration of ECU commands.
+     */
+    public enum Command {
+        CHARGE(123),
+        SEND_CAN_BUS_MESSAGE(111),
+        CLEAR_FAULT(45),
+        TOGGLE_CAN_BUS_SNIFF(127),
+        TOGGLE_MIRROR_MODE(90),
+        ENTER_MIRROR_SET(-1),
+        SEND_ECHO(84),
+        TOGGLE_REVERSE(25),
+        PRINT_LOOKUP(101),
+        SET_SERIAL_VAR(61);
+
+        private final byte[] data;
+
+        Command(int id) {
+            this.data = new byte[]{ Integer.valueOf(id).byteValue() };
+        }
+
+        /**
+         * Gets the raw data representation of the command.
+         *
+         * @return Representation of command as a byte array.
+         */
+        public byte[] getData() {
+            return data;
+        }
+    }
+
+    /**
+     * An enumeration of vehicle states.
+     */
+    public enum State {
+        INITIALIZING("Teensy Initialize"),
+        PRE_CHARGE("PreCharge State"),
+        IDLE("Idle State"),
+        CHARGING("Charging State"),
+        BUTTON("Button State"),
+        DRIVING("Driving Mode State"),
+        FAULT("Fault State");
+
+        private final String name;
+        private int id = -1;
+
+        State(String title) {
+            this.name = title;
+        }
+
+        /**
+         * Sets the numerical ID of the state.
+         *
+         * @param id ID of state as integer.
+         */
+        public void setTagId(int id) {
+            this.id = id;
+        }
+
+        /**
+         * Gets the numerical ID of the state.
+         *
+         * @return ID of state as integer.
+         */
+        public int getTagId() {
+            return id;
+        }
+
+        /**
+         * Gets the pretty name of the state.
+         *
+         * @return Pretty name of state.
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Gets the state by it's numerical ID.
+         *
+         * @param id ID of state.
+         * @return {@link State} if exists, null otherwise.
+         */
+        public static State getStateById(int id) {
+            for (State state : State.values()) {
+                if (state.getTagId() == id) {
+                    return state;
+                }
+            }
             return null;
         }
-        return ecuMsgHandler.updateMessages(iBuffer[iBuf_MsgID], iBuffer[iBuf_Value]);
-    }
 
-    private static final Date d = new Date();
-
-    /**
-     * Generate a formatted string to be passed to interpretListener
-     *
-     * @param epoch     Epoch when message was sent
-     * @param tagString The message's tag
-     * @param msgString The message's string
-     * @param number    The message's value
-     * @return Formatted message string
-     */
-    static String formatMsg(long epoch, String tagString, String msgString, long number) {
-        if (tagString == null || msgString == null)
-            return "";
-        d.setTime(epoch);
-        String epochStr = epoch != 0 ? DateFormat.getTimeInstance().format(d) + ' ' : "";
-        return epochStr + tagString + ' ' + msgString + ' ' + number + '\n';
-    }
-
-    /**
-     * Update requested values, run callback, and generate a formatted string from message
-     *
-     * @param epoch      Epoch when message was sent
-     * @param data_block 8 byte data block
-     * @return the formatted message that was received
-     */
-    private String updateFormattedData(long epoch, byte[] data_block) {
-        ECUMsg msg = updateData(data_block);
-        if (msg == null) {
-            return formatMsg(epoch, ecuKeyMap.getTag((int) iBuffer[iBuf_CallerID]), ecuKeyMap.getStr((int) iBuffer[iBuf_StringID]), iBuffer[iBuf_Value]);
-        } else {
-            return formatMsg(epoch, msg.stringTag, msg.stringMsg, msg.value);
-        }
-    }
-
-    /**
-     * Consume data, does not interpret anything about it
-     * <p>
-     * Should be faster than processData, but does not output anything
-     *
-     * @param epoch    Epoch when message was sent
-     * @param raw_data received byte array
-     */
-    private void consumeData(long epoch, byte[] raw_data) {
-        for (int i = 0; i < raw_data.length; i += 8) {
-            byte[] data_block = new byte[8];
-            try {
-                System.arraycopy(raw_data, i, data_block, 0, 8);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                if (errorListener != null)
-                    errorListener.newError(LOG_TAG, "Received cutoff array");
-                continue;
-            }
-            updateData(data_block);
-            logRawData(epoch, data_block);
-        }
-    }
-
-    /**
-     * Both Consume and interpret raw data that has been received
-     *
-     * @param epoch    Epoch when message was sent
-     * @param raw_data received byte array
-     * @return The interpreted string of the data
-     */
-    private String processData(long epoch, byte[] raw_data) { // Improve: run this on separate thread
-        StringBuilder output = new StringBuilder(32);
-
-        if (interpreterMode == MODE.HEX) {
-            for (int i = 0; i < raw_data.length; i += 8) {
-                byte[] data_block = new byte[8];
-                try {
-                    System.arraycopy(raw_data, i, data_block, 0, 8);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    if (errorListener != null)
-                        errorListener.newError(LOG_TAG, "Received cutoff array");
-                    continue;
+        /**
+         * Gets the state by it's name.
+         *
+         * @param name Name of state.
+         * @return {@link State} if exists, null otherwise.
+         */
+        public static State getStateByName(String name) {
+            name = name.replaceAll("\\[", "").replaceAll("]", "");
+            for (State state : State.values()) {
+                if (state.getName().equalsIgnoreCase(name)) {
+                    return state;
                 }
-                updateData(data_block);
-                logRawData(epoch, data_block);
-                output.append(ByteSplit.bytesToHex(data_block)).append("\n");
             }
-            if (output.length() == 0)
-                return "";
-            return output.substring(0, output.length() - 1);
-        } else if (interpreterMode == MODE.ASCII) {
-            for (int i = 0; i < raw_data.length; i += 8) {
-                byte[] data_block = new byte[8];
-                try {
-                    System.arraycopy(raw_data, i, data_block, 0, 8);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    continue;
-                }
-
-                logRawData(epoch, data_block);
-                output.append(updateFormattedData(epoch, data_block));
-            }
-            if (output.length() == 0) {
-                if (errorListener != null)
-                    errorListener.newError(LOG_TAG, "USB serial might be overwhelmed!");
-                return output.toString();
-            }
-            return output.substring(0, output.length() - 1);
-        } else {
-            consumeData(epoch, raw_data); // attempt to process data
-            return new String(raw_data);
+            return null;
         }
     }
-
 }

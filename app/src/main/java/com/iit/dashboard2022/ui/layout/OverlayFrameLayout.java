@@ -11,21 +11,19 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.widget.FrameLayout;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
 import androidx.appcompat.content.res.AppCompatResources;
-
 import com.iit.dashboard2022.R;
 
 public class OverlayFrameLayout extends FrameLayout {
     private final Paint paint, dstOver;
     @Nullable
-    private Drawable drawableMask;
-    @Nullable
     private final Bitmap overlay, mask;
     private final Canvas canvas;
+    @Nullable
+    private Drawable drawableMask;
 
     public OverlayFrameLayout(Context context) {
         this(context, null);

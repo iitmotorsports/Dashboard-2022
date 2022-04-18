@@ -3,14 +3,12 @@ package com.iit.dashboard2022.ui.widget;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.util.AttributeSet;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.iit.dashboard2022.R;
 
-public class SideRadio extends MaterialRadioButton implements ActionableCheck{
+public class SideRadio extends MaterialRadioButton implements ActionableCheck {
     private static ColorStateList radioOnColorList, radioOffColorList;
 
     public SideRadio(@NonNull Context context) {
@@ -45,8 +43,9 @@ public class SideRadio extends MaterialRadioButton implements ActionableCheck{
 
     @Override
     public void setActionedCheck(boolean checked) {
-        if (isChecked() == checked)
+        if (isChecked() == checked) {
             return;
+        }
         performClick();
     }
 }

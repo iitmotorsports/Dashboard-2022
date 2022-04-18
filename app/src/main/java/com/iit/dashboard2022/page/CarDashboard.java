@@ -4,18 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ecu.ECUMsgHandler;
+import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.SpeedText;
 import com.iit.dashboard2022.ui.widget.StartLight;
 import com.iit.dashboard2022.ui.widget.gauge.LinearGauge;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
+import com.iit.dashboard2022.util.Constants;
 
 import java.util.Locale;
 
@@ -23,9 +22,11 @@ public class CarDashboard extends Page implements UITester.TestUI {
     private StartLight dashStartLight;
     private SpeedGauge sgL, sgR;
     private LinearGauge batteryGauge, powerGauge;
+    private LinearGauge lTempGauge, rTempGauge;
     private SpeedText speedometer;
     private Indicators indicators;
     private String limitFormat;
+    private ECU frontECU;
 
     @Nullable
     @Override
@@ -35,6 +36,8 @@ public class CarDashboard extends Page implements UITester.TestUI {
         sgR = rootView.findViewById(R.id.speedGaugeRight);
         batteryGauge = rootView.findViewById(R.id.batteryGauge);
         powerGauge = rootView.findViewById(R.id.powerGauge);
+        lTempGauge = rootView.findViewById(R.id.lTempGauge);
+        rTempGauge = rootView.findViewById(R.id.rTempGauge);
         speedometer = rootView.findViewById(R.id.speedometer);
         indicators = rootView.findViewById(R.id.indicators);
         dashStartLight = rootView.findViewById(R.id.dashStartLight);
@@ -53,6 +56,8 @@ public class CarDashboard extends Page implements UITester.TestUI {
     }
 
     public void setSpeedPercentage(float percent) {
+        sgL.setTaper(percent);
+        sgR.setTaper(percent);
         sgL.setPercent(percent);
         sgR.setPercent(percent);
     }
@@ -60,6 +65,22 @@ public class CarDashboard extends Page implements UITester.TestUI {
     public void setBatteryPercentage(float percent) {
         batteryGauge.setPercent(percent);
         batteryGauge.setValue(Math.round(percent * 100f));
+    }
+
+    public void setLeftTempValue(int value) {
+        lTempGauge.setValue(value);
+    }
+
+    public void setLeftTempPercentage(float percent) {
+        lTempGauge.setPercent(percent);
+    }
+
+    public void setRightTempValue(int value) {
+        rTempGauge.setValue(value);
+    }
+
+    public void setRightTempPercentage(float percent) {
+        rTempGauge.setPercent(percent);
     }
 
     public void setPowerValue(int value) {
@@ -94,8 +115,12 @@ public class CarDashboard extends Page implements UITester.TestUI {
         dashStartLight.setState(state);
     }
 
+    public void setECU(ECU frontECU) {
+        this.frontECU = frontECU;
+    }
+
     public void reset() {
-        if (dashStartLight != null)
+        if (dashStartLight != null) {
             dashStartLight.postDelayed(() -> {
                 setSpeedPercentage(0);
                 setBatteryPercentage(0);
@@ -109,8 +134,12 @@ public class CarDashboard extends Page implements UITester.TestUI {
                     setIndicator(indicator, false);
                 }
                 setStartLight(false);
-                setState(ECUMsgHandler.STATE.Initializing.toString());
+                if (frontECU != null) {
+                    frontECU.getMessageHandler().getStatistic(Constants.Statistics.State).update(-1);
+                }
+                setState(ECU.State.INITIALIZING.toString());
             }, 20);
+        }
     }
 
     @NonNull
@@ -124,6 +153,10 @@ public class CarDashboard extends Page implements UITester.TestUI {
         setSpeedPercentage(percent);
         setBatteryPercentage(percent);
         setPowerPercentage(percent);
+        setRightTempPercentage(percent);
+        setLeftTempPercentage(percent);
+        setLeftTempValue((int) (percent * 400));
+        setRightTempValue((int) (percent * 400));
         setPowerValue((int) (percent * 1000));
         setPowerLimit((int) (percent * 1000));
         setSpeedValue((int) (300 * percent));
@@ -133,11 +166,12 @@ public class CarDashboard extends Page implements UITester.TestUI {
             for (Indicators.Indicator i : Indicators.Indicator.values()) {
                 setIndicator(i, false);
             }
-        }else {
+        } else {
             setState(UITester.rndStr((int) (percent * 25)));
             for (Indicators.Indicator i : Indicators.Indicator.values()) {
-                if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9)
+                if (i != Indicators.Indicator.Lag && UITester.Rnd.nextFloat() > 0.9) {
                     setIndicator(i, percent > 0.5);
+                }
             }
             setIndicator(Indicators.Indicator.Lag, true);
             setLagTime((long) (percent * 5000));

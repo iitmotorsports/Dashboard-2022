@@ -11,25 +11,21 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleableRes;
-
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
 
 public class LinearGauge extends View implements WidgetUpdater.Widget {
-    private RectF dst;
     private final Paint paint, bgPaint, topTextPaint, bottomTextPaint, valueTextPaint;
     private final Rect mainBar;
-
     private final String topText;
+    private final boolean flipped, vertical;
+    private final int[] colors;
+    private RectF dst;
     private String bottomText;
     private String unit;
-    private final boolean flipped;
-    private final int[] colors;
-
     private String output;
     private int value = 0;
 
@@ -57,6 +53,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
                 R.attr.colorMid,
                 R.attr.flipped,
                 R.attr.unit,
+                R.attr.vertical,
                 android.R.attr.textSize,
                 android.R.attr.textColor,
                 android.R.attr.text,
@@ -73,6 +70,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
         int colorMid = a.getColor(i++, 0);
         flipped = a.getBoolean(i++, false);
         unit = (String) a.getText(i++);
+        vertical = a.getBoolean(i++, false);
         int textSize = a.getDimensionPixelSize(i++, 14);
         int textColor = a.getColor(i++, Color.WHITE);
 
@@ -130,15 +128,21 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     }
 
     private void setSize(int x, int y) {
-        width = x;
-        height = y;
+        if (vertical) {
+            width = y;
+            height = x;
+        } else {
+            width = x;
+            height = y;
+        }
+
         textOffset = (int) (height - height * 0.125f);
         if (topText != null) {
             topTextY = (int) (topTextPaint.getTextSize() + height * 0.125f / 2);
             float[] widths = new float[topText.length()];
             topTextPaint.getTextWidths(topText, widths);
         }
-        valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height/1.2f, getResources().getDisplayMetrics()));
+        valueTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, height / 1.2f, getResources().getDisplayMetrics()));
         dst = new RectF(0, 0, x, y);
         altX = textOffset / 8f;
         updateValueString();
@@ -154,6 +158,10 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
 
     protected void onDraw(Canvas canvas) {
         canvas.drawRect(dst, bgPaint);
+        if (vertical) {
+            canvas.rotate(-90);
+            canvas.translate(-width, 0);
+        }
         canvas.drawRect(mainBar, paint);
         if (topText != null) {
             canvas.drawText(topText, altX, topTextY, topTextPaint);
@@ -165,17 +173,20 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
     }
 
     protected void onSizeChanged(int x, int y, int ox, int oy) {
-        if (x <= 0 || y <= 0)
+        if (x <= 0 || y <= 0) {
             return;
+        }
         setSize(x, y);
     }
 
     @ColorInt
     private int getColor(float ratio) {
-        if (ratio <= 0 || colors.length == 1)
+        if (ratio <= 0 || colors.length == 1) {
             return colors[0];
-        if (ratio >= 1)
+        }
+        if (ratio >= 1) {
             return colors[colors.length - 1];
+        }
 
         // Calc the sector
         float position = ((colors.length - 1) * ratio);
@@ -187,10 +198,12 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
         int eColor = colors[sector + 1];
 
         // Manage the transparent case
-        if (sColor == Color.TRANSPARENT)
+        if (sColor == Color.TRANSPARENT) {
             sColor = Color.argb(0, Color.red(eColor), Color.green(eColor), Color.blue(eColor));
-        if (eColor == Color.TRANSPARENT)
+        }
+        if (eColor == Color.TRANSPARENT) {
             eColor = Color.argb(0, Color.red(sColor), Color.green(sColor), Color.blue(sColor));
+        }
 
         // Calculate the result color
         int alpha = (int) (Color.alpha(eColor) * ratio + Color.alpha(sColor) * (1 - ratio));
@@ -219,15 +232,17 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
             oldPercent += dv;
             oldPercent = WidgetUpdater.truncate(oldPercent);
 
-            if (flipped)
+            if (flipped) {
                 mainBar.set((int) (width * (1.0f - oldPercent)), 0, width, height);
-            else
+            } else {
                 mainBar.set(0, 0, (int) (width * oldPercent), height);
+            }
             paint.setColor(getColor(oldPercent));
             invalid = true;
         }
         updateValueString();
-        if (invalid)
+        if (invalid) {
             postInvalidate();
+        }
     }
 }

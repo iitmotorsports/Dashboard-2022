@@ -12,22 +12,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class PageManager extends FragmentStateAdapter {
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({
-            DASHBOARD,
-            LIVEDATA,
-            LOGS,
-            ERRORS,
-    })
-    @interface PageIndex {
-    }
-
     public static final int DASHBOARD = 0;
     public static final int LIVEDATA = 1;
     public static final int LOGS = 2;
     public static final int ERRORS = 3;
-
-    private final Page[] pages = new Page[4];
+    public static final int COMMANDER = 4;
+    public static final int ABOUT = 5;
+    private final Page[] pages = new Page[6];
 
     public PageManager(@NonNull FragmentManager fragmentManager) {
         super(fragmentManager, new Lifecycle() {
@@ -51,6 +42,8 @@ public class PageManager extends FragmentStateAdapter {
         pages[LIVEDATA] = new LiveData();
         pages[LOGS] = new Logs();
         pages[ERRORS] = new Errors();
+        pages[COMMANDER] = new Commander();
+        pages[ABOUT] = new About();
     }
 
     @NonNull
@@ -76,5 +69,17 @@ public class PageManager extends FragmentStateAdapter {
     @Override
     public int getItemCount() {
         return pages.length;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({
+            DASHBOARD,
+            LIVEDATA,
+            LOGS,
+            ERRORS,
+            COMMANDER,
+            ABOUT
+    })
+    @interface PageIndex {
     }
 }
