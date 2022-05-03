@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
+import com.iit.dashboard2022.util.Constants;
 
 public class TranslationAnim {
     public static final boolean X_AXIS = true;
@@ -26,13 +27,13 @@ public class TranslationAnim {
     public TranslationAnim(View view, boolean axis, boolean direction) {
         autoSize = true;
         this.direction = direction;
-        setup(view, axis, 0, 0, AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+        setup(view, axis, 0, 0, Constants.ANIM_DEFAULT_INTERPOLATOR);
     }
 
     public TranslationAnim(View view, boolean axis, float from, float to) {
         autoSize = false;
         this.direction = ANIM_BACKWARD;
-        setup(view, axis, from, to, AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+        setup(view, axis, from, to, Constants.ANIM_DEFAULT_INTERPOLATOR);
     }
 
     public TranslationAnim(View view, boolean axis, boolean direction, Interpolator interpolator) {
@@ -93,7 +94,7 @@ public class TranslationAnim {
         posDX = to - from;
         translator = ObjectAnimator.ofFloat(view, axis ? View.TRANSLATION_X : View.TRANSLATION_Y, from, to);
         translator.setInterpolator(interpolator);
-        translator.setDuration(AnimSetting.ANIM_DURATION);
+        translator.setDuration(Constants.ANIM_DURATION);
     }
 
     public void setOnInitializedListener(Runnable callback) {

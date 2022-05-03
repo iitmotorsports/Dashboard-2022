@@ -10,7 +10,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.anim.AnimSetting;
+import com.iit.dashboard2022.util.Constants;
 
 public class LiveDataEntry extends View implements WidgetUpdater.Widget {
 
@@ -131,7 +131,7 @@ public class LiveDataEntry extends View implements WidgetUpdater.Widget {
 
         updateValue();
         setActive(true);
-        postDelayed(this::unActivate, AnimSetting.ANIM_DURATION);
+        postDelayed(this::unActivate, Constants.ANIM_DURATION);
         update = true;
     }
 

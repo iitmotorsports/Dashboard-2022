@@ -11,8 +11,8 @@ import android.view.animation.RotateAnimation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.ColorAnim;
+import com.iit.dashboard2022.util.Constants;
 
 public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButton implements ActionableCheck {
     private static final int ANIM_DEGREES = 60;
@@ -53,18 +53,18 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
 
         close = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         open = new RotateAnimation(0, -ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        close.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
-        open.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
-        close.setDuration(AnimSetting.ANIM_DURATION);
-        open.setDuration(AnimSetting.ANIM_DURATION);
+        close.setInterpolator(Constants.ANIM_DEFAULT_INTERPOLATOR);
+        open.setInterpolator(Constants.ANIM_DEFAULT_INTERPOLATOR);
+        close.setDuration(Constants.ANIM_DURATION);
+        open.setDuration(Constants.ANIM_DURATION);
 
         lockSpin = new RotateAnimation(0, ANIM_DEGREES * 2, Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 1f);
         lockSpin.setInterpolator(new AnticipateOvershootInterpolator());
-        lockSpin.setDuration(AnimSetting.ANIM_DURATION * 2);
+        lockSpin.setDuration(Constants.ANIM_DURATION * 2);
 
         jiggle = new RotateAnimation(0, ANIM_DEGREES, Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 1f);
         jiggle.setInterpolator(new BounceInterpolator());
-        jiggle.setDuration(AnimSetting.ANIM_DURATION);
+        jiggle.setDuration(Constants.ANIM_DURATION);
 
         close.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -108,7 +108,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         spinColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.primary, color -> setImageTintList(ColorStateList.valueOf(color)));
         lockedColorAnim = new ColorAnim(getContext(), R.color.foreground, R.color.midground, color -> setImageTintList(ColorStateList.valueOf(color)));
         translator = ValueAnimator.ofFloat(0, 1);
-        translator.setDuration(AnimSetting.ANIM_DURATION);
+        translator.setDuration(Constants.ANIM_DURATION);
         translator.addUpdateListener(animation -> {
             float fraction = animation.getAnimatedFraction();
             if (fraction == 1.0f) {
@@ -117,7 +117,7 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
                 }
                 moving = false;
             }
-            fraction = AnimSetting.ANIM_DEFAULT_INTERPOLATOR.getInterpolation(fraction);
+            fraction = Constants.ANIM_DEFAULT_INTERPOLATOR.getInterpolation(fraction);
             setTranslationX(getWidth() / 2.0f * fraction);
             setTranslationY(getHeight() / 2.0f * fraction);
         });
