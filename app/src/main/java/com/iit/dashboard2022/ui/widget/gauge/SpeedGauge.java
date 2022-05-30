@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.ui.widget.gauge;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -62,6 +63,7 @@ public class SpeedGauge extends View implements WidgetUpdater.Widget {
         maskPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         maskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 
+        @SuppressLint("ResourceType") @StyleableRes
         int[] set = {
                 android.R.attr.backgroundTint,
                 R.attr.colorHigh,

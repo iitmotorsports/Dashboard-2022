@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.ui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -23,6 +24,7 @@ public class SideToggle extends MaterialButton implements ActionableCheck {
 
         colorAnim = new ColorAnim(context, R.color.foreground, R.color.primary, this::setBackgroundColor);
 
+        @SuppressLint("ResourceType") @StyleableRes
         int[] set = {
                 android.R.attr.textOn,
                 android.R.attr.textOff,

@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.ui.layout;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ public class OverlayFrameLayout extends FrameLayout {
     public OverlayFrameLayout(Context context, AttributeSet attrs, @AttrRes int defStyle) {
         super(context, attrs, defStyle);
 
+        @SuppressLint("ResourceType") @StyleableRes
         int[] set = {
                 R.attr.mask,
                 android.R.attr.color,

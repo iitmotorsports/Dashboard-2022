@@ -35,6 +35,7 @@ public class SideSwitch extends RelativeLayout implements ActionableCheck {
     private void init(Context context, @Nullable AttributeSet attrs) {
         View.inflate(context, R.layout.widget_side_switch, this);
         if (attrs != null) {
+            @SuppressLint("ResourceType") @StyleableRes
             int[] set = {
                     android.R.attr.text,
                     R.attr.enableText,

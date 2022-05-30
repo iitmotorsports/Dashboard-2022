@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.ui.widget.gauge;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -46,6 +47,7 @@ public class LinearGauge extends View implements WidgetUpdater.Widget {
 
         mainBar = new Rect();
 
+        @SuppressLint("ResourceType") @StyleableRes
         int[] set = {
                 android.R.attr.backgroundTint,
                 R.attr.colorHigh,
