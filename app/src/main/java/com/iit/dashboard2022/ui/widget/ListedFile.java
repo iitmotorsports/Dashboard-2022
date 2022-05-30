@@ -19,7 +19,7 @@ import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.LogFile;
 import com.iit.dashboard2022.logging.ToastLevel;
-import com.iit.dashboard2022.ui.anim.AnimSetting;
+import com.iit.dashboard2022.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +65,8 @@ public class ListedFile extends FrameLayout {
 
         if (animatorShow == null) {
             animatorShow = ValueAnimator.ofFloat(1.0f);
-            animatorShow.setDuration(AnimSetting.ANIM_DURATION / 2);
-            animatorShow.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+            animatorShow.setDuration(Constants.ANIM_DURATION / 2);
+            animatorShow.setInterpolator(Constants.ANIM_DEFAULT_INTERPOLATOR);
             animatorShow.addUpdateListener(animation -> {
                 float fraction = animation.getAnimatedFraction();
                 animViewShow.showButton.setAlpha(fraction);
@@ -84,8 +84,8 @@ public class ListedFile extends FrameLayout {
                 }
             });
             animatorHide = ValueAnimator.ofFloat(1.0f);
-            animatorHide.setDuration(AnimSetting.ANIM_DURATION / 2);
-            animatorHide.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+            animatorHide.setDuration(Constants.ANIM_DURATION / 2);
+            animatorHide.setInterpolator(Constants.ANIM_DEFAULT_INTERPOLATOR);
             animatorHide.addUpdateListener(animation -> {
                 float fraction = animation.getAnimatedFraction();
                 animViewHide.showButton.setAlpha(fraction);

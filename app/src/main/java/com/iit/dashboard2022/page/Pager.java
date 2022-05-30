@@ -8,8 +8,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.iit.dashboard2022.R;
-import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
+import com.iit.dashboard2022.util.Constants;
 
 public class Pager {
     public static final int LEFT = 0;
@@ -70,8 +70,8 @@ public class Pager {
         });
 
         edgeAnim = ValueAnimator.ofFloat(0, 1);
-        edgeAnim.setDuration(AnimSetting.ANIM_DURATION);
-        edgeAnim.setInterpolator(AnimSetting.ANIM_DEFAULT_INTERPOLATOR);
+        edgeAnim.setDuration(Constants.ANIM_DURATION);
+        edgeAnim.setInterpolator(Constants.ANIM_DEFAULT_INTERPOLATOR);
         // FIXME: Performance: Instead of resizing the actual View, take a screenshot and resize that instead
         edgeAnim.addUpdateListener(animation -> {
             float f = animation.getAnimatedFraction();

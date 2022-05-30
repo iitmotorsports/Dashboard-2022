@@ -6,6 +6,7 @@ import android.graphics.Color;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import com.iit.dashboard2022.util.Constants;
 
 public class ColorAnim {
     private final float[] anim_from = new float[3], anim_to = new float[3];
@@ -17,7 +18,7 @@ public class ColorAnim {
         Color.colorToHSV(context.getColor(to), anim_to);
 
         anim = ValueAnimator.ofFloat(0, 1);
-        anim.setDuration(AnimSetting.ANIM_DURATION);
+        anim.setDuration(Constants.ANIM_DURATION);
 
         anim.addUpdateListener(animation -> {
             anim_hsv[0] = anim_from[0] + (anim_to[0] - anim_from[0]) * (4 * animation.getAnimatedFraction());

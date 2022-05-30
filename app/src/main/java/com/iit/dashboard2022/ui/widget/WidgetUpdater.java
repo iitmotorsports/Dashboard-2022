@@ -2,7 +2,7 @@ package com.iit.dashboard2022.ui.widget;
 
 import android.os.SystemClock;
 import com.google.common.collect.Sets;
-import com.iit.dashboard2022.ui.anim.AnimSetting;
+import com.iit.dashboard2022.util.Constants;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,7 +43,7 @@ public class WidgetUpdater {
 
     private static class WidgetUpdateManager extends Thread {
         protected static final Set<Widget> WIDGETS = new HashSet<>();
-        private static final long UPDATE_TIME_MS = AnimSetting.ANIM_UPDATE_MILLIS;
+        private static final long UPDATE_TIME_MS = Constants.ANIM_UPDATE_MILLIS;
         private static final long SETTLE_TIME_MS = UPDATE_TIME_MS * 10;
         private static long settleTime = SETTLE_TIME_MS;
         private static long lastTime = 0;

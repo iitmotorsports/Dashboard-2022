@@ -21,9 +21,9 @@ import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.logging.StringLogger;
 import com.iit.dashboard2022.ui.UITester;
-import com.iit.dashboard2022.ui.anim.AnimSetting;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
+import com.iit.dashboard2022.util.Constants;
 
 import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -81,7 +81,7 @@ public class ConsoleWidget extends ConstraintLayout implements WidgetUpdater.Wid
         scrollToStartImage.setOnClickListener(v -> {
             consoleScroller.scrollUp();
             scrollToStartImage.setAlpha(1f);
-            postDelayed(() -> scrollToStartImage.setAlpha(0.5f), AnimSetting.ANIM_DURATION / 2);
+            postDelayed(() -> scrollToStartImage.setAlpha(0.5f), Constants.ANIM_DURATION / 2);
         });
         scrollToStartImage.setAlpha(0.5f);
 
