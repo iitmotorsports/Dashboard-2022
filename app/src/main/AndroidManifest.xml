@@ -24,14 +24,14 @@
                 android:name=".SplashActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:launchMode="singleInstance"
-                android:screenOrientation="landscape"/>
+                android:screenOrientation="reverseLandscape"/>
 
         <activity
                 android:name=".MainActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:exported="true"
                 android:launchMode="singleInstance"
-                android:screenOrientation="landscape"
+                android:screenOrientation="reverseLandscape"
                 android:theme="@style/Theme.Dashboard2022">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
