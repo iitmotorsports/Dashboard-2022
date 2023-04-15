@@ -33,11 +33,6 @@ public class LiveDataSelector {
         entries.add(lde);
     }
 
-    @Nullable
-    public LiveDataEntry getLastSelected() {
-        return lastSelected;
-    }
-
     public interface SelectionChangedListener {
         void onSelectionChanged(LiveDataEntry newSelection);
     }

@@ -52,21 +52,6 @@ public class HawkUtil {
     }
 
     /**
-     * Checks if the host device has a network connection
-     *
-     * @param context {@link Context}
-     * @return True if host has connection, false if not
-     */
-    public static boolean checkInternetConnection(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm != null) {
-            NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
-            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN));
-        }
-        return false;
-    }
-
-    /**
      * Gets the application file directory
      *
      * @return The file directory if global context is loaded, null otherwise

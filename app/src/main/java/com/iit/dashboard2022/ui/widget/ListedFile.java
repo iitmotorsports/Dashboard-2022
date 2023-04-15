@@ -53,11 +53,11 @@ public class ListedFile extends FrameLayout {
 
         listedFileMain = findViewById(R.id.listedFileMain);
 
-        listedFileMain.setOnClickListener(this::onViewPressed);
+        listedFileMain.setOnClickListener(v -> onViewPressed());
 
-        uploadButton.setOnClickListener(this::onUploadPressed);
-        deleteButton.setOnClickListener(this::onDeletePressed);
-        deleteButton.setOnLongClickListener(this::onDeleteLongPressed);
+        uploadButton.setOnClickListener(v -> onUploadPressed());
+        deleteButton.setOnClickListener(v -> onDeletePressed());
+        deleteButton.setOnLongClickListener(v -> onDeleteLongPressed());
 
         recycle();
 
@@ -116,12 +116,6 @@ public class ListedFile extends FrameLayout {
         }
 
         return entry;
-    }
-
-    public static void deselectActive() {
-        if (lastSelected != null) {
-            lastSelected.deselect();
-        }
     }
 
     public void destroy() {
@@ -199,16 +193,16 @@ public class ListedFile extends FrameLayout {
     }
 
 
-    private void onUploadPressed(View v) {
+    private void onUploadPressed() {
         notifyListener(ListedFileAction.UPLOAD);
     }
 
-    private void onDeletePressed(View v) {
+    private void onDeletePressed() {
         Log.toast("Hold to confirm", ToastLevel.INFO);
     }
 
     @SuppressWarnings("SameReturnValue")
-    private boolean onDeleteLongPressed(View v) {
+    private boolean onDeleteLongPressed() {
         if (isActive()) {
             Log.toast("Cannot delete active file", ToastLevel.WARNING);
         } else {
@@ -217,7 +211,7 @@ public class ListedFile extends FrameLayout {
         return true;
     }
 
-    private void onViewPressed(View view) {
+    private void onViewPressed() {
         select();
     }
 

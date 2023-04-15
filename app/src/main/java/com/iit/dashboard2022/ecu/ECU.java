@@ -64,7 +64,6 @@ public class ECU {
         usbMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
         usbMethod.setDataListener(payloadQueue::add);
         usbMethod.autoConnect(true);
-        open();
     }
 
     /**
@@ -147,15 +146,6 @@ public class ECU {
      */
     public boolean isOpen() {
         return usbMethod.isOpen();
-    }
-
-    /**
-     * Gets whether the USB device is attached
-     *
-     * @return True if attached, false if not
-     */
-    public boolean isAttached() {
-        return usbMethod.isAttached();
     }
 
     /**

@@ -32,7 +32,6 @@ public class Commander extends Page {
 
     private SwitchMaterial toggle;
     private Slider slider;
-    private MaterialButton submitBtn;
     private EditText valueEdit;
     private TextView maxValueText, minValueText, valueActiveText, IDTextView;
     private LinearLayout valueListLayout;
@@ -55,7 +54,7 @@ public class Commander extends Page {
         minValueText = rootView.findViewById(R.id.minValueText);
         valueActiveText = rootView.findViewById(R.id.valueActiveText);
         IDTextView = rootView.findViewById(R.id.IDTextView);
-        submitBtn = rootView.findViewById(R.id.submitBtn);
+        MaterialButton submitBtn = rootView.findViewById(R.id.submitBtn);
         valueListLayout = rootView.findViewById(R.id.valueListLayout);
 
         selector.setSelectionChangedListener(newSelection -> {

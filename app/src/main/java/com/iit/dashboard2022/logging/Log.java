@@ -114,14 +114,6 @@ public class Log {
         };
     }
 
-    /**
-     * Shows a toast with a normal level.
-     *
-     * @param msg Message to display.
-     */
-    public static void toast(String msg) {
-        toast(msg, ToastLevel.NORMAL);
-    }
 
     /**
      * Shows a toast with the specified level.
@@ -131,17 +123,6 @@ public class Log {
      */
     public static void toast(String msg, ToastLevel status) {
         toast(msg, status, false, Gravity.CENTER);
-    }
-
-    /**
-     * Shows a toast with the specified level.
-     *
-     * @param msg        Message to display.
-     * @param status     Level of toast.
-     * @param longRender The toast will be displayed for a long time if true, short otherwise.
-     */
-    public static void toast(String msg, ToastLevel status, boolean longRender) {
-        toast(msg, status, longRender, Gravity.CENTER);
     }
 
     /**

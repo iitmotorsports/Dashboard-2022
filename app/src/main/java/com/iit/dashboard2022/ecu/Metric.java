@@ -24,7 +24,7 @@ public enum Metric {
     MC1_MOTOR_TEMP(10),
     MC0_MOTOR_TEMP(11),
     SPEEDOMETER(12),
-    POWER_GUAGE(13),
+    POWER_GAUGE(13),
     SOC(14),
     STACK_VOLTAGE(15),
     STACK_CURRENT(16),

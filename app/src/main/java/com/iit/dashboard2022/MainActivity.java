@@ -56,7 +56,6 @@ public final class MainActivity extends AppCompatActivity {
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
         LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
-        ldPage.setEcu(frontECU);
         Commander commandPage = (Commander) mainPager.getPage(PageManager.COMMANDER);
         commandPage.setECU(frontECU);
         cdPage.setECU(frontECU);
@@ -90,20 +89,20 @@ public final class MainActivity extends AppCompatActivity {
                     WidgetUpdater.post();
                 }
         );
+        cdPage.reset();
+        WidgetUpdater.start();
 
         new Handler(Looper.myLooper()).post(() -> {
             /* FINAL CALLS */
-            setupStatistics(cdPage);
-            cdPage.reset();
-
-            WidgetUpdater.start();
-            Log.getInstance().newLog(Metric.getMetricsAsMap());
-
             Log.setEnabled(true);
+            Log.getInstance().newLog(Metric.getMetricsAsMap());
             logPage.displayFiles(Log.getInstance().getLogs().values());
+            setupStatistics(cdPage);
+
             frontECU.open();
         });
         super.onStart();
+
     }
 
     /**
@@ -122,7 +121,7 @@ public final class MainActivity extends AppCompatActivity {
         });
 
         Metric.SOC.addMessageListener(stat -> dashboard.setBatteryPercentage(Math.max(Math.min(stat.getValue(), 100), 0) / 100f));
-        Metric.POWER_GUAGE.addMessageListener(stat -> { // NOTE: Actual MC power not being used
+        Metric.POWER_GAUGE.addMessageListener(stat -> { // NOTE: Actual MC power not being used
             long avgMCVolt = (Metric.MC0_VOLTAGE.getValue() + Metric.MC1_VOLTAGE.getValue()) / 2;
             float limit = Metric.STACK_VOLTAGE.getValue() * Metric.STACK_CURRENT.getValue();
             int usage = (int) (avgMCVolt * Metric.BMS_DISCHARGE_LIM.getValue());
@@ -169,6 +168,4 @@ public final class MainActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
         HawkUtil.setWindowFlags(getWindow());
     }
-
-
 }

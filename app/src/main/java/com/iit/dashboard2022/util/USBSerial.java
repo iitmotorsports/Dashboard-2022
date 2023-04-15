@@ -73,11 +73,6 @@ public class USBSerial implements SerialInputOutputManager.Listener {
         return (status & Opened) == Opened;
     }
 
-    public boolean isAttached() {
-        return (status & Attached) == Attached;
-    }
-
-
     public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity) {
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         deviceIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbManager.EXTRA_PERMISSION_GRANTED), PendingIntent.FLAG_IMMUTABLE);
