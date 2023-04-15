@@ -48,78 +48,10 @@
                         android:textOn="@string/disconnect"
                         tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
-                <com.iit.dashboard2022.ui.widget.SideToggle
-                        android:id="@+id/JSONToggle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textOff="@string/json_unloaded"
-                        android:textOn="@string/json_loaded"
-                        app:textOffSize="10sp"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
-
-                <com.iit.dashboard2022.ui.widget.SideLabel
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/console"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
-
-                <com.iit.dashboard2022.ui.widget.SideSwitch
-                        android:id="@+id/consoleSwitch"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:enableText="false"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck">
-
-                </com.iit.dashboard2022.ui.widget.SideSwitch>
-
-                <RadioGroup
-                        android:id="@+id/consoleRadioGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipChildren="false">
-
-                    <com.iit.dashboard2022.ui.widget.SideRadio
-                            android:id="@+id/asciiRButton"
-                            style="@style/SideRadioButton"
-                            android:layout_width="match_parent"
-                            android:text="@string/ascii"
-                            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
-
-                    <com.iit.dashboard2022.ui.widget.SideRadio
-                            android:id="@+id/hexRButton"
-                            style="@style/SideRadioButton"
-                            android:layout_width="match_parent"
-                            android:text="@string/hex"
-                            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
-
-                    <com.iit.dashboard2022.ui.widget.SideRadio
-                            android:id="@+id/rawRButton"
-                            style="@style/SideRadioButton"
-                            android:layout_width="match_parent"
-                            android:text="@string/raw"
-                            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"/>
-
-                </RadioGroup>
-
-                <com.iit.dashboard2022.ui.widget.SideButton
-                        android:id="@+id/clearConsoleButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/clear_console"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
-
                 <com.iit.dashboard2022.ui.widget.SideLabel
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/controls"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
-
-                <com.iit.dashboard2022.ui.widget.SideToggle
-                        android:id="@+id/chargeToggle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textOff="@string/charge"
-                        android:textOn="@string/charging"
                         tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
                 <com.iit.dashboard2022.ui.widget.SideSwitch
@@ -135,20 +67,6 @@
                         android:text="@string/debug"
                         tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
-                <com.iit.dashboard2022.ui.widget.SideButton
-                        android:id="@+id/canMsgButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/can_message"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
-
-                <com.iit.dashboard2022.ui.widget.SideButton
-                        android:id="@+id/canEchoButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/can_echo"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
-
                 <com.iit.dashboard2022.ui.widget.SideSwitch
                         android:id="@+id/uiTestSwitch"
                         android:layout_width="match_parent"
@@ -157,13 +75,6 @@
                         tools:ignore="TextContrastCheck,TouchTargetSizeCheck">
 
                 </com.iit.dashboard2022.ui.widget.SideSwitch>
-
-                <com.iit.dashboard2022.ui.widget.SideSwitch
-                        android:id="@+id/nearbyAPISwitch"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/nearby_switch_text"
-                        tools:ignore="TextContrastCheck,TouchTargetSizeCheck"/>
 
             </LinearLayout>
         </ScrollView>

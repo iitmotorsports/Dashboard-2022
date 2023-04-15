@@ -60,59 +60,6 @@ public class ByteSplit {
     }
 
     /**
-     * Converts an unsigned integer to a signed byte
-     *
-     * @param unsignedVal unsigned representation of integer
-     * @return signed short
-     */
-    public static byte toSignedByte(long unsignedVal) {
-        return ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(unsignedVal).get(0);
-    }
-
-    /**
-     * Converts an unsigned integer to a signed short
-     *
-     * @param unsignedVal unsigned representation of integer
-     * @return signed short
-     */
-    public static short toSignedShort(long unsignedVal) {
-        return ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(unsignedVal).getShort(0);
-    }
-
-    /**
-     * Converts an unsigned integer to a signed int
-     *
-     * @param unsignedVal unsigned representation of integer
-     * @return signed int
-     */
-    public static int toSignedInt(long unsignedVal) {
-        return ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(unsignedVal).getInt(0);
-    }
-
-    /**
-     * Reads the first two bytes of a message's array, composing them into an
-     * unsigned short value
-     *
-     * @param data raw byte data
-     * @return The unsigned short value as an int
-     */
-    public static int getUnsignedShort(byte[] data) {
-        return (ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getShort() & 0xffff);
-    }
-
-    /**
-     * Reads two bytes at the message's index, composing them into an unsigned short
-     * value.
-     *
-     * @param data     raw byte data
-     * @param position position in message array
-     * @return The unsigned short value as an int
-     */
-    public static int getUnsignedShort(byte[] data, int position) {
-        return (ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getShort(position) & 0xffff);
-    }
-
-    /**
      * Reads the first four bytes of a message's array, composing them into an
      * unsigned int value
      *
@@ -121,17 +68,5 @@ public class ByteSplit {
      */
     public static long getUnsignedInt(byte[] data) {
         return ((long) ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xffffffffL);
-    }
-
-    /**
-     * Reads four bytes at the message's index, composing them into an unsigned int
-     * value.
-     *
-     * @param data     raw byte data
-     * @param position position in message array
-     * @return The unsigned short value at the buffer's current position as a long
-     */
-    public static long getUnsignedInt(byte[] data, int position) {
-        return ((long) ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getInt(position) & 0xffffffffL);
     }
 }

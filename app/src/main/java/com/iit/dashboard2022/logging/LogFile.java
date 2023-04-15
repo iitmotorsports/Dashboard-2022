@@ -1,5 +1,6 @@
 package com.iit.dashboard2022.logging;
 
+import com.iit.dashboard2022.ecu.Metric;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
 
@@ -24,7 +25,6 @@ public class LogFile implements Closeable {
 
     private final long date;
     private final File dir;
-    private final File logFile;
     private final File statsFile;
     private final File statsMapFile;
 
@@ -43,7 +43,6 @@ public class LogFile implements Closeable {
         this.date = date;
         dir = new File(HawkUtil.getLogFilesDir(), String.valueOf(date));
         dir.mkdirs();
-        logFile = new File(dir, "log.txt");
         statsFile = new File(dir, "log.stats");
         statsMapFile = new File(dir, "log.map.stats");
         if (statsMap != null) {
@@ -64,7 +63,6 @@ public class LogFile implements Closeable {
      * @return True if all files are successfully deleted, false otherwise.
      */
     public boolean delete() {
-        logFile.delete();
         statsFile.delete();
         statsMapFile.delete();
         Log.getInstance().getLogs().remove(date);
@@ -96,7 +94,7 @@ public class LogFile implements Closeable {
      * @return Size of the session formatted as a String.
      */
     public String getFileSize() {
-        long totalBytes = logFile.length() + statsFile.length() + statsMapFile.length();
+        long totalBytes = statsFile.length() + statsMapFile.length();
         return HawkUtil.humanReadableBytes(totalBytes);
     }
 
@@ -110,36 +108,12 @@ public class LogFile implements Closeable {
     }
 
     /**
-     * Writes a String log message to the log file.
-     *
-     * @param message The message to write to the file.
-     */
-    public void toLog(String message) {
-        if (outputStream == null) {
-            try {
-                if (!logFile.exists()) {
-                    logFile.createNewFile();
-                }
-                outputStream = new FileOutputStream(logFile);
-            } catch (IOException e) {
-                Log.getLogger().error("Failed to create log file or open output stream", e);
-            }
-        }
-        try {
-            outputStream.write(message.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            Log.getLogger().error("Failed to write data to log file", e);
-        }
-    }
-
-    /**
      * Logs binary data to the statistics file.
      *
-     * @param id   ID of statistics.
-     * @param data Value of statistic.
+     * @param metric Metric.
      */
-    public void logBinaryStatistics(int id, int data) {
-        String out = String.format(Locale.ENGLISH, "%d %d %d\n", System.currentTimeMillis(), id, data);
+    public void logBinaryStatistics(Metric metric) {
+        String out = String.format(Locale.ENGLISH, "%d %d %d\n", System.currentTimeMillis(), metric.getId(), metric.getValue());
         if (binaryStream == null) {
             try {
                 if (!statsFile.exists()) {
@@ -173,15 +147,6 @@ public class LogFile implements Closeable {
                 Log.getLogger().error("Failed to close statistics file output stream", e);
             }
         }
-    }
-
-    /**
-     * Gets the log file of the session.
-     *
-     * @return Text log file.
-     */
-    public File getLogFile() {
-        return logFile;
     }
 
     /**

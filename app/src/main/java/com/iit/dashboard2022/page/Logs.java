@@ -16,7 +16,6 @@ import com.iit.dashboard2022.logging.LogFile;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.widget.ListedFile;
 import com.iit.dashboard2022.ui.widget.SideButton;
-import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,8 +27,6 @@ public class Logs extends Page {
     private static Handler worker;
 
     private ViewGroup rootView;
-    private Runnable showConsole;
-    private ConsoleWidget console;
     private LinearLayout fileEntries;
 
     @Nullable
@@ -52,11 +49,6 @@ public class Logs extends Page {
         }
 
         return rootView;
-    }
-
-    public void attachConsole(ConsoleWidget console, Runnable showConsole) {
-        this.console = console;
-        this.showConsole = showConsole;
     }
 
     public void displayListedFile(@NonNull ListedFile listedFile) {
@@ -121,20 +113,11 @@ public class Logs extends Page {
     private void deleteAllEntries() {
         List<ListedFile> views = getCurrentListedFiles();
         worker.post(() -> {
-            int preSize = views.size();
-            Lists.newArrayList(views).forEach(view -> {
-                LogFile file = view.getFile();
-                if (file == null || (Log.getInstance().getActiveLogFile() != null && file.getEpochSeconds() == Log.getInstance().getActiveLogFile().getEpochSeconds())) {
-                    return;
-                }
-                views.remove(view);
-                rootView.post(() -> removeEntry(view));
-            });
-            if (views.size() == preSize) {
-                Log.toast("No files deleted", ToastLevel.INFO);
-            } else {
-                Log.toast("Done deleting", ToastLevel.INFO);
-            }
+            boolean remove = views.removeIf(file -> file.getFile() != null
+                                         && (Log.getInstance().getActiveLogFile() != null
+                                             && file.getFile().getEpochSeconds() != Log.getInstance().getActiveLogFile().getEpochSeconds()));
+            Log.toast(remove ? "Done Deleting" : "No files deleted", ToastLevel.INFO);
+            updateAll();
         });
     }
 

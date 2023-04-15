@@ -6,11 +6,8 @@ import android.os.Looper;
 import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUMessageHandler;
-import com.iit.dashboard2022.ecu.ECUStat;
+import com.iit.dashboard2022.ecu.Metric;
 import com.iit.dashboard2022.logging.Log;
-import com.iit.dashboard2022.logging.StringAppender;
-import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
 import com.iit.dashboard2022.page.LiveData;
@@ -21,14 +18,9 @@ import com.iit.dashboard2022.ui.SidePanel;
 import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.SettingsButton;
 import com.iit.dashboard2022.ui.widget.WidgetUpdater;
-import com.iit.dashboard2022.ui.widget.console.ConsoleWidget;
 import com.iit.dashboard2022.util.HawkUtil;
-import com.iit.dashboard2022.util.mapping.JsonFileSelectorHandler;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static com.iit.dashboard2022.util.Constants.Statistics.*;
 
 public final class MainActivity extends AppCompatActivity {
 
@@ -54,16 +46,12 @@ public final class MainActivity extends AppCompatActivity {
         mainPager = new Pager(this);
         Log.setContext(this);
         Log.getInstance().loadLogs();
-
-        ((JsonFileSelectorHandler) ECUMessageHandler.MapHandler.SELECTOR.get()).init(this);
-
     }
 
     @Override
     protected void onStart() {
         /* INITIALIZE */
 
-        ConsoleWidget console = findViewById(R.id.console);
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
         LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
@@ -73,18 +61,15 @@ public final class MainActivity extends AppCompatActivity {
         cdPage.setECU(frontECU);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
-        StringAppender.register(console);
-
         frontECU.onStateChangeEvent(state -> {
             cdPage.setState(state.name());
             cdPage.setIndicator(Indicators.Indicator.Waiting, state == ECU.State.IDLE);
             cdPage.setIndicator(Indicators.Indicator.Charging, state == ECU.State.CHARGING);
-            sidePanel.chargeToggle.post(() -> sidePanel.chargeToggle.setChecked(state == ECU.State.CHARGING));
         });
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
-        sidePanel.attach(this, console, cdPage, ldPage, frontECU);
+        sidePanel.attach(cdPage, ldPage, frontECU);
 
         /* SETTINGS BUTTON */
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
@@ -97,12 +82,10 @@ public final class MainActivity extends AppCompatActivity {
                 },
                 () -> {
                     mainPager.pushMargin(Pager.RIGHT, (int) -sidePanel.sidePanelDrawerAnim.start());
-                    sidePanel.consoleSwitch.setActionedCheck(false);
                     WidgetUpdater.post();
                 },
                 locked -> {
                     mainPager.setUserInputEnabled(!locked);
-                    sidePanel.consoleSwitch.setActionedCheck(false);
                     WidgetUpdater.post();
                 }
         );
@@ -110,29 +93,13 @@ public final class MainActivity extends AppCompatActivity {
         new Handler(Looper.myLooper()).postDelayed(() -> {
             /* FINAL CALLS */
             setupStatistics(cdPage);
-            frontECU.getMessageHandler().onLoadEvent(b -> logPage.displayFiles(Log.getInstance().getLogs().values()));
             cdPage.reset();
 
-            logPage.attachConsole(console, () -> settingsBtn.post(() -> {
-                if (settingsBtn.isLocked()) {
-                    settingsBtn.performLongClick();
-                }
-                settingsBtn.setActionedCheck(true);
-                sidePanel.consoleSwitch.setActionedCheck(true);
-            }));
             WidgetUpdater.start();
 
             Log.setEnabled(true);
-            try {
-                if (!frontECU.getMessageHandler().load().get()) {
-                    Log.toast("No JSON is currently loaded", ToastLevel.WARNING);
-                    logPage.displayFiles(Log.getInstance().getLogs().values());
-                } else {
-                    frontECU.open();
-                }
-            } catch (ExecutionException | InterruptedException e) {
-                Log.getLogger().error("Error while loading ECU");
-            }
+            logPage.displayFiles(Log.getInstance().getLogs().values());
+            frontECU.open();
         }, 500);
         super.onStart();
     }
@@ -144,20 +111,19 @@ public final class MainActivity extends AppCompatActivity {
      */
     private void setupStatistics(CarDashboard dashboard) {
         AtomicLong lastSpeed = new AtomicLong();
-        ECUMessageHandler ecuMsgHandler = frontECU.getMessageHandler();
 
         /* GAUGES */
-        ecuMsgHandler.getStatistic(Speedometer).addMessageListener(stat -> {
-            dashboard.setSpeedValue(stat.get());
-            dashboard.setSpeedPercentage(Math.abs(stat.get() - lastSpeed.get()) * 0.32f);
-            lastSpeed.set(stat.get());
+        Metric.SPEEDOMETER.addMessageListener(stat -> {
+            dashboard.setSpeedValue(stat.getValue());
+            dashboard.setSpeedPercentage(Math.abs(stat.getValue() - lastSpeed.get()) * 0.32f);
+            lastSpeed.set(stat.getValue());
         });
 
-        ecuMsgHandler.getStatistic(BatteryLife).addMessageListener(stat -> dashboard.setBatteryPercentage(Math.max(Math.min(stat.get(), 100), 0) / 100f));
-        ecuMsgHandler.getStatistic(PowerGauge).addMessageListener(stat -> { // NOTE: Actual MC power not being used
-            long avgMCVolt = (ecuMsgHandler.getStatistic(MC0Voltage).get() + ecuMsgHandler.getStatistic(MC1Voltage).get()) / 2;
-            float limit = ecuMsgHandler.getStatistic(BMSVolt).get() * ecuMsgHandler.getStatistic(BMSAmp).get();
-            int usage = (int) (avgMCVolt * ecuMsgHandler.getStatistic(BMSDischargeLim).get());
+        Metric.SOC.addMessageListener(stat -> dashboard.setBatteryPercentage(Math.max(Math.min(stat.getValue(), 100), 0) / 100f));
+        Metric.POWER_GUAGE.addMessageListener(stat -> { // NOTE: Actual MC power not being used
+            long avgMCVolt = (Metric.MC0_VOLTAGE.getValue() + Metric.MC1_VOLTAGE.getValue()) / 2;
+            float limit = Metric.STACK_VOLTAGE.getValue() * Metric.STACK_CURRENT.getValue();
+            int usage = (int) (avgMCVolt * Metric.BMS_DISCHARGE_LIM.getValue());
 
             dashboard.setPowerLimit((int) limit);
             if (limit == 0) {
@@ -171,20 +137,20 @@ public final class MainActivity extends AppCompatActivity {
 
         /* INDICATORS */
 
-        ecuMsgHandler.getStatistic(Beat).addMessageListener(stat -> dashboard.setIndicator(Indicators.Indicator.Lag, false), ECUStat.UpdateMethod.ON_RECEIVE);
-        ecuMsgHandler.getStatistic(Lag).addMessageListener(stat -> {
+        Metric.BEAT.addMessageListener(stat -> dashboard.setIndicator(Indicators.Indicator.Lag, false), Metric.UpdateMethod.ON_RECEIVE);
+        Metric.LAG.addMessageListener(stat -> {
             dashboard.setIndicator(Indicators.Indicator.Lag, true);
-            dashboard.setLagTime(stat.get());
+            dashboard.setLagTime(stat.getValue());
         });
-        ecuMsgHandler.getStatistic(Fault).addMessageListener(stat -> dashboard.setIndicator(Indicators.Indicator.Fault, stat.get() > 0));
-        ecuMsgHandler.getStatistic(StartLight).addMessageListener(stat -> dashboard.setStartLight(stat.get() == 1));
-        ecuMsgHandler.getStatistic(MC0BoardTemp).addMessageListener(stat -> {
-            dashboard.setLeftTempValue(stat.getAsInt());
-            dashboard.setLeftTempPercentage(stat.get() / 100f);
+        Metric.FAULT.addMessageListener(stat -> dashboard.setIndicator(Indicators.Indicator.Fault, stat.getValue() > 0));
+        Metric.START_LIGHT.addMessageListener(stat -> dashboard.setStartLight(stat.getValue() == 1));
+        Metric.MC0_BOARD_TEMP.addMessageListener(stat -> {
+            dashboard.setLeftTempValue(stat.getValue());
+            dashboard.setLeftTempPercentage(stat.getValue() / 100f);
         });
-        ecuMsgHandler.getStatistic(MC1BoardTemp).addMessageListener(stat -> {
-            dashboard.setRightTempValue(stat.getAsInt());
-            dashboard.setRightTempPercentage(stat.get() / 100f);
+        Metric.MC1_BOARD_TEMP.addMessageListener(stat -> {
+            dashboard.setRightTempValue(stat.getValue());
+            dashboard.setRightTempPercentage(stat.getValue() / 100f);
         });
     }
 

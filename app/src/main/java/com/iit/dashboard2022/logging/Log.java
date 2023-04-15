@@ -54,7 +54,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  * @author Noah Husby
  */
-public class Log implements StringLogger {
+public class Log {
     private final static Logger LOGGER = LoggerFactory.getLogger("Dashboard");
 
     private static final Log INSTANCE = new Log();
@@ -343,9 +343,6 @@ public class Log implements StringLogger {
      * @param statisticsMap Map of statistics names. Ex: {"1": "Steering"}
      */
     public void newLog(Map<String, String> statisticsMap) {
-        if (!StringAppender.isRegistered(this)) {
-            StringAppender.register(this);
-        }
         LogFile logFile = new LogFile(statisticsMap);
         logs.put(logFile.getEpochSeconds(), logFile);
         if (activeLogFile != null) {
@@ -376,13 +373,6 @@ public class Log implements StringLogger {
         return logs;
     }
 
-    @Override
-    public void onLoggingEvent(ILoggingEvent event, LayoutWrappingEncoder<ILoggingEvent> encoder) {
-        if (activeLogFile != null) {
-            activeLogFile.toLog(encoder.getLayout().doLayout(event));
-        }
-    }
-
     /**
      * Posts a log file to the Cabinet API.
      *
@@ -404,7 +394,7 @@ public class Log implements StringLogger {
             httpConn.setRequestProperty("Test", "Bonjour");
             OutputStream outputStream = httpConn.getOutputStream();
             writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true);
-            HawkUtil.addFilePart(writer, outputStream, boundary, "log", log.getLogFile());
+            HawkUtil.addFilePart(writer, outputStream, boundary, "log", File.createTempFile("temp", null));
             if (log.getStatsFile().length() != 0) {
                 HawkUtil.addFilePart(writer, outputStream, boundary, "stats", log.getStatsFile());
                 HawkUtil.addFilePart(writer, outputStream, boundary, "stats_map", log.getStatsMapFile());

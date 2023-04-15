@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUStat;
+import com.iit.dashboard2022.ecu.Metric;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
@@ -30,7 +30,7 @@ public class LiveData extends Page implements UITester.TestUI {
 
     private boolean enabled = true;
 
-    private final Map<ECUStat, LiveDataEntry> entries = new ConcurrentHashMap<>();
+    private final Map<Metric, LiveDataEntry> entries = new ConcurrentHashMap<>();
     private boolean alt;
 
     private ECU ecu;
@@ -51,7 +51,7 @@ public class LiveData extends Page implements UITester.TestUI {
     }
 
     @UiThread
-    public CompletableFuture<LiveDataEntry> post(ECUStat stat) {
+    public CompletableFuture<LiveDataEntry> post(Metric metric) {
         CompletableFuture<LiveDataEntry> future = new CompletableFuture<>();
         AtomicBoolean temp = new AtomicBoolean(true);
         while (temp.get()) {
@@ -59,11 +59,10 @@ public class LiveData extends Page implements UITester.TestUI {
                 continue;
             }
             getActivity().runOnUiThread(() -> {
-                LiveDataEntry entry = entries.get(stat);
-                String title = stat.getPrettyName() == null ? stat.getIdentifier() : stat.getPrettyName();
+                LiveDataEntry entry = entries.get(metric);
                 if (entry == null) {
-                    entry = new LiveDataEntry(title, rootView.getContext());
-                    entries.put(stat, entry);
+                    entry = new LiveDataEntry(metric.getName(), rootView.getContext());
+                    entries.put(metric, entry);
                     if (alt) {
                         liveDataEntries2.addView(entry);
                     } else {
@@ -92,14 +91,14 @@ public class LiveData extends Page implements UITester.TestUI {
     public void onPageChange(boolean enter) {
         enabled = enter;
         if (enter) {
-            for (ECUStat stat : ecu.getMessageHandler().getStatistics().values()) {
-                if (entries.containsKey(stat)) {
+            for (Metric metric : Metric.values()) {
+                if (entries.containsKey(metric)) {
                     continue;
                 }
                 new Handler(Looper.myLooper()).post(() -> {
                     try {
-                        LiveDataEntry entry = post(stat).get();
-                        stat.addMessageListener(c -> entry.setValue(c.get()));
+                        LiveDataEntry entry = post(metric).get();
+                        metric.addMessageListener(c -> entry.setValue(c.getValue()));
                     } catch (ExecutionException | InterruptedException e) {
                         Log.getLogger().error("Error while updating statistic", e);
                     }

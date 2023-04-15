@@ -16,7 +16,7 @@ import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
-import com.iit.dashboard2022.ecu.ECUStat;
+import com.iit.dashboard2022.ecu.Metric;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
@@ -131,7 +131,7 @@ public class Commander extends Page {
 
     public void setECU(ECU frontECU) {
         this.frontECU = frontECU;
-        frontECU.getMessageHandler().getStatistic(Constants.Statistics.SerialVarResponse).addMessageListener(val -> Log.toast("Value received (truncated): " + val, ToastLevel.SUCCESS), ECUStat.UpdateMethod.ON_RECEIVE);
+        Metric.SERIAL_VAR_RESPONSE.addMessageListener(val -> Log.toast("Value received (truncated): " + val, ToastLevel.SUCCESS), Metric.UpdateMethod.ON_RECEIVE);
     }
 
     @UiThread

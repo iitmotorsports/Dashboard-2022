@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
+import com.iit.dashboard2022.ecu.Metric;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.SpeedText;
@@ -135,7 +136,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
                 }
                 setStartLight(false);
                 if (frontECU != null) {
-                    frontECU.getMessageHandler().getStatistic(Constants.Statistics.State).update(-1);
+                    Metric.STATE.update(-1);
                 }
                 setState(ECU.State.INITIALIZING.toString());
             }, 20);
