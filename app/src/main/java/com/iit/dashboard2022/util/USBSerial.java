@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
@@ -18,8 +19,9 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class USBSerial extends SerialCom implements SerialInputOutputManager.Listener {
+public class USBSerial implements SerialInputOutputManager.Listener {
 
     private final Context context;
     private final UsbManager usbManager;
@@ -29,6 +31,52 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
     private final int baudRate, dataBits, stopBits, parity;
     private UsbSerialPort port;
     private boolean registered = false;
+
+    public static final int Attached = 1; // Physical connection
+    public static final int Detached = 1 << 1; // Physical disconnection
+    public static final int Opened = 1 << 2; // Digital connection
+    public static final int Closed = 1 << 3; // Digital disconnection
+    protected int status = 0;
+    protected Consumer<Integer> statusListener;
+    protected Consumer<byte[]> dataListener;
+
+    protected void newConnData(byte[] buffer) {
+        if (dataListener != null) {
+            dataListener.accept(buffer);
+        }
+    }
+
+    protected void newConnError(Exception exception) {
+        Log.getLogger().error("Serial error: ", exception);
+    }
+
+    protected void setConnStatus(int flags) {
+        status = flags;
+        if (statusListener != null) {
+            statusListener.accept(flags);
+        }
+    }
+
+    public boolean checkStatus(int flags) {
+        return (status & flags) == flags;
+    }
+
+    public void setDataListener(@Nullable Consumer<byte[]> data) {
+        this.dataListener = data;
+    }
+
+    public void setStatusListener(@Nullable Consumer<Integer> flags) {
+        this.statusListener = flags;
+    }
+
+    public boolean isOpen() {
+        return (status & Opened) == Opened;
+    }
+
+    public boolean isAttached() {
+        return (status & Attached) == Attached;
+    }
+
 
     public USBSerial(Context context, int baudRate, @DataBits int dataBits, @StopBits int stopBits, @UsbSerialPort.Parity int parity) {
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -101,19 +149,17 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
         return false;
     }
 
-    @Override
     public boolean open() {
         if (isOpen()) {
             return true;
         }
         boolean opened = openNewConnection();
         if (opened) {
-            setConnStatus(SerialCom.Attached | SerialCom.Opened);
+            setConnStatus(Attached | Opened);
         }
         return opened;
     }
 
-    @Override
     public void close() {
         if (!isOpen()) {
             return;
@@ -122,14 +168,13 @@ public class USBSerial extends SerialCom implements SerialInputOutputManager.Lis
             try {
                 port.close();
                 port = null;
-                setConnStatus((checkStatus(SerialCom.Attached) ? SerialCom.Attached : SerialCom.Detached) | SerialCom.Closed);
+                setConnStatus((checkStatus(Attached) ? Attached : Detached) | Closed);
             } catch (IOException e) {
                 Log.getLogger().error("Failed to close USB connection", e);
             }
         }
     }
 
-    @Override
     public void write(byte[] buffer) {
         try {
             if (port != null && isOpen()) {

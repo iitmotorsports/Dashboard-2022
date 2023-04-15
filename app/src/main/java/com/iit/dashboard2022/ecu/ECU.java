@@ -32,7 +32,6 @@ public class ECU {
     private final BlockingQueue<byte[]> payloadQueue = new LinkedBlockingQueue<>();
 
 
-
     public ECU(AppCompatActivity activity) {
 
         // Handles state management
@@ -72,7 +71,7 @@ public class ECU {
      * Handles the payload based upon the interpreter mode.
      * The raw data is logged to the binary file regardless of mode.
      *
-     * @param id ID of the metric.
+     * @param id    ID of the metric.
      * @param value Value of the metric.
      */
     private void handlePayload(int id, int value) {
@@ -164,7 +163,6 @@ public class ECU {
      */
     public enum Command {
         TOGGLE_REVERSE(25),
-        PRINT_LOOKUP(101),
         SET_SERIAL_VAR(61);
 
         private final byte[] data;
@@ -183,65 +181,4 @@ public class ECU {
         }
     }
 
-    /**
-     * An enumeration of vehicle states.
-     */
-    public enum State {
-        INITIALIZING("Teensy Initialize"),
-        PRE_CHARGE("PreCharge State"),
-        IDLE("Idle State"),
-        CHARGING("Charging State"),
-        BUTTON("Button State"),
-        DRIVING("Driving Mode State"),
-        FAULT("Fault State");
-
-        private final String name;
-        private int id = -1;
-
-        State(String title) {
-            this.name = title;
-        }
-
-        /**
-         * Sets the numerical ID of the state.
-         *
-         * @param id ID of state as integer.
-         */
-        public void setTagId(int id) {
-            this.id = id;
-        }
-
-        /**
-         * Gets the numerical ID of the state.
-         *
-         * @return ID of state as integer.
-         */
-        public int getTagId() {
-            return id;
-        }
-
-        /**
-         * Gets the pretty name of the state.
-         *
-         * @return Pretty name of state.
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * Gets the state by it's numerical ID.
-         *
-         * @param id ID of state.
-         * @return {@link State} if exists, null otherwise.
-         */
-        public static State getStateById(int id) {
-            for (State state : State.values()) {
-                if (state.getTagId() == id) {
-                    return state;
-                }
-            }
-            return null;
-        }
-    }
 }

@@ -69,10 +69,6 @@ public class SideSwitch extends RelativeLayout implements ActionableCheck {
         return widget_switch.isChecked();
     }
 
-    public void setChecked(boolean checked) {
-        widget_switch.setChecked(checked);
-    }
-
     public void setOnCheckedChangeListener(@Nullable CompoundButton.OnCheckedChangeListener listener) {
         widget_switch.setOnCheckedChangeListener(listener);
     }

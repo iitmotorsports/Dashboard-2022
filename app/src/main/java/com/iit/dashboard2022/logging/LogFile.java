@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class LogFile implements Closeable {
     private final File statsFile;
     private final File statsMapFile;
 
-    private FileOutputStream outputStream = null;
+    private final FileOutputStream outputStream = null;
     private FileOutputStream binaryStream = null;
 
     public LogFile(Map<String, String> statsMap) {
@@ -63,8 +64,7 @@ public class LogFile implements Closeable {
      * @return True if all files are successfully deleted, false otherwise.
      */
     public boolean delete() {
-        statsFile.delete();
-        statsMapFile.delete();
+        Arrays.stream(dir.listFiles()).forEach(File::delete);
         Log.getInstance().getLogs().remove(date);
         return dir.delete();
     }

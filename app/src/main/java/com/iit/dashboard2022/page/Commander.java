@@ -22,7 +22,6 @@ import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
 import com.iit.dashboard2022.ui.widget.LiveDataSelector;
 import com.iit.dashboard2022.util.ByteSplit;
-import com.iit.dashboard2022.util.Constants;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

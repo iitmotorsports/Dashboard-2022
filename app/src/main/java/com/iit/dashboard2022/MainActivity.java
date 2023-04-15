@@ -7,6 +7,7 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.Metric;
+import com.iit.dashboard2022.ecu.State;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
@@ -63,8 +64,8 @@ public final class MainActivity extends AppCompatActivity {
 
         frontECU.onStateChangeEvent(state -> {
             cdPage.setState(state.name());
-            cdPage.setIndicator(Indicators.Indicator.Waiting, state == ECU.State.IDLE);
-            cdPage.setIndicator(Indicators.Indicator.Charging, state == ECU.State.CHARGING);
+            cdPage.setIndicator(Indicators.Indicator.Waiting, state == State.IDLE);
+            cdPage.setIndicator(Indicators.Indicator.Charging, state == State.CHARGING);
         });
 
         /* SIDE PANEL */
@@ -90,17 +91,18 @@ public final class MainActivity extends AppCompatActivity {
                 }
         );
 
-        new Handler(Looper.myLooper()).postDelayed(() -> {
+        new Handler(Looper.myLooper()).post(() -> {
             /* FINAL CALLS */
             setupStatistics(cdPage);
             cdPage.reset();
 
             WidgetUpdater.start();
+            Log.getInstance().newLog(Metric.getMetricsAsMap());
 
             Log.setEnabled(true);
             logPage.displayFiles(Log.getInstance().getLogs().values());
             frontECU.open();
-        }, 500);
+        });
         super.onStart();
     }
 

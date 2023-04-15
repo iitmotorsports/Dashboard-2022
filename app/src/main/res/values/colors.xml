@@ -14,7 +14,6 @@
     <color name="green">#008200</color>
     <color name="blue">#0082c3</color>
 
-    <color name="translucent_bg">#80000816</color>
     <color name="defaultTextColor">#FFFFFF</color>
     <color name="errorColor">#D50000</color>
     <color name="infoColor">#3F51B5</color>

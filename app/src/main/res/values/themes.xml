@@ -28,7 +28,4 @@
         <item name="sideSwitchWidgetStyle">@style/SideSwitchWidget</item>
     </style>
 
-    <style name="Theme.Dashboard2022.Dialog" parent="Theme.Dashboard2022">
-        <item name="android:background">@color/background</item>
-    </style>
 </resources>

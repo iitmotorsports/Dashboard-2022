@@ -9,13 +9,13 @@ import androidx.annotation.Nullable;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.Metric;
+import com.iit.dashboard2022.ecu.State;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.Indicators;
 import com.iit.dashboard2022.ui.widget.SpeedText;
 import com.iit.dashboard2022.ui.widget.StartLight;
 import com.iit.dashboard2022.ui.widget.gauge.LinearGauge;
 import com.iit.dashboard2022.ui.widget.gauge.SpeedGauge;
-import com.iit.dashboard2022.util.Constants;
 
 import java.util.Locale;
 
@@ -138,7 +138,7 @@ public class CarDashboard extends Page implements UITester.TestUI {
                 if (frontECU != null) {
                     Metric.STATE.update(-1);
                 }
-                setState(ECU.State.INITIALIZING.toString());
+                setState(State.INITIALIZING.getName());
             }, 20);
         }
     }

@@ -2,14 +2,8 @@ package com.iit.dashboard2022;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.util.HawkUtil;

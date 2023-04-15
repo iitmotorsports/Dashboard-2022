@@ -14,9 +14,6 @@ public class TranslationAnim {
 
     private final boolean autoSize, direction;
     View view;
-    boolean axis;
-    float from, to;
-    Interpolator interpolator;
     boolean state;
     ViewTreeObserver.OnGlobalLayoutListener autoSizeListener;
     private float posDX = 0;
@@ -30,30 +27,8 @@ public class TranslationAnim {
         setup(view, axis, 0, 0, Constants.ANIM_DEFAULT_INTERPOLATOR);
     }
 
-    public TranslationAnim(View view, boolean axis, float from, float to) {
-        autoSize = false;
-        this.direction = ANIM_BACKWARD;
-        setup(view, axis, from, to, Constants.ANIM_DEFAULT_INTERPOLATOR);
-    }
-
-    public TranslationAnim(View view, boolean axis, boolean direction, Interpolator interpolator) {
-        autoSize = true;
-        this.direction = direction;
-        setup(view, axis, 0, 0, interpolator);
-    }
-
-    public TranslationAnim(View view, boolean axis, float from, float to, Interpolator interpolator) {
-        autoSize = false;
-        this.direction = ANIM_BACKWARD;
-        setup(view, axis, from, to, interpolator);
-    }
-
     private void setup(View view, boolean axis, float from, float to, Interpolator interpolator) {
         this.view = view;
-        this.axis = axis;
-        this.from = from;
-        this.to = to;
-        this.interpolator = interpolator;
         state = direction;
         if (autoSize) {
             autoSizeListener = new ViewTreeObserver.OnGlobalLayoutListener() {

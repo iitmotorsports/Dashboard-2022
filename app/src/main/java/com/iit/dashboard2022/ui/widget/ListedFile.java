@@ -30,7 +30,7 @@ public class ListedFile extends FrameLayout {
 
     private static ValueAnimator animatorShow, animatorHide;
     private static ListedFile lastSelected, animViewShow, animViewHide;
-    private final MaterialButton showButton, uploadButton, deleteButton;
+    private final MaterialButton uploadButton, deleteButton;
     private final ConstraintLayout listedFileMain;
     private final MaterialTextView fileInfo;
     private LogFile file;
@@ -48,7 +48,6 @@ public class ListedFile extends FrameLayout {
         View.inflate(context, R.layout.widget_listed_file, this);
 
         fileInfo = findViewById(R.id.fileInfo);
-        showButton = findViewById(R.id.showButton);
         uploadButton = findViewById(R.id.uploadButton);
         deleteButton = findViewById(R.id.deleteButton);
 
@@ -56,7 +55,6 @@ public class ListedFile extends FrameLayout {
 
         listedFileMain.setOnClickListener(this::onViewPressed);
 
-        showButton.setOnClickListener(this::onShowPressed);
         uploadButton.setOnClickListener(this::onUploadPressed);
         deleteButton.setOnClickListener(this::onDeletePressed);
         deleteButton.setOnLongClickListener(this::onDeleteLongPressed);
@@ -69,7 +67,6 @@ public class ListedFile extends FrameLayout {
             animatorShow.setInterpolator(Constants.ANIM_DEFAULT_INTERPOLATOR);
             animatorShow.addUpdateListener(animation -> {
                 float fraction = animation.getAnimatedFraction();
-                animViewShow.showButton.setAlpha(fraction);
                 animViewShow.uploadButton.setAlpha(fraction);
                 animViewShow.deleteButton.setAlpha(fraction);
                 animViewShow.listedFileMain.getBackground().setAlpha(64 + (int) (fraction * 191));
@@ -78,7 +75,6 @@ public class ListedFile extends FrameLayout {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     super.onAnimationStart(animation);
-                    animViewShow.showButton.setVisibility(VISIBLE);
                     animViewShow.uploadButton.setVisibility(VISIBLE);
                     animViewShow.deleteButton.setVisibility(VISIBLE);
                 }
@@ -88,7 +84,6 @@ public class ListedFile extends FrameLayout {
             animatorHide.setInterpolator(Constants.ANIM_DEFAULT_INTERPOLATOR);
             animatorHide.addUpdateListener(animation -> {
                 float fraction = animation.getAnimatedFraction();
-                animViewHide.showButton.setAlpha(fraction);
                 animViewHide.uploadButton.setAlpha(fraction);
                 animViewHide.deleteButton.setAlpha(fraction);
                 animViewHide.listedFileMain.getBackground().setAlpha(64 + (int) (fraction * 191));
@@ -97,7 +92,6 @@ public class ListedFile extends FrameLayout {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    animViewHide.showButton.setVisibility(GONE);
                     animViewHide.uploadButton.setVisibility(GONE);
                     animViewHide.deleteButton.setVisibility(GONE);
                 }
@@ -147,7 +141,6 @@ public class ListedFile extends FrameLayout {
             animViewHide = null;
             animatorHide.cancel();
         }
-        showButton.setVisibility(GONE);
         uploadButton.setVisibility(GONE);
         deleteButton.setVisibility(GONE);
         listedFileMain.getBackground().setAlpha(64);
@@ -205,9 +198,6 @@ public class ListedFile extends FrameLayout {
         }
     }
 
-    private void onShowPressed(View v) {
-        notifyListener(ListedFileAction.SHOW);
-    }
 
     private void onUploadPressed(View v) {
         notifyListener(ListedFileAction.UPLOAD);
@@ -254,7 +244,6 @@ public class ListedFile extends FrameLayout {
     }
 
     public enum ListedFileAction {
-        SHOW,
         UPLOAD,
         DELETE,
     }

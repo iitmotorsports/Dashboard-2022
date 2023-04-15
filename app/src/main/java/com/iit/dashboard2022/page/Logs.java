@@ -40,7 +40,7 @@ public class Logs extends Page {
 
         ListedFile.setGlobalFileListListener(this::onListedFileAction);
         deleteAllButton.setOnClickListener(v -> Log.toast("Hold to confirm", ToastLevel.INFO));
-        deleteAllButton.setOnLongClickListener(this::onDeleteAllButtonLongClick);
+        deleteAllButton.setOnLongClickListener(v -> onDeleteAllButtonLongClick());
         updateAllButton.setOnClickListener(v -> updateAll());
 
         if (worker == null) {
@@ -80,7 +80,7 @@ public class Logs extends Page {
     }
 
     @SuppressWarnings("SameReturnValue")
-    private boolean onDeleteAllButtonLongClick(View view) { // TODO: Add dialog to confirm again
+    private boolean onDeleteAllButtonLongClick() { // TODO: Add dialog to confirm again
         Log.toast("Deleting all entries", ToastLevel.WARNING);
         deleteAllEntries();
         return true;
@@ -113,62 +113,14 @@ public class Logs extends Page {
     private void deleteAllEntries() {
         List<ListedFile> views = getCurrentListedFiles();
         worker.post(() -> {
-            boolean remove = views.removeIf(file -> file.getFile() != null
-                                         && (Log.getInstance().getActiveLogFile() != null
-                                             && file.getFile().getEpochSeconds() != Log.getInstance().getActiveLogFile().getEpochSeconds()));
-            Log.toast(remove ? "Done Deleting" : "No files deleted", ToastLevel.INFO);
+            views.removeIf(file -> file.getFile().delete());
+            Log.toast("Done Deleting", ToastLevel.INFO);
             updateAll();
         });
     }
 
     private void onListedFileAction(@NonNull ListedFile listedFile, @NonNull ListedFile.ListedFileAction action) {
         switch (action) {
-            case SHOW:
-                // TODO: SHOW
-                /*
-                if (console == null) {
-                    Log.toast("No console attached", ToastLevel.ERROR);
-                    return;
-                }
-                ListedFile.deselectActive();
-                worker.post(() -> {
-                    console.post(() -> console.clear());
-
-                    LogFile file = listedFile.getFile();
-                    if (file == null) {
-                        Log.toast("File returned null", ToastLevel.ERROR);
-                        return;
-                    }
-
-                    String msg = ECULogger.interpretLogFile(file);
-                    if (msg.length() == 0) {
-                        Log.toast("File returned empty", ToastLevel.WARNING);
-                        return;
-                    }
-
-                    Spannable[] msgBlocks = ECUColor.colorMsgString(rootView.getContext(), msg);
-                    Log.toast("Showing file on console", ToastLevel.INFO);
-                    showConsole.run();
-                    worker.post(new Runnable() {
-                        int c = 0;
-
-                        @Override
-                        public void run() {
-                            Spannable span = msgBlocks[c++];
-                            if (span != null) {
-                                console.systemPost("Log", TextUtils.concat(file.getTitle(), " - " + c + "/" + msgBlocks.length + "\n", span));
-                            }
-                            if (c != msgBlocks.length) {
-                                worker.postDelayed(this, 64);
-                            }
-                        }
-                    });
-                });
-
-                break;
-
-                 */
-                break;
             case UPLOAD:
                 Log.toast("Uploading File", ToastLevel.INFO);
                 worker.post(() -> {

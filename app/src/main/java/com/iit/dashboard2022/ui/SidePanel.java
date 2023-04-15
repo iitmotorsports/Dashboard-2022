@@ -15,7 +15,7 @@ import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
-import com.iit.dashboard2022.util.SerialCom;
+import com.iit.dashboard2022.util.USBSerial;
 
 public class SidePanel extends ConstraintLayout {
     public final SideSwitch uiTestSwitch, reverseSwitch;
@@ -48,8 +48,8 @@ public class SidePanel extends ConstraintLayout {
 
     public void attach(CarDashboard dashboard, LiveData liveDataPage, ECU frontECU) {
         frontECU.setConnectionListener(status -> {
-            boolean opened = (status & SerialCom.Opened) == SerialCom.Opened;
-            boolean attached = (status & SerialCom.Attached) == SerialCom.Attached;
+            boolean opened = (status & USBSerial.Opened) == USBSerial.Opened;
+            boolean attached = (status & USBSerial.Attached) == USBSerial.Attached;
 
             Log.getLogger().info(opened ? "Serial Connected" : "Serial Disconnected");
 

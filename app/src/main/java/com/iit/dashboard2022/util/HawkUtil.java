@@ -10,6 +10,7 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.MainActivity;
+import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +27,7 @@ import java.util.Locale;
  *
  * @author Noah Husby
  */
+@UtilityClass
 public class HawkUtil {
 
     /**

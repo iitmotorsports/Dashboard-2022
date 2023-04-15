@@ -23,8 +23,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.iit.dashboard2022.R;

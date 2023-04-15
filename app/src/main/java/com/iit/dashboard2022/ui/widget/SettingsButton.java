@@ -144,10 +144,6 @@ public class SettingsButton extends androidx.appcompat.widget.AppCompatImageButt
         }
     }
 
-    public boolean isLocked() {
-        return locked;
-    }
-
     @Override
     public boolean performClick() {
         if (moving || !callbackSet) {

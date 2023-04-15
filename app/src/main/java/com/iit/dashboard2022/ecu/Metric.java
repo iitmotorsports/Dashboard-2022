@@ -1,9 +1,15 @@
 package com.iit.dashboard2022.ecu;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public enum Metric {
 
     BRAKE(1),
@@ -34,22 +40,11 @@ public enum Metric {
     SERIAL_VAR_RESPONSE(26),
     STEER(27);
 
+    @Getter
     private final int id;
+    @Getter
     private int value = 0;
-    public final Map<Consumer<Metric>, UpdateMethod> messageListeners = new ConcurrentHashMap<>();
-
-    Metric(int id) {
-        this.id = id;
-    }
-
-    /**
-     * Gets the id of the metric.
-     *
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
+    private final Map<Consumer<Metric>, UpdateMethod> messageListeners = new ConcurrentHashMap<>();
 
     /**
      * Gets the name of the metric.
@@ -104,19 +99,6 @@ public enum Metric {
         messageListeners.put(messageListener, updateMethod);
     }
 
-    public void clear() {
-        this.value = 0;
-    }
-
-    /**
-     * Gets the current value
-     *
-     * @return The current value
-     */
-    public int getValue() {
-        return value;
-    }
-
     public enum UpdateMethod {
         /**
          * Fire the event each time a value is received
@@ -136,6 +118,15 @@ public enum Metric {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the metrics as a string map of ID / Name.
+     *
+     * @return A {@link Map} of Metric ID / Name.
+     */
+    public static Map<String, String> getMetricsAsMap() {
+        return Arrays.stream(values()).collect(Collectors.toMap(v -> String.valueOf(v.id), Enum::name));
     }
 }
 
