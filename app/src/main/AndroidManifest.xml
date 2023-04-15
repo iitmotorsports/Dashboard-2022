@@ -24,18 +24,23 @@
                 android:name=".SplashActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
                 android:launchMode="singleInstance"
-                android:screenOrientation="reverseLandscape"/>
+                android:exported="true"
+                android:screenOrientation="reverseLandscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
 
         <activity
                 android:name=".MainActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
-                android:exported="true"
                 android:launchMode="singleInstance"
                 android:screenOrientation="reverseLandscape"
+                android:exported="false"
                 android:theme="@style/Theme.Dashboard2022">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
             </intent-filter>
             <meta-data

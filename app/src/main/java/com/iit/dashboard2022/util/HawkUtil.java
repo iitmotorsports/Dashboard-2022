@@ -7,6 +7,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
+import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.MainActivity;
 
@@ -33,6 +34,9 @@ public class HawkUtil {
      * @param window {@link Window}
      */
     public static void setWindowFlags(Window window) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.getInsetsController().hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
         } else {

@@ -1,12 +1,9 @@
 package com.iit.dashboard2022;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.WindowManager;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.ecu.ECUMessageHandler;
@@ -16,7 +13,6 @@ import com.iit.dashboard2022.logging.StringAppender;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.page.CarDashboard;
 import com.iit.dashboard2022.page.Commander;
-import com.iit.dashboard2022.page.Errors;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.page.Logs;
 import com.iit.dashboard2022.page.PageManager;
@@ -34,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static com.iit.dashboard2022.util.Constants.Statistics.*;
 
-public class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity {
 
     // Don't use this variable. It will have unintended consequences and will likely end up in the app crashing
     public static AppCompatActivity GLOBAL_CONTEXT = null;
@@ -46,14 +42,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         GLOBAL_CONTEXT = this;
-        startActivity(new Intent(this, SplashActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));
-        Log.setEnabled(false);
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupUI();
+        HawkUtil.setWindowFlags(getWindow());
 
-        /* INITIALIZE */
+        Log.setEnabled(false);
         frontECU = new ECU(this);
 
         mainPager = new Pager(this);
@@ -61,23 +56,24 @@ public class MainActivity extends AppCompatActivity {
         Log.getInstance().loadLogs();
 
         ((JsonFileSelectorHandler) ECUMessageHandler.MapHandler.SELECTOR.get()).init(this);
+
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+    protected void onStart() {
+        /* INITIALIZE */
+
         ConsoleWidget console = findViewById(R.id.console);
         /* PAGER */
         CarDashboard cdPage = (CarDashboard) mainPager.getPage(PageManager.DASHBOARD);
         LiveData ldPage = (LiveData) mainPager.getPage(PageManager.LIVEDATA);
         ldPage.setEcu(frontECU);
-        Errors errorsPage = (Errors) mainPager.getPage(PageManager.ERRORS);
         Commander commandPage = (Commander) mainPager.getPage(PageManager.COMMANDER);
         commandPage.setECU(frontECU);
         cdPage.setECU(frontECU);
         Logs logPage = (Logs) mainPager.getPage(PageManager.LOGS);
 
         StringAppender.register(console);
-        StringAppender.register(errorsPage);
 
         frontECU.onStateChangeEvent(state -> {
             cdPage.setState(state.name());
@@ -88,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* SIDE PANEL */
         sidePanel = findViewById(R.id.sidePanel);
-        sidePanel.attach(this, console, cdPage, ldPage, errorsPage, frontECU);
+        sidePanel.attach(this, console, cdPage, ldPage, frontECU);
 
         /* SETTINGS BUTTON */
         SettingsButton settingsBtn = findViewById(R.id.settingsBtn);
@@ -138,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.getLogger().error("Error while loading ECU");
             }
         }, 500);
-        super.onPostCreate(savedInstanceState);
+        super.onStart();
     }
 
     /**
@@ -206,12 +202,5 @@ public class MainActivity extends AppCompatActivity {
         HawkUtil.setWindowFlags(getWindow());
     }
 
-    private void setupUI() {
-        // Account for notches in newer phones
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-        HawkUtil.setWindowFlags(getWindow());
-    }
 
 }

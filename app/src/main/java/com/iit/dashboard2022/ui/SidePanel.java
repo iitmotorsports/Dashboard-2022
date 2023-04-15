@@ -13,7 +13,6 @@ import com.iit.dashboard2022.ecu.ECU;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.page.CarDashboard;
-import com.iit.dashboard2022.page.Errors;
 import com.iit.dashboard2022.page.LiveData;
 import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SideButton;
@@ -72,7 +71,7 @@ public class SidePanel extends ConstraintLayout {
         sidePanelDrawerAnim.startWhenReady();
     }
 
-    public void attach(Activity activity, ConsoleWidget console, CarDashboard dashboard, LiveData liveDataPage, Errors errorsPage, ECU frontECU) {
+    public void attach(Activity activity, ConsoleWidget console, CarDashboard dashboard, LiveData liveDataPage, ECU frontECU) {
         consoleAnim = console.getAnimator();
         consoleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
