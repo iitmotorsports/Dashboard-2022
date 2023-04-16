@@ -22,6 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class LiveData extends Page implements UITester.TestUI {
 
     private LinearLayout liveDataEntries1, liveDataEntries2;
@@ -93,7 +96,7 @@ public class LiveData extends Page implements UITester.TestUI {
                         LiveDataEntry entry = post(metric).get();
                         metric.addMessageListener(c -> entry.setValue(c.getValue()));
                     } catch (ExecutionException | InterruptedException e) {
-                        Log.getLogger().error("Error while updating statistic", e);
+                        log.error("Error while updating statistic", e);
                     }
                 });
             }

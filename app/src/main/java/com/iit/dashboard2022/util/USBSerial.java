@@ -21,6 +21,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.function.Consumer;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class USBSerial implements SerialInputOutputManager.Listener {
 
     private final Context context;
@@ -47,7 +50,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
     }
 
     protected void newConnError(Exception exception) {
-        Log.getLogger().error("Serial error: ", exception);
+        log.error("Serial error: ", exception);
     }
 
     protected void setConnStatus(int flags) {
@@ -139,7 +142,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
             return true;
 
         } catch (IOException e) {
-            Log.getLogger().error("Failed to open new USB connection", e);
+            log.error("Failed to open new USB connection", e);
         }
         return false;
     }
@@ -165,7 +168,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
                 port = null;
                 setConnStatus((checkStatus(Attached) ? Attached : Detached) | Closed);
             } catch (IOException e) {
-                Log.getLogger().error("Failed to close USB connection", e);
+                log.error("Failed to close USB connection", e);
             }
         }
     }
@@ -176,7 +179,7 @@ public class USBSerial implements SerialInputOutputManager.Listener {
                 port.write(buffer, 0);
             }
         } catch (IOException e) {
-            Log.getLogger().error("Failed to write data to USB serial device", e);
+            log.error("Failed to write data to USB serial device", e);
         }
     }
 

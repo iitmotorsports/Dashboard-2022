@@ -24,6 +24,9 @@ import com.iit.dashboard2022.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ListedFile extends FrameLayout {
     private static final List<ListedFile> inactiveEntries = new ArrayList<>();
     private static GlobalFileListListener globalFileListListener;
@@ -164,7 +167,7 @@ public class ListedFile extends FrameLayout {
         try {
             fileInfo.post(() -> fileInfo.setText(file.getFormattedName() + (isActive() ? " - Active" : "")));
         } catch (Exception e) {
-            Log.getLogger().error("Failed to update log file information", e);
+            log.error("Failed to update log file information", e);
             if (fileInfo != null) {
                 fileInfo.post(() -> fileInfo.setText(R.string.listed_file_fail));
             }

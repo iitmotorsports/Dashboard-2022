@@ -36,7 +36,6 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         GLOBAL_CONTEXT = this;
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         HawkUtil.setWindowFlags(getWindow());

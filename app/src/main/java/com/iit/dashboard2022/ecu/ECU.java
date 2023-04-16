@@ -5,17 +5,21 @@ import com.google.common.collect.Lists;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.LogFile;
+import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.USBSerial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A class that handles the communication and representation of the vehicle's engine control unit.
@@ -23,8 +27,8 @@ import java.util.function.Consumer;
  * @author Isaias Rivera
  * @author Noah Husby
  */
+@Slf4j
 public class ECU {
-    private static final Logger logger = LoggerFactory.getLogger("ECU");
 
     private final USBSerial usbMethod;
     private final List<Consumer<State>> stateListener = Collections.synchronizedList(Lists.newArrayList());
@@ -49,9 +53,11 @@ public class ECU {
                 try {
                     ByteBuffer buf = ByteBuffer.wrap(payloadQueue.take())
                             .order(ByteOrder.LITTLE_ENDIAN);
-                    handlePayload(buf.getInt(0), buf.getInt(1));
+                    while (buf.hasRemaining()) {
+                        handlePayload(buf.getInt(), buf.getInt());
+                    }
                 } catch (InterruptedException e) {
-                    Log.getLogger().warn("ECU Thread Interrupted", e);
+                    log.warn("ECU Thread Interrupted", e);
                 }
             }
         });
@@ -64,6 +70,7 @@ public class ECU {
         usbMethod = new USBSerial(activity, 115200, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_2, UsbSerialPort.PARITY_NONE);
         usbMethod.setDataListener(payloadQueue::add);
         usbMethod.autoConnect(true);
+        open();
     }
 
     /**
@@ -76,7 +83,7 @@ public class ECU {
     private void handlePayload(int id, int value) {
         Metric metric = Metric.getMetricById(id);
         if (metric == null) {
-            logger.warn("Invalid metric w/ ID: {}", id);
+            log.warn("Invalid metric w/ ID: {}", id);
             return;
         }
         metric.update(value);

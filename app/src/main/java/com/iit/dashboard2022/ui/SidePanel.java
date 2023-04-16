@@ -16,7 +16,9 @@ import com.iit.dashboard2022.ui.anim.TranslationAnim;
 import com.iit.dashboard2022.ui.widget.SideSwitch;
 import com.iit.dashboard2022.ui.widget.SideToggle;
 import com.iit.dashboard2022.util.USBSerial;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SidePanel extends ConstraintLayout {
     public final SideSwitch uiTestSwitch, reverseSwitch;
     public final SideToggle connToggle;
@@ -51,7 +53,7 @@ public class SidePanel extends ConstraintLayout {
             boolean opened = (status & USBSerial.Opened) == USBSerial.Opened;
             boolean attached = (status & USBSerial.Attached) == USBSerial.Attached;
 
-            Log.getLogger().info(opened ? "Serial Connected" : "Serial Disconnected");
+            log.info(opened ? "Serial Connected" : "Serial Disconnected");
 
             StringBuilder msg = new StringBuilder("ECU ");
 

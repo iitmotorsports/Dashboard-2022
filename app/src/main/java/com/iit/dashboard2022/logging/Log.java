@@ -47,23 +47,21 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * A utility class for handling logs.
  *
  * @author Noah Husby
  */
+@Slf4j
 public class Log {
-    private final static Logger LOGGER = LoggerFactory.getLogger("Dashboard");
-
-    private static final Log INSTANCE = new Log();
-
-    public static Logger getLogger() {
-        return LOGGER;
-    }
+    @Getter
+    private static final Log instance = new Log();
 
     private static final ConcurrentLinkedQueue<ToastMessage> queue = new ConcurrentLinkedQueue<>();
     private static final Handler uiHandle = new Handler(Looper.getMainLooper());
-    private static boolean enable = true;
     private static Runnable newToast;
 
     protected Log() {
@@ -87,23 +85,23 @@ public class Log {
             }
             switch (tm.status) {
                 case NORMAL:
-                    LOGGER.info(tm.msg);
+                    log.info(tm.msg);
                     toast = normalWithDarkThemeSupport(context, tm.msg, tm.duration);
                     break;
                 case INFO:
-                    LOGGER.info(tm.msg);
+                    log.info(tm.msg);
                     toast = info(context, tm.msg, tm.duration, true);
                     break;
                 case SUCCESS:
-                    LOGGER.info(tm.msg);
+                    log.info(tm.msg);
                     toast = success(context, tm.msg, tm.duration, true);
                     break;
                 case WARNING:
-                    LOGGER.warn(tm.msg);
+                    log.warn(tm.msg);
                     toast = warning(context, tm.msg, tm.duration, true);
                     break;
                 case ERROR:
-                    LOGGER.error(tm.msg);
+                    log.error(tm.msg);
                     toast = error(context, tm.msg, tm.duration, true);
                     break;
                 default:
@@ -134,7 +132,7 @@ public class Log {
      * @param gravity    Gravity of toast
      */
     public static void toast(String msg, ToastLevel status, boolean longRender, int gravity) {
-        if (!enable || newToast == null) {
+        if (newToast == null) {
             return;
         }
         int xOffset = 0;
@@ -143,15 +141,6 @@ public class Log {
         }
         queue.add(new ToastMessage(longRender ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT, Gravity.BOTTOM | gravity, status, xOffset, msg));
         uiHandle.postDelayed(newToast, 20);
-    }
-
-    /**
-     * Enable toasts.
-     *
-     * @param enable Toasts will be enabled if true, false otherwise.
-     */
-    public static void setEnabled(boolean enable) {
-        Log.enable = enable;
     }
 
     /**
@@ -286,10 +275,6 @@ public class Log {
         return ContextCompat.getColor(context, color);
     }
 
-    public static Log getInstance() {
-        return INSTANCE;
-    }
-
     /**
      * Loads logs from storage
      */
@@ -299,20 +284,20 @@ public class Log {
         Map<Long, LogFile> tempLogs = Maps.newTreeMap();
         for (File file : Objects.requireNonNull(logDir.listFiles())) {
             if (file.isFile()) {
-                getLogger().warn("Unknown file in log directory: " + file.getName());
+                log.warn("Unknown file in log directory: " + file.getName());
             } else {
                 String directoryName = file.getName();
                 long date;
                 try {
                     date = Long.parseLong(directoryName);
                 } catch (NumberFormatException ignored) {
-                    getLogger().warn("Invalid directory name: " + directoryName + ". Not loading log.");
+                    log.warn("Invalid directory name: " + directoryName + ". Not loading log.");
                     continue;
                 }
                 tempLogs.put(date, new LogFile(date));
             }
         }
-        getLogger().info(String.format(Locale.ENGLISH, "Loaded %d logs", tempLogs.size()));
+        log.info(String.format(Locale.ENGLISH, "Loaded %d logs", tempLogs.size()));
         logs = tempLogs;
     }
 
@@ -325,11 +310,11 @@ public class Log {
         LogFile logFile = new LogFile(statisticsMap);
         logs.put(logFile.getEpochSeconds(), logFile);
         if (activeLogFile != null) {
-            getLogger().info("Stopping log: " + activeLogFile.getDate());
+            log.info("Stopping log: " + activeLogFile.getDate());
             activeLogFile.close();
         }
         activeLogFile = logFile;
-        getLogger().info("Starting log: " + activeLogFile.getDate());
+        log.info("Starting log: " + activeLogFile.getDate());
     }
 
     /**
@@ -373,7 +358,7 @@ public class Log {
             httpConn.setRequestProperty("Test", "Bonjour");
             OutputStream outputStream = httpConn.getOutputStream();
             writer = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true);
-            HawkUtil.addFilePart(writer, outputStream, boundary, "log", File.createTempFile("temp", null));
+            HawkUtil.addFilePart(writer, outputStream, boundary, "log", log.getLogFile());
             if (log.getStatsFile().length() != 0) {
                 HawkUtil.addFilePart(writer, outputStream, boundary, "stats", log.getStatsFile());
                 HawkUtil.addFilePart(writer, outputStream, boundary, "stats_map", log.getStatsMapFile());

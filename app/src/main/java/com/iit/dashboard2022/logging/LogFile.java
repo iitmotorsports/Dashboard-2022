@@ -6,6 +6,7 @@ import com.iit.dashboard2022.util.HawkUtil;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,19 +18,26 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * A representation of a logging session.
  *
  * @author Noah Husby
  */
+@Slf4j
 public class LogFile implements Closeable {
 
     private final long date;
     private final File dir;
+    @Getter
+    private final File logFile;
+
     private final File statsFile;
     private final File statsMapFile;
 
-    private final FileOutputStream outputStream = null;
+    private FileOutputStream outputStream = null;
     private FileOutputStream binaryStream = null;
 
     public LogFile(Map<String, String> statsMap) {
@@ -46,6 +54,7 @@ public class LogFile implements Closeable {
         dir.mkdirs();
         statsFile = new File(dir, "log.stats");
         statsMapFile = new File(dir, "log.map.stats");
+        logFile = new File(dir, "log.txt");
         if (statsMap != null) {
             try {
                 FileWriter writer = new FileWriter(statsMapFile);
@@ -53,9 +62,19 @@ public class LogFile implements Closeable {
                 writer.close();
                 statsFile.createNewFile();
             } catch (IOException e) {
-                Log.getLogger().error("Failed to write statistics map file for: " + getFileSize(), e);
+                log.error("Failed to write statistics map file for: " + getFileSize(), e);
             }
         }
+        // Temp write to log
+        try {
+            logFile.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(logFile);
+            outputStream.write("Car is not logged through dashboard. Please check SD Card Logs.".getBytes(StandardCharsets.UTF_8));
+            outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     /**
@@ -121,13 +140,13 @@ public class LogFile implements Closeable {
                 }
                 binaryStream = new FileOutputStream(statsFile);
             } catch (IOException e) {
-                Log.getLogger().error("Failed to create statistics file or open output stream", e);
+                log.error("Failed to create statistics file or open output stream", e);
             }
         }
         try {
             binaryStream.write(out.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            Log.getLogger().error("Failed to write data to statistics file", e);
+            log.error("Failed to write data to statistics file", e);
         }
     }
 
@@ -137,14 +156,14 @@ public class LogFile implements Closeable {
             try {
                 outputStream.close();
             } catch (IOException e) {
-                Log.getLogger().error("Failed to close log file output stream", e);
+                log.error("Failed to close log file output stream", e);
             }
         }
         if (binaryStream != null) {
             try {
                 binaryStream.close();
             } catch (IOException e) {
-                Log.getLogger().error("Failed to close statistics file output stream", e);
+                log.error("Failed to close statistics file output stream", e);
             }
         }
     }
