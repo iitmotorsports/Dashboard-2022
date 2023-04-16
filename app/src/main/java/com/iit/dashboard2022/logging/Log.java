@@ -28,8 +28,8 @@ import com.google.gson.JsonObject;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,9 +46,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A utility class for handling logs.

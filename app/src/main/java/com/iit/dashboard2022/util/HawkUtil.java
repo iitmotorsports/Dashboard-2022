@@ -1,12 +1,8 @@
 package com.iit.dashboard2022.util;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowInsets;
 import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import com.iit.dashboard2022.MainActivity;

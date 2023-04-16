@@ -40,7 +40,6 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         HawkUtil.setWindowFlags(getWindow());
 
-        Log.setEnabled(false);
         frontECU = new ECU(this);
 
         mainPager = new Pager(this);
@@ -93,7 +92,6 @@ public final class MainActivity extends AppCompatActivity {
 
         new Handler(Looper.myLooper()).post(() -> {
             /* FINAL CALLS */
-            Log.setEnabled(true);
             Log.getInstance().newLog(Metric.getMetricsAsMap());
             logPage.displayFiles(Log.getInstance().getLogs().values());
             setupStatistics(cdPage);

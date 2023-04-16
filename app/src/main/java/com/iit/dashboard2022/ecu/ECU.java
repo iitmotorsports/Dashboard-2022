@@ -5,21 +5,16 @@ import com.google.common.collect.Lists;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.logging.LogFile;
-import com.iit.dashboard2022.logging.ToastLevel;
 import com.iit.dashboard2022.util.USBSerial;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A class that handles the communication and representation of the vehicle's engine control unit.

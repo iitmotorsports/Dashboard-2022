@@ -13,15 +13,13 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-import com.iit.dashboard2022.logging.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.function.Consumer;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class USBSerial implements SerialInputOutputManager.Listener {

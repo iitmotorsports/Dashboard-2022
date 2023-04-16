@@ -12,17 +12,15 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import com.iit.dashboard2022.R;
 import com.iit.dashboard2022.ecu.Metric;
-import com.iit.dashboard2022.logging.Log;
 import com.iit.dashboard2022.ui.UITester;
 import com.iit.dashboard2022.ui.widget.LiveDataEntry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LiveData extends Page implements UITester.TestUI {
@@ -59,11 +57,7 @@ public class LiveData extends Page implements UITester.TestUI {
                 if (entry == null) {
                     entry = new LiveDataEntry(metric.getName(), rootView.getContext());
                     entries.put(metric, entry);
-                    if (alt) {
-                        liveDataEntries2.addView(entry);
-                    } else {
-                        liveDataEntries1.addView(entry);
-                    }
+                    (alt ? liveDataEntries2 : liveDataEntries1).addView(entry);
                     alt = !alt;
                 }
                 temp.set(false);

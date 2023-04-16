@@ -25,6 +25,7 @@ import com.iit.dashboard2022.util.ByteSplit;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class Commander extends Page {
 
@@ -111,10 +112,7 @@ public class Commander extends Page {
 
         newSetup("No selected value", ID, currentValue, setMin, setMax);
 
-        for (CommanderValue value : CommanderValue.values()) {
-            addEntry(value.name, (byte) value.ID, value.initial, value.min, value.max);
-        }
-
+        Arrays.stream(CommanderValue.values()).forEach(v -> addEntry(v.getName(), (byte) v.getId(), v.getInitial(), v.getMin(), v.getMax()));
         return rootView;
     }
 

@@ -1,12 +1,10 @@
 package com.iit.dashboard2022.ui.widget;
 
 import android.view.View;
-import androidx.annotation.Nullable;
 import androidx.collection.ArraySet;
 
 public class LiveDataSelector {
     private final ArraySet<LiveDataEntry> entries = new ArraySet<>();
-    private LiveDataEntry lastSelected;
     private SelectionChangedListener selectionChangedListener;
 
     private void onClick(View view) {
@@ -16,7 +14,6 @@ public class LiveDataSelector {
                 entry.setActive(false);
             }
         }
-        lastSelected = current;
         current.setActive(true);
         if (selectionChangedListener != null) {
             selectionChangedListener.onSelectionChanged(current);

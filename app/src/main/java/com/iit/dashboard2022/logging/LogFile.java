@@ -3,10 +3,11 @@ package com.iit.dashboard2022.logging;
 import com.iit.dashboard2022.ecu.Metric;
 import com.iit.dashboard2022.util.Constants;
 import com.iit.dashboard2022.util.HawkUtil;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,9 +18,6 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A representation of a logging session.
