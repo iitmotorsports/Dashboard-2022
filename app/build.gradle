@@ -4,7 +4,7 @@ plugins {
 
 ext {
     logbackVersion = "1.3.0-alpha16"
-    lombokVersion = "1.18.20"
+    lombokVersion = "1.18.26"
     androidXVersion = "1.5.0"
     materialVersion = "1.8.0"
     usbSerialVersion = "v3.4.2"
